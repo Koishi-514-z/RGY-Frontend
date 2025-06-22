@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Form, Input, Button, App, Row, Col, Card, Typography, Divider, Space } from 'antd';
+import { Form, Input, Button, App, Typography, Divider, Space } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from 'react-router-dom';
 import { userExisted, addUser, login } from "../service/user";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export default function RegisterForm() {
     const [form] = Form.useForm();
@@ -100,12 +100,12 @@ export default function RegisterForm() {
                 label="确认密码"
                 required
                 tooltip="请再次填写密码"
-                dependencies={['password']}
                 rules={[
                     { required: true, message: '请确认密码' },
-                    ({ getFieldValue }) => ({
+                    () => ({
                         validator(_, value) {
-                            if (!value || getFieldValue('password') === value) {
+                            const password = form.getFieldValue('password');
+                            if (!value || value === password) {
                                 return Promise.resolve();
                             }
                             return Promise.reject(new Error('两次输入的密码不匹配!'));
@@ -155,13 +155,13 @@ export default function RegisterForm() {
             </Form.Item>
             
             <Divider style={{ margin: '16px 0' }}>
-                <Text type="secondary">或者</Text>
+                <Text type="secondary"> 或者 </Text>
             </Divider>
             
             <div style={{ textAlign: 'center' }}>
                 <Space>
-                    <Text type="secondary">已有账号？</Text>
-                    <Link to="/login" style={{ fontWeight: 500 }}>返回登录</Link>
+                    <Text type="secondary"> 已有账号？ </Text>
+                    <Link to="/login" style={{ fontWeight: 500 }}> 返回登录 </Link>
                 </Space>
             </div>
         </Form>

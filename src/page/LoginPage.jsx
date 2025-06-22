@@ -16,8 +16,8 @@ export default function LoginPage() {
                         }}
                     >
                         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                            <Title level={2} style={{ margin: '8px 0' }}>欢迎登录</Title>
-                            <Text type="secondary">登录以继续访问系统</Text>
+                            <Title level={2} style={{ margin: '8px 0' }}> 欢迎登录 </Title>
+                            <Text type="secondary"> 登录以继续访问系统 </Text>
                         </div>
                         <LoginForm />
                     </Card>

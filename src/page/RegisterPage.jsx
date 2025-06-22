@@ -16,8 +16,8 @@ export default function RegisterPage() {
                         }}
                     >
                         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                            <Title level={2} style={{ margin: '8px 0' }}>用户注册</Title>
-                            <Text type="secondary">创建您的账号以访问系统</Text>
+                            <Title level={2} style={{ margin: '8px 0' }}> 用户注册 </Title>
+                            <Text type="secondary"> 创建您的账号以访问系统 </Text>
                         </div>
                         <RegisterForm />
                     </Card>
