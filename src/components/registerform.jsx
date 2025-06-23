@@ -27,6 +27,7 @@ export default function RegisterForm() {
             password: values.password,
             profile: {
                 userid: values.username + "_" + timestamp.toString(),
+                stuid: values.stuid,
                 username: values.username,
                 email: values.email,
                 avatar: null,
@@ -60,6 +61,26 @@ export default function RegisterForm() {
             scrollToFirstError
             size="large"
         >
+            <Form.Item
+                name="stuid"
+                label="学号"
+                required
+                tooltip="请填写学号"
+                rules={[
+                    { required: true, message: '请输入学号' },
+                    {
+                        pattern: /^\d{12}$/,
+                        message: '学号必须是12位数字'
+                    }
+                ]}
+            >
+                <Input 
+                    prefix={<UserOutlined style={{ color: '#bfbfbf' }} />} 
+                    placeholder="请输入学号" 
+                    size="large" 
+                />
+            </Form.Item>
+
             <Form.Item
                 name="username"
                 label="用户名"
