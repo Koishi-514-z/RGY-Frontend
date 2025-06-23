@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Avatar, Upload, Typography, Card, Modal, Divider, Row, Col, Space } from "antd";
+import { Form, Input, Button, Avatar, Upload, Typography, Modal, Divider, Row, Col, Space } from "antd";
 import { UserOutlined, MailOutlined, SaveOutlined, CloseOutlined, LockOutlined, CameraOutlined } from "@ant-design/icons";
 import { App } from 'antd';
 import { getUserProfile, updatePassword, updateProfile, verifyPassword } from "../service/user";
@@ -79,9 +79,12 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
             message.error('密码错误');
             return;
         }
-        const updated = await updatePassword(newPassword);
-        if(!updated) {
-            message.error('修改密码失败');
+        if(newPassword) {
+            const updated = await updatePassword(newPassword);
+            if(!updated) {
+                message.error('修改密码失败');
+                return;
+            }
         }
         await saveProfile();
     }
@@ -89,12 +92,12 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
     const beforeUpload = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('只能上传 JPG/PNG 格式的图片!');
+            message.error('只能上传 JPG/PNG 格式的图片');
             return false;
         }
         const isLt2M = file.size / 1024 / 1024 < 16;
         if (!isLt2M) {
-            message.error('图片必须小于 16MB!');
+            message.error('图片必须小于 16MB');
             return false;
         }
         return true;
