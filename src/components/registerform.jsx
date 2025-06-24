@@ -31,6 +31,7 @@ export default function RegisterForm() {
                 username: values.username,
                 email: values.email,
                 avatar: null,
+                node: null
             }
         };
         const add = await addUser(newUser);

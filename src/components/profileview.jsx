@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Avatar, Descriptions, Typography, Card, Row, Col, Divider, Space, Tag } from "antd";
 import { EditOutlined, UserOutlined, MailOutlined, IdcardOutlined, NumberOutlined } from "@ant-design/icons";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export default function ProfileView({profile}) {
     const InfoItem = ({ icon, label, value, tag, tagColor }) => (

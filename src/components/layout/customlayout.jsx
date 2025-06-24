@@ -13,7 +13,7 @@ const { Header, Content, Sider, Footer } = Layout;
 const { Title, Text } = Typography;
 
 export default function CustomLayout({content}) {
-    const [profile, setProfile] = useState(null);
+    const [profile, setProfile] = useState({});
 
     useEffect(() => {
         const fetch = async () => {
@@ -22,12 +22,6 @@ export default function CustomLayout({content}) {
         }
         fetch();
     }, []);
-    
-    if(!profile) {
-        return (
-            <Loading/>
-        )
-    }
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
