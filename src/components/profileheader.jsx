@@ -1,24 +1,47 @@
 import React from "react";
-import { Button, Avatar, Typography, Card, Row, Col, Space } from "antd";
+import { Button, Avatar, Typography, Card, Row, Col, Space, App } from "antd";
 import { EditOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
+import HomeTabs from "./hometabs";
+import { useNavigate } from "react-router-dom";
+import { getSessionid, createSession } from "../service/chat";
 
 const { Title, Text } = Typography;
 
-export default function ProfileHeader({profile, setEditting}) {
+export default function ProfileHeader({profile, tabKey, setTabKey, id}) {
+    const navigate = useNavigate();
+    const { message } = App.useApp();
+
     const handleEdit = () => {
-        setEditting(true);
+        setTabKey(3);
     };
+
+    const handleClick = async () => {
+        if(!id) {
+            navigate(`/chat`);
+            return;
+        }   
+        let sessionid = await getSessionid(id);
+        if(sessionid === 'NOT FOUND') {
+            sessionid = await createSession(id);
+            if(!sessionid) {
+                message.error('创建会话失败，请检查网络');
+                return;
+            }
+        }
+        navigate(`/chat/${sessionid}`)
+    }
+
+    const emptyText = '这个家伙很懒，什么也没有留下';
 
     return (
         <Card 
             style={{ 
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                borderRadius: '12px',
+                borderRadius: '0px',
                 overflow: 'hidden',
                 marginBottom: '24px'
             }}
         >
-            <Row align="middle" gutter={[24, 0]}>
+            <Row align="middle" gutter={[24, 24]}>
                 <Col xs={24} sm={8} md={4} style={{ textAlign: 'center' }}>
                     <Avatar 
                         size={120} 
@@ -31,7 +54,7 @@ export default function ProfileHeader({profile, setEditting}) {
                     />
                 </Col>
 
-                <Col xs={24} sm={12} md={18}>
+                <Col xs={24} sm={10} md={16}>
                     <div style={{ padding: '8px 0' }}>
                         <Title level={3} style={{ marginBottom: 12 }}>
                             {profile.username}
@@ -39,25 +62,42 @@ export default function ProfileHeader({profile, setEditting}) {
                         
                         <Space direction="vertical" size={12} style={{ marginBottom: 20 }}>
                             <Space>
-                                <MailOutlined style={{ color: '#1890ff' }} />
-                                <Text style={{ fontSize: '16px' }}>{profile.email}</Text>
+                                <Text style={{ fontSize: '16px' }}>{profile.note ? profile.note : emptyText}</Text>
                             </Space>
                         </Space>
                     </div>
                 </Col>
-                <Col xs={24} sm={4} md={2}>
+                <Col xs={24} sm={3} md={2}>
                     <Button 
                         type="primary" 
-                        icon={<EditOutlined />} 
-                        onClick={handleEdit}
+                        icon={<MailOutlined />} 
+                        onClick={handleClick}
                         size="large"
                         style={{ 
-                            width: '42px',
+                            width: '64px',
                             height: '42px',
                             borderRadius: '6px',
                             fontSize: '15px'
                         }}
                     />
+                </Col>
+                <Col xs={24} sm={3} md={2}>
+                    {!id && 
+                        <Button 
+                            type="primary" 
+                            icon={<EditOutlined />} 
+                            onClick={handleEdit}
+                            size="large"
+                            style={{ 
+                                width: '42px',
+                                height: '42px',
+                                borderRadius: '6px',
+                                fontSize: '15px'
+                            }}
+                        />}
+                </Col>
+                <Col span={24}>
+                    <HomeTabs tabKey={tabKey} setTabKey={setTabKey} id={id} />
                 </Col>
             </Row>
         </Card>

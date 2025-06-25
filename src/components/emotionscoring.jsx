@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { App, Rate, Form, Flex, Radio, Tag, Modal, Button } from "antd";
+import { App, Rate, Form, Radio, Tag, Modal, Button, Card, Space, Typography, Row, Col } from "antd";
 import { getEmotion, getTags, updateEmotion } from "../service/emotion";
+import { HeartOutlined, EditOutlined, CalendarOutlined } from "@ant-design/icons";
 import Loading from "../components/loading";
+import EmotionScoringModal from "./emotionscoringmodal";
+
+const { Title, Text } = Typography;
 
 export default function EmotionScoring({emotion, setEmotion}) {
     const [editting, setEditting] = useState(false);
@@ -36,7 +40,7 @@ export default function EmotionScoring({emotion, setEmotion}) {
         }
         const res = await updateEmotion({
             score: values.score,
-            tagid: values
+            tagid: values.tag
         });
         if(!res) {
             message.error('保存失败，请检查网络');
@@ -47,86 +51,102 @@ export default function EmotionScoring({emotion, setEmotion}) {
     }
 
     const getEmotionTag = (tag) => {
-        switch(tag.id) {
-            case 1: {
-                return <Tag color="green"> {tags[0].content} </Tag>;
-            }
-            case 2: {
-                return <Tag color="red"> {tags[1].content} </Tag>;
-            }
-            case 3: {
-                return <Tag color="yellow"> {tags[2].content} </Tag>;
-            }
-            case 4: {
-                return <Tag color="orange"> {tags[3].content} </Tag>;
-            }
-            case 5: {
-                return <Tag color="blue"> {tags[4].content} </Tag>;
-            }
-            default: {
-                return <Tag color="default"> Unknown </Tag>;
-            }
+        if(tags.length === 0) {
+            return null;
         }
+        const tagColors = {
+            1: "success",
+            2: "error",  
+            3: "warning", 
+            4: "orange",  
+            5: "processing" 
+        };
+        
+        try {
+            const tagIndex = tag.id - 1;
+            if (tagIndex >= 0 && tagIndex < tags.length) {
+                return (
+                    <Tag 
+                        color={tagColors[tag.id]} 
+                        style={{ 
+                            padding: '4px 12px', 
+                            fontSize: '14px',
+                            borderRadius: '16px',
+                            margin: '0 8px'
+                        }}
+                    >
+                        {tags[tagIndex].content}
+                    </Tag>
+                );
+            }
+        } 
+        catch (error) {
+            console.error("Error rendering emotion tag:", error);
+        }
+        
+        return <Tag color="default">Unknown</Tag>;
     };
 
     if(tags.length === 0) {
-        return (
-            <Loading/>
-        )
+        return <Loading/>
     }
 
     return (
-        <div>
-            <Rate disabled={true} defaultValue={emotion.score} />
-            {getEmotionTag(emotion.tag)}
-            <Button 
-                type="primary" 
-                onClick={handleOpen}
-                style={{ 
-                    width: '100%',
-                    height: '46px',
-                    borderRadius: '6px',
-                    fontSize: '16px',
-                    fontWeight: 500
-                }}
-            >
-                Scoring
-            </Button>
-            <Modal
-                title="心情打卡"
-                closable={{ 'aria-label': 'Custom Close Button' }}
-                open={editting}
-                onOk={handleOk}
-                onCancel={handleClose}
-            >
-                <Form
-                    form={form}
-                    layout="vertical"
-                    name="scoringform"
-                >
-                    <Form.Item
-                        name="score"
-                        label="心情评分"
+        <Card 
+            title={
+                <div style={{ padding: '8px 0' }}>
+                    <Space>
+                        <CalendarOutlined style={{ fontSize: '18px', color: '#1890ff' }} />
+                        <Title level={4} style={{ margin: 0 }}>今日心情打卡</Title>
+                    </Space>
+                </div>
+            }
+            style={{ 
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                marginBottom: '24px'
+            }}
+        >
+            <Row align="middle" justify="center" gutter={[0, 24]}>
+                <Col span={24} style={{ textAlign: 'center' }}>
+                    <Space direction="vertical" size={16} align="center">
+                        <Text style={{ fontSize: '16px', color: '#595959' }}>
+                            您的当前心情状态
+                        </Text>
+                        <div>
+                            <Rate 
+                                disabled={true} 
+                                value={emotion.score} 
+                                style={{ fontSize: '24px' }}
+                            />
+                        </div>
+                        <div>
+                            {getEmotionTag(emotion.tag)}
+                        </div>
+                    </Space>
+                </Col>
+                
+                <Col span={4}>
+                    <Button 
+                        type="primary" 
+                        icon={<EditOutlined />}
+                        onClick={handleOpen}
+                        size="large"
+                        style={{ 
+                            width: '100%',
+                            height: '46px',
+                            borderRadius: '6px',
+                            fontSize: '16px',
+                            fontWeight: 500
+                        }}
                     >
-                        <Rate defaultValue={emotion.score} />
-                    </Form.Item>
+                        更新心情
+                    </Button>
+                </Col>
+            </Row>
 
-                    <Form.Item
-                        name="tag"
-                        label="情绪标签"
-                    >
-                        <Flex vertical gap="middle">
-                            <Radio.Group defaultValue={emotion.tag.id}>
-                                <Radio.Button value={1}> {tags[0].content} </Radio.Button>
-                                <Radio.Button value={2}> {tags[1].content} </Radio.Button>
-                                <Radio.Button value={3}> {tags[2].content} </Radio.Button>
-                                <Radio.Button value={4}> {tags[3].content} </Radio.Button>
-                                <Radio.Button value={5}> {tags[4].content} </Radio.Button>
-                            </Radio.Group>
-                        </Flex> 
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </div>
-    )
+            <EmotionScoringModal tags={tags} editting={editting} setEditting={setEditting} emotion={emotion} setEmotion={setEmotion} />
+        </Card>
+    );
 }

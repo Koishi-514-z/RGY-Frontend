@@ -36,7 +36,7 @@ export async function getUrlDatas() {
     return res;
 }
 
-export async function isNegative() {
+export async function checkNegative() {
     const url = `${PREFIX}/emotion/negative`;
     let res;
     try {

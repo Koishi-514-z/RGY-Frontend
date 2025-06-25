@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Card, List, Space, Typography, Tag, Rate, Divider, App } from "antd";
-import { 
-  HeartOutlined, 
-  SmileOutlined, 
-  MehOutlined, 
-  FrownOutlined, 
-  ThunderboltOutlined
-} from "@ant-design/icons";
-import { getTags, getUrlDatas, isNegative } from "../service/emotion";
+import { Card, List, Space, Typography, Tag, Rate, Divider, App, Avatar } from "antd";
+import { HeartOutlined, SmileOutlined, MehOutlined, FrownOutlined, ThunderboltOutlined } from "@ant-design/icons";
+import { getTags, getUrlDatas, checkNegative } from "../service/emotion";
 import Loading from "./loading";
+import PushList from "./pushlist";
 
 const { Title, Text } = Typography;
 
@@ -21,7 +16,7 @@ export default function EmotionCard({emotion}) {
     useEffect(() => {
         const fetch = async () => {
             const fetched_tags = await getTags();
-            const isNegative = await isNegative();
+            const isNegative = await checkNegative();
             const fetched_urls = await getUrlDatas();
             setTags(fetched_tags);
             setNegative(isNegative);
@@ -124,8 +119,6 @@ export default function EmotionCard({emotion}) {
                     {getEmotionTag(emotion.tag)}
                 </div>
                 
-                <Divider style={{ margin: '16px 0' }} />
-                
                 <Text 
                     style={{ 
                         fontSize: '16px',
@@ -136,31 +129,30 @@ export default function EmotionCard({emotion}) {
                     {getEmotionDescription(emotion.score)}
                 </Text>
                 
-                {!negative ? null : 
-                    <div>
+                {!negative ? null : (
+                    <div style={{ marginTop: '24px' }}>
+                        <Divider>
+                            <Space>
+                                <HeartOutlined style={{ color: '#ff4d4f' }} />
+                                <Text strong>心情调节推荐</Text>
+                            </Space>
+                        </Divider>
+                        
                         <Text 
                             style={{ 
-                                fontSize: '16px',
-                                fontWeight: 500
+                                fontSize: '15px',
+                                display: 'block',
+                                textAlign: 'center',
+                                margin: '16px 0',
+                                color: '#595959'
                             }}
                         >
-                            为您推送以下内容：
+                            我们为您精选了以下内容，希望能帮助您改善心情
                         </Text>
-                        <List
-                            itemLayout="horizontal"
-                            dataSource={urlDatas}
-                            renderItem={data => (
-                                <List.Item>
-                                    <List.Item.Meta
-                                        avatar={<Avatar src={data.img} />}
-                                        title={<a href={data.url}> {data.title} </a>}
-                                        description={data.description}
-                                    />
-                                </List.Item>
-                            )}
-                        />
+                        
+                        <PushList urlDatas={urlDatas} inhome={true} />
                     </div>
-                }
+                )}
             </div>
         </Card>
     );

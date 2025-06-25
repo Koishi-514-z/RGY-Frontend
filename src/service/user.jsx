@@ -28,13 +28,38 @@ export async function userExisted(username) {
 }
 
 export async function getUserProfile() {
-    const url = `${PREFIX}/user/get`;
+    const url = `${PREFIX}/user/getmine`;
     let res;
     try {
         res = await getJson(url);
     } catch (e) {
         console.log(e);
         res = null;
+    }
+    return res;
+}
+
+export async function getSimplifiedProfile(userid) {
+    userid = encodeURIComponent(userid);
+    const url = `${PREFIX}/user/getsim?userid=${userid}`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = null;
+    }
+    return res;
+}
+
+export async function getIntimateUsers() {
+    const url = `${PREFIX}/user/getintm`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = [];
     }
     return res;
 }

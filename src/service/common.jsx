@@ -97,4 +97,4 @@ export async function readFile(file) {
 
 export const BASEURL = 'http://localhost:8080';
 export const BASEURL_MOCK = 'https://b317a8dc-e8d1-4b75-b957-2543aaf00613.mock.pstmn.io';
-export const PREFIX = `${BASEURL_MOCK}/api`;
+export const PREFIX = `${BASEURL}/api`;

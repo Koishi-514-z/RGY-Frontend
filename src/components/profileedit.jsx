@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Avatar, Upload, Typography, Modal, Divider, Row, Col, Space } from "antd";
-import { UserOutlined, MailOutlined, SaveOutlined, CloseOutlined, LockOutlined, CameraOutlined } from "@ant-design/icons";
+import { UserOutlined, MailOutlined, SaveOutlined, CloseOutlined, LockOutlined, CameraOutlined, EditOutlined } from "@ant-design/icons";
 import { App } from 'antd';
 import { getUserProfile, updatePassword, updateProfile, verifyPassword } from "../service/user";
 import { readFile } from "../service/common";
 
 const { Title, Text } = Typography;
 
-export default function ProfileEdit({profile, setProfile, setEditting}) {
+export default function ProfileEdit({profile, setProfile, setTabKey}) {
     const initFormValues = {
         username: profile.username,
         password: null,
@@ -45,7 +45,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
             setProfile(await getUserProfile());
         }
         closeModal();
-        setEditting(false);
+        setTabKey(1);
     }
     
     const handleSave = async () => {
@@ -61,7 +61,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
     };
 
     const handleCancel = () => {
-        setEditting(false);
+        setTabKey(1);
     };
 
     const handleOk = async () => {
@@ -183,7 +183,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                 initialValues={initFormValues}
             >
                 <Row gutter={24}>
-                    <Col xs={24} md={{ span: 16, offset: 2 }}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
                         <Form.Item
                             name="username"
                             label="用户名"
@@ -198,7 +198,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                     </Col>
                 </Row>
                 <Row gutter={24}>
-                    <Col xs={24} md={{ span: 16, offset: 2 }}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
                         <Form.Item
                             name="email"
                             label="电子邮箱"
@@ -215,6 +215,21 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                         </Form.Item>
                     </Col>
                 </Row>
+                <Row gutter={24}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
+                        <Form.Item
+                            name="note"
+                            label="个性签名"
+                        >
+                            <Input 
+                                prefix={<EditOutlined style={{ color: '#bfbfbf' }} />} 
+                                size="large" 
+                                showCount 
+                                maxLength={30} 
+                            />
+                        </Form.Item>
+                    </Col>
+                </Row>
 
                 <Divider>
                     <Space>
@@ -224,7 +239,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                 </Divider>
 
                 <Row gutter={24}>
-                    <Col xs={24} md={{ span: 16, offset: 2 }}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
                         <Form.Item
                             name="password"
                             label="新密码"
@@ -241,7 +256,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                     </Col>
                 </Row>
                 <Row gutter={24}>
-                    <Col xs={24} md={{ span: 16, offset: 2 }}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
                         <Form.Item
                             name="confirm"
                             label="确认新密码"

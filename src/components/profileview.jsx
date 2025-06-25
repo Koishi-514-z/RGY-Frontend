@@ -1,6 +1,6 @@
 import React from "react";
-import { Button, Avatar, Descriptions, Typography, Card, Row, Col, Divider, Space, Tag } from "antd";
-import { EditOutlined, UserOutlined, MailOutlined, IdcardOutlined, NumberOutlined } from "@ant-design/icons";
+import { Typography, Card, Row, Col, Divider, Space, Tag } from "antd";
+import { UserOutlined, MailOutlined, IdcardOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 

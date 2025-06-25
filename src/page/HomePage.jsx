@@ -1,31 +1,68 @@
 import React, { useState, useEffect } from "react";
 import CustomLayout from "../components/layout/customlayout";
-import { getUserProfile } from "../service/user";
+import { getIntimateUsers, getUserProfile, getSimplifiedProfile } from "../service/user";
 import ProfileEdit from "../components/profileedit";
 import ProfileView from "../components/profileview";
 import ProfileHeader from "../components/profileheader";
 import Loading from "../components/loading";
 import HomeLayout from "../components/layout/homelayout";
 import EmotionCard from "../components/emotioncard";
-import { Card, Row, Col, Space } from "antd";
+import BlogCard from "../components/blogcard";
+import IntimateCard from "../components/intimatecard";
 import { getEmotion } from "../service/emotion";
+import { useParams, useNavigate } from "react-router-dom";
+import { getCommentBlogs, getLikeBlogs, getBlogs } from "../service/blog";
 
 export default function HomePage() {
     const [profile, setProfile] = useState(null);
     const [emotion, setEmotion] = useState(null);
-    const [editting, setEditting] = useState(false);
+    const [intimateUsers, setIntimateUsers] = useState([]);
+    const [myBlogs, setMyBlogs] = useState([]);
+    const [likeBlogs, setLikeBlogs] = useState([]);
+    const [commentBlogs, setCommentBlogs] = useState([]);
+    const {userid} = useParams();
+    const [tabKey, setTabKey] = useState(userid ? 2 : 1);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetch = async () => {
-            const fetched_profile = await getUserProfile();
-            const fetched_emotion = await getEmotion();
-            setProfile(fetched_profile);
-            setEmotion(fetched_emotion);
+            if(userid) {
+                const me = await getUserProfile();
+                if(me.userid === userid) {
+                    navigate(`/home`);
+                }
+                const fetched_profile = await getSimplifiedProfile(userid);
+                const fetched_blogs = await getBlogs(userid);
+                const fetched_blogs_like = await getLikeBlogs(userid);
+                const fetched_blogs_comment = await getCommentBlogs(userid);
+                setProfile(fetched_profile);
+                setEmotion(null);
+                setIntimateUsers(null);
+                setTabKey(2);
+                setMyBlogs(fetched_blogs);
+                setLikeBlogs(fetched_blogs_like);
+                setCommentBlogs(fetched_blogs_comment);
+            }
+            else {
+                const fetched_profile = await getUserProfile();
+                const fetched_emotion = await getEmotion();
+                const fetched_users = await getIntimateUsers();
+                const fetched_blogs = await getBlogs(fetched_profile.userid);
+                const fetched_blogs_like = await getLikeBlogs(fetched_profile.userid);
+                const fetched_blogs_comment = await getCommentBlogs(fetched_profile.userid);
+                setProfile(fetched_profile);
+                setEmotion(fetched_emotion);
+                setIntimateUsers(fetched_users);
+                setTabKey(1);
+                setMyBlogs(fetched_blogs);
+                setLikeBlogs(fetched_blogs_like);
+                setCommentBlogs(fetched_blogs_comment);
+            }
         }
         fetch();
-    }, []);
+    }, [userid]);
 
-    if(!profile) {
+    if(!profile || !emotion) {
         return (
             <CustomLayout content={
                 <Loading />
@@ -33,42 +70,16 @@ export default function HomePage() {
         )
     }
 
+    const header = <ProfileHeader profile={profile} tabKey={tabKey} setTabKey={setTabKey} id={userid} />;
+    const edit = <ProfileEdit profile={profile} setProfile={setProfile} setTabKey={setTabKey} />;
+    const view = <ProfileView profile={profile} />;
+    const emotionCard = <EmotionCard emotion={emotion} />;
+    const intimateCard = <IntimateCard intimateUsers={intimateUsers} />;
+    const blogCard = <BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} />;
+
     return (
         <CustomLayout content={
-            <HomeLayout 
-                editting={editting} 
-                content_edit={
-                    <div style={{ maxWidth: '750px', margin: '0 auto', padding: '24px' }}>
-                        <Card 
-                            style={{ 
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                borderRadius: '12px',
-                                overflow: 'hidden'
-                            }}
-                        >
-                            <ProfileEdit profile={profile} setProfile={setProfile} setEditting={setEditting} />
-                        </Card>
-                    </div> 
-                }
-                content_view={
-                    <div style={{ margin: '0 auto', padding: '24px' }}>
-                        <Row gutter={[24, 24]}>
-                            <Col span={24}>
-                                <ProfileHeader profile={profile} setEditting={setEditting} />
-                            </Col>
-                        </Row>
-                        <Row gutter={[24, 24]}>
-                            <Col span={16}>
-                                <EmotionCard emotion={emotion} />
-                            </Col>
-
-                            <Col span={8}>
-                                <ProfileView profile={profile} /> 
-                            </Col>
-                        </Row>
-                    </div>
-                }
-            />
+            <HomeLayout header={header} edit={edit} view={view} emotionCard={emotionCard} intimateCard={intimateCard} blogCard={blogCard} tabKey={tabKey} />
         }/>
     )
 
@@ -77,11 +88,11 @@ export default function HomePage() {
             password: 
             stuid:
             profile: {
-                userid:
-                username:
+                userid:     *
+                username:   *
                 email:
-                avatar:
-                note:
+                avatar:     *
+                note:       *
             }
         }
 
@@ -109,6 +120,8 @@ export default function HomePage() {
             userid:
             timestamp:
             likeNum:
+            title:
+            cover:
             content:
             tag[]
             reply[]
@@ -129,6 +142,21 @@ export default function HomePage() {
             img:
             description:
             url:
+        }
+
+        session: {
+            sessionid:
+            myself:  (id in database)   (simplified)
+            other:  (id in database)   (simplified)
+            timestamp: (最近一次私信的时间)
+            messages[]
+
+            message: {
+                messageid:
+                role: (0->A, 1->B)
+                timestamp
+                content
+            }
         }
     */
 }
