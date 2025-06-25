@@ -28,7 +28,7 @@ export async function userExisted(username) {
 }
 
 export async function getUserProfile() {
-    const url = `${PREFIX}/user/getmine`;
+    const url = `${PREFIX}/user/get`;
     let res;
     try {
         res = await getJson(url);

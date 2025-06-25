@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 const { Title, Text } = Typography;
 
 export default function BlogCard({myBlogs, likeBlogs, commentBlogs}) {
+    console.log(myBlogs);
+
     const navigate = useNavigate();
 
     const handleClick = () => {

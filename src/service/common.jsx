@@ -1,13 +1,12 @@
 const isError = (code) => {
-    if(code == 500 || code == 404 || code == 403 || code == 401) {
+    if(code === 500 || code === 404 || code === 403 || code === 401) {
         return true;
     }
     return false;
 }
 
 export async function getJson(url) {
-    // let res = await fetch(url, { method: "GET", credentials: "include" });
-    let res = await fetch(url, { method: "GET" });
+    let res = await fetch(url, { method: "GET", credentials: "include" });
     let res_json = await res.json();
     if(isError(res_json.code)) {
         window.location.href = '/forbidden';
@@ -17,8 +16,7 @@ export async function getJson(url) {
 }
 
 export async function get(url) {
-    // let res = await fetch(url, { method: "GET", credentials: "include" });
-    let res = await fetch(url, { method: "GET" });
+    let res = await fetch(url, { method: "GET", credentials: "include" });
     let res_json = await res.json();
     if(isError(res_json.code)) {
         window.location.href = '/forbidden';
@@ -34,7 +32,7 @@ export async function put(url, data) {
         headers: {
             'Content-Type': 'application/json'
         },
-        // credentials: "include"
+        credentials: "include"
     };
     let res = await fetch(url, opts);
     let res_json = await res.json();
@@ -52,7 +50,7 @@ export async function del(url, data) {
         headers: {
             'Content-Type': 'application/json'
         },
-        // credentials: "include"
+        credentials: "include"
     };
     let res = await fetch(url, opts);
     let res_json = await res.json();
@@ -71,7 +69,7 @@ export async function post(url, data) {
         headers: {
             'Content-Type': 'application/json'
         },
-        // credentials: "include"
+        credentials: "include"
     };
     let res = await fetch(url, opts);
     let res_json = await res.json();

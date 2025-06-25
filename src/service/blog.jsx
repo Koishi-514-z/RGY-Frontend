@@ -2,7 +2,7 @@ import { PREFIX, getJson, post, put, del } from "./common";
 
 export async function getBlogs(userid) {
     userid = encodeURIComponent(userid)
-    const url = `${PREFIX}/blogs/get?userid=${userid}`;
+    const url = `${PREFIX}/blogs/getmine?userid=${userid}`;
     let res;
     try {
         res = await getJson(url);

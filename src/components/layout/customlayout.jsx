@@ -13,7 +13,7 @@ const { Header, Content, Sider, Footer } = Layout;
 const { Title, Text } = Typography;
 
 export default function CustomLayout({content}) {
-    const [profile, setProfile] = useState({});
+    const [profile, setProfile] = useState(null);
 
     useEffect(() => {
         const fetch = async () => {
@@ -62,14 +62,14 @@ export default function CustomLayout({content}) {
                         <Avatar 
                             size={64} 
                             icon={<UserOutlined />}
-                            src={profile.avatar}
+                            src={profile ? profile.avatar : null}
                             style={{ 
                                 backgroundColor: '#1890ff',
                                 marginBottom: 12
                             }}
                         />
                         <div>
-                            <Text strong style={{ fontSize: 16 }}>{profile.username}</Text>
+                            <Text strong style={{ fontSize: 16 }}>{profile ? profile.username : ''}</Text>
                         </div>
                     </div>
                     <Navbar />

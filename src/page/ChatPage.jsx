@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getSession, getSessionTags } from "../service/chat";
 import { useParams } from "react-router-dom";
-import { App } from "antd";
+import { App, Row, Col } from "antd";
 import SessionMenu from "../components/sessionmenu";
 import CustomLayout from "../components/layout/customlayout";
 import MessageDisplay from "../components/messagedisplay";
@@ -38,12 +38,41 @@ export default function ChatPage() {
 
     return (
         <CustomLayout content={
-            <div>
-                <SessionMenu sessionTags={sessionTags} />
-                <MessageDisplay session={session} />
-                <InputArea setSession={setSession} />
-            </div>
+            <Row gutter={[24, 24]} style={{ height: 'calc(110vh - 64px - 69px - 48px)' }}>
+                <Col xs={24} sm={8} md={6} lg={5} xl={4} style={{ height: '100%' }}>
+                    <div style={{ 
+                        height: '100%', 
+                        background: '#fff', 
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.09)',
+                        borderRadius: '4px',
+                        overflow: 'hidden'
+                    }}>
+                        <SessionMenu sessionTags={sessionTags} />
+                    </div>
+                </Col>
+                
+                <Col xs={24} sm={16} md={18} lg={19} xl={20} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ 
+                        flex: 1, 
+                        overflowY: 'auto',
+                        background: '#fff',
+                        borderRadius: '4px',
+                        padding: '16px',
+                        marginBottom: '16px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.09)'
+                    }}>
+                        <MessageDisplay session={session} />
+                    </div>
+                    
+                    <div style={{ 
+                        background: '#fff',
+                        borderRadius: '4px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.09)'
+                    }}>
+                        <InputArea setSession={setSession} />
+                    </div>
+                </Col>
+            </Row>
         }/>
-        
     )
 }

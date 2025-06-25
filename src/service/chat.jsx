@@ -1,7 +1,8 @@
 import { PREFIX, getJson, post, put, del } from "./common";
 
 export async function getSession(sessionid) {
-    const url = `${PREFIX}/chat/getsession/${sessionid}`;
+    sessionid = encodeURIComponent(sessionid);
+    const url = `${PREFIX}/chat/getsession?sessionid=${sessionid}`;
     let session;
     try {
         session = await getJson(url);
@@ -30,7 +31,7 @@ export async function createSession(userid) {
     const url = `${PREFIX}/chat/create?userid=${userid}`;
     let sessionid;
     try {
-        sessionid = await post(url, user);
+        sessionid = await post(url, null);
     } catch (e) {
         console.log(e);
         sessionid = null;
@@ -44,7 +45,7 @@ export async function getSessionid(userid) {
     const url = `${PREFIX}/chat/getid?userid=${userid}`;
     let sessionid;
     try {
-        sessionid = await post(url, user);
+        sessionid = await post(url, null);
     } catch (e) {
         console.log(e);
         sessionid = null;

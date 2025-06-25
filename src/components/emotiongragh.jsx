@@ -29,21 +29,9 @@ const CustomTooltip = ({ active, payload, label }) => {
     return null;
 };
 
-export default function EmotionGragh() {
-    const [weekData, setWeekData] = useState(null);
-    const [monthData, setMonthData] = useState(null);
+export default function EmotionGragh({weekData, monthData}) {
     const [activeTab, setActiveTab] = useState("week");
     const [chartType, setChartType] = useState("area");
-    
-    useEffect(() => {
-        const fetch = async () => {
-            const fetched_week = await getWeekData();
-            const fetched_month = await getMonthData();
-            setWeekData(fetched_week);
-            setMonthData(fetched_month);
-        }
-        fetch();
-    }, []);
 
     const handleTabChange = (key) => {
         setActiveTab(key);
@@ -55,11 +43,12 @@ export default function EmotionGragh() {
 
     const activeData = activeTab === "week" ? weekData : monthData;
  
-    const getTrend = (data) => {
-        if (!data || data.length < 2) return null;
-        
-        const firstScore = data[0].score;
-        const lastScore = data[data.length - 1].score;
+    const getTrend = (datas) => {
+        if(!datas || datas.length < 2) {
+            return null;
+        }
+        const firstScore = datas[0].score;
+        const lastScore = datas[datas.length - 1].score;
         const trend = lastScore - firstScore;
         
         return {
@@ -67,8 +56,24 @@ export default function EmotionGragh() {
             isPositive: trend >= 0
         };
     };
+
+    const calcAverage = (datas) => {
+        if(!datas || datas.length < 2) {
+            return null;
+        }
+        let avg = 0;
+        for(const data of datas) {
+            avg += data.score;
+        }
+        avg /= datas.length;
+        return {
+            value: avg,
+            isPositive: avg >= 3
+        }
+    }
     
-    const trend = activeData ? getTrend(activeData) : null;
+    const trend = getTrend(activeData);
+    const average = calcAverage(activeData);
 
     const renderChart = () => {
         if (!activeData || activeData.length === 0) {
@@ -217,9 +222,17 @@ export default function EmotionGragh() {
                             {activeTab === "week" ? "本周" : "本月"}情绪趋势: 
                             <span style={{ 
                                 color: trend.isPositive ? '#52c41a' : '#f5222d',
-                                marginLeft: '8px'
+                                marginLeft: '8px',
+                                marginRight: '16px'
                             }}>
                                 {trend.isPositive ? "+" : ""}{trend.value}
+                            </span>
+                            情绪均值:
+                            <span style={{ 
+                                color: average.isPositive ? '#52c41a' : '#f5222d',
+                                marginLeft: '8px'
+                            }}>
+                                {average.value}
                             </span>
                         </Text>
                         <div style={{ fontSize: '14px', color: '#8c8c8c', marginTop: '4px' }}>

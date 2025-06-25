@@ -10,7 +10,7 @@ export default function MessageDisplay({session}) {
                 dataSource={session ? session.messages : []}
                 renderItem={message => (
                     <List.Item>
-                        <ContentCard message={message} />
+                        <ContentCard session={session} message={message} />
                     </List.Item>
                 )}
             />

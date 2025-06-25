@@ -62,7 +62,7 @@ export default function HomePage() {
         fetch();
     }, [userid]);
 
-    if(!profile || !emotion) {
+    if(!profile || (!userid && !emotion)) {
         return (
             <CustomLayout content={
                 <Loading />
