@@ -25,12 +25,13 @@ export default function RegisterForm() {
         const timestamp = now.getTime();
         const newUser = {
             password: values.password,
+            stuid: values.stuid,
             profile: {
                 userid: values.username + "_" + timestamp.toString(),
-                stuid: values.stuid,
                 username: values.username,
                 email: values.email,
                 avatar: null,
+                node: null
             }
         };
         const add = await addUser(newUser);

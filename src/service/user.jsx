@@ -39,6 +39,31 @@ export async function getUserProfile() {
     return res;
 }
 
+export async function getSimplifiedProfile(userid) {
+    userid = encodeURIComponent(userid);
+    const url = `${PREFIX}/user/getsim?userid=${userid}`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = null;
+    }
+    return res;
+}
+
+export async function getIntimateUsers() {
+    const url = `${PREFIX}/user/getintm`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = [];
+    }
+    return res;
+}
+
 export async function addUser(user) {
     const url = `${PREFIX}/user/add`;
     let res;
