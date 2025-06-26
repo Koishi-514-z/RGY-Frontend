@@ -7,6 +7,9 @@ import NotFoundPage from "../page/NotFoundPage";
 import EmotionPage from "../page/EmotionPage";
 import CommunityPage from "../page/CommunityPage";
 import BlogdetailPage from "../page/BlogdetailPage";
+import AdminStatisticPage from "../page/AdminStatisticPage";
+import AdminConsultPage from "../page/AdminConsultPage";
+import AIAssistantPage from "../page/AIAssistantPage";
 import ChatPage from "../page/ChatPage";
 
 export default function AppRouter() {
@@ -25,6 +28,9 @@ export default function AppRouter() {
                 <Route path="/blog/:blogid" element={<BlogdetailPage />} />
                 <Route path="/forbidden" element={<ForbiddenPage />} />
                 <Route path="/*" element={<NotFoundPage />} />
+                <Route path="/admin/stats" element={<AdminStatisticPage />} />
+                <Route path="/admin/consult" element={<AdminConsultPage />} />
+                <Route path="/AIassistant" element={<AIAssistantPage />} />
             </Routes>
         </BrowserRouter>
     )
