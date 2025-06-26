@@ -39,7 +39,6 @@ export default function ForbiddenPage() {
                         boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                         overflow: 'hidden'
                     }}
-                    bodyStyle={{ padding: '32px 24px' }}
                 >
                     <Result
                         status="404"

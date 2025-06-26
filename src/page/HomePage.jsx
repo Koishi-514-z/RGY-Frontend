@@ -1,72 +1,161 @@
 import React, { useState, useEffect } from "react";
 import CustomLayout from "../components/layout/customlayout";
-import { getUserProfile } from "../service/user";
+import { getIntimateUsers, getUserProfile, getSimplifiedProfile } from "../service/user";
 import ProfileEdit from "../components/profileedit";
 import ProfileView from "../components/profileview";
+import ProfileHeader from "../components/profileheader";
 import Loading from "../components/loading";
-import { Card } from "antd";
+import HomeLayout from "../components/layout/homelayout";
+import EmotionCard from "../components/emotioncard";
+import BlogCard from "../components/blogcard";
+import IntimateCard from "../components/intimatecard";
+import { getEmotion } from "../service/emotion";
+import { useParams, useNavigate } from "react-router-dom";
+import { getCommentBlogs, getLikeBlogs, getBlogs } from "../service/blog";
 
 export default function HomePage() {
     const [profile, setProfile] = useState(null);
-    const [editting, setEditting] = useState(false);
+    const [emotion, setEmotion] = useState(null);
+    const [intimateUsers, setIntimateUsers] = useState([]);
+    const [myBlogs, setMyBlogs] = useState([]);
+    const [likeBlogs, setLikeBlogs] = useState([]);
+    const [commentBlogs, setCommentBlogs] = useState([]);
+    const {userid} = useParams();
+    const [tabKey, setTabKey] = useState(userid ? 2 : 1);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetch = async () => {
-            const fetched_profile = await getUserProfile();
-            console.log(fetched_profile);
-            setProfile(fetched_profile);
+            if(userid) {
+                const me = await getUserProfile();
+                if(me.userid === userid) {
+                    navigate(`/home`);
+                }
+                const fetched_profile = await getSimplifiedProfile(userid);
+                const fetched_blogs = await getBlogs(userid);
+                const fetched_blogs_like = await getLikeBlogs(userid);
+                const fetched_blogs_comment = await getCommentBlogs(userid);
+                setProfile(fetched_profile);
+                setEmotion(null);
+                setIntimateUsers(null);
+                setTabKey(2);
+                setMyBlogs(fetched_blogs);
+                setLikeBlogs(fetched_blogs_like);
+                setCommentBlogs(fetched_blogs_comment);
+            }
+            else {
+                const fetched_profile = await getUserProfile();
+                const fetched_emotion = await getEmotion();
+                const fetched_users = await getIntimateUsers();
+                const fetched_blogs = await getBlogs(fetched_profile.userid);
+                const fetched_blogs_like = await getLikeBlogs(fetched_profile.userid);
+                const fetched_blogs_comment = await getCommentBlogs(fetched_profile.userid);
+                setProfile(fetched_profile);
+                setEmotion(fetched_emotion);
+                setIntimateUsers(fetched_users);
+                setTabKey(1);
+                setMyBlogs(fetched_blogs);
+                setLikeBlogs(fetched_blogs_like);
+                setCommentBlogs(fetched_blogs_comment);
+            }
         }
         fetch();
-    }, []);
+    }, [userid]);
 
-    if(!profile) {
+    if(!profile || (!userid && !emotion)) {
         return (
-            <Loading/>
+            <CustomLayout content={
+                <Loading />
+            }/>
         )
     }
 
+    const header = <ProfileHeader profile={profile} tabKey={tabKey} setTabKey={setTabKey} id={userid} />;
+    const edit = <ProfileEdit profile={profile} setProfile={setProfile} setTabKey={setTabKey} />;
+    const view = <ProfileView profile={profile} />;
+    const emotionCard = <EmotionCard emotion={emotion} />;
+    const intimateCard = <IntimateCard intimateUsers={intimateUsers} />;
+    const blogCard = <BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} />;
+
     return (
         <CustomLayout content={
-            editting ? 
-            (
-                <div style={{ maxWidth: '750px', margin: '0 auto', padding: '24px' }}>
-                    <Card 
-                        style={{ 
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                            borderRadius: '12px',
-                            overflow: 'hidden'
-                        }}
-                    >
-                        <ProfileEdit profile={profile} setProfile={setProfile} setEditting={setEditting} />
-                    </Card>
-                </div> 
-            ) : 
-            (
-                <div style={{ maxWidth: '750px', margin: '0 auto', padding: '24px' }}>
-                    <Card 
-                        style={{ 
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                            borderRadius: '12px',
-                            overflow: 'hidden'
-                        }}
-                    >
-                        <ProfileView profile={profile} setEditting={setEditting} /> 
-                    </Card>
-                </div> 
-            )    
-                
+            <HomeLayout header={header} edit={edit} view={view} emotionCard={emotionCard} intimateCard={intimateCard} blogCard={blogCard} tabKey={tabKey} />
         }/>
     )
 
     /*
         user: {
             password: 
+            stuid:
             profile: {
-                userid:
-                stuid:
-                username:
+                userid:     *
+                username:   *
                 email:
-                avatar:
+                avatar:     *
+                note:       *
+            }
+        }
+
+        emotion: {
+            emotionid:
+            userid:
+            timestamp:
+            tag: {
+                id:
+                content:
+            }
+            score:
+        }
+
+        diary: {
+            diaryid:
+            userid:
+            timestamp:
+            label: (0->positive  1->neutral  2->negative)
+            content:
+        }
+
+        blog: {
+            blogid:
+            userid:
+            timestamp:
+            likeNum:
+            title:
+            cover:
+            content:
+            tag[]
+            reply[]
+
+            reply: {
+                replyid:
+                blogid:
+                userid:
+                timestamp:
+                content:
+            }
+        }
+
+        urlData: {
+            urlid:
+            type: (music/article)
+            title:
+            img:
+            description:
+            url:
+        }
+
+        session: {
+            sessionid:
+            myself:  (id in database)   (simplified)
+            other:  (id in database)   (simplified)
+            timestamp: (最近一次私信的时间)
+            messages[]
+
+            message: {
+                messageid:
+                role: (0->A, 1->B)
+                timestamp
+                content
             }
         }
     */

@@ -1,0 +1,78 @@
+import React, { useState, useEffect } from "react";
+import { getSession, getSessionTags } from "../service/chat";
+import { useParams } from "react-router-dom";
+import { App, Row, Col } from "antd";
+import SessionMenu from "../components/sessionmenu";
+import CustomLayout from "../components/layout/customlayout";
+import MessageDisplay from "../components/messagedisplay";
+import InputArea from "../components/inputarea";
+
+export default function ChatPage() {
+    const [sessionTags, setSessionTags] = useState([]);
+    const [session, setSession] = useState(null);
+    const {sessionid} = useParams();
+    const { message } = App.useApp();
+
+    useEffect(() => {
+        const fetch = async () => {
+            const fetched_tags = await getSessionTags();
+            setSessionTags(fetched_tags);
+        }
+        fetch();
+    }, []);
+
+    useEffect(() => {
+        const fetch = async () => {
+            if(!sessionid) {
+                setSession(null);
+                return;
+            }
+            const fetched_session = await getSession(sessionid);
+            if(!fetched_session) {
+                message.error('加载失败');
+            }
+            setSession(fetched_session);
+        }
+        fetch();
+    }, [sessionid]);
+
+    return (
+        <CustomLayout content={
+            <Row gutter={[24, 24]} style={{ height: 'calc(110vh - 64px - 69px - 48px)' }}>
+                <Col xs={24} sm={8} md={6} lg={5} xl={4} style={{ height: '100%' }}>
+                    <div style={{ 
+                        height: '100%', 
+                        background: '#fff', 
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.09)',
+                        borderRadius: '4px',
+                        overflow: 'hidden'
+                    }}>
+                        <SessionMenu sessionTags={sessionTags} />
+                    </div>
+                </Col>
+                
+                <Col xs={24} sm={16} md={18} lg={19} xl={20} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ 
+                        flex: 1, 
+                        overflowY: 'auto',
+                        background: '#fff',
+                        borderRadius: '4px',
+                        padding: '16px',
+                        marginBottom: '16px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.09)'
+                    }}>
+                        <MessageDisplay session={session} />
+                    </div>
+                    
+                    <div style={{ 
+                        background: '#fff',
+                        borderRadius: '4px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.09)'
+                    }}>
+                        <InputArea setSession={setSession} />
+                    </div>
+                </Col>
+            </Row>
+        }/>
+    )
+}

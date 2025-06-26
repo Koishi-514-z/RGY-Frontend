@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Avatar, Upload, Typography, Card, Modal, Divider, Row, Col, Space } from "antd";
-import { UserOutlined, MailOutlined, SaveOutlined, CloseOutlined, LockOutlined, CameraOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Avatar, Upload, Typography, Modal, Divider, Row, Col, Space } from "antd";
+import { UserOutlined, MailOutlined, SaveOutlined, CloseOutlined, LockOutlined, CameraOutlined, EditOutlined } from "@ant-design/icons";
 import { App } from 'antd';
 import { getUserProfile, updatePassword, updateProfile, verifyPassword } from "../service/user";
 import { readFile } from "../service/common";
 
 const { Title, Text } = Typography;
 
-export default function ProfileEdit({profile, setProfile, setEditting}) {
+export default function ProfileEdit({profile, setProfile, setTabKey}) {
     const initFormValues = {
         username: profile.username,
         password: null,
@@ -44,8 +44,10 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
             message.success('保存成功');
             setProfile(await getUserProfile());
         }
-        closeModal();
-        setEditting(false);
+        setTimeout(() => {
+            closeModal();
+            setTabKey(1);
+        }, 1000);
     }
     
     const handleSave = async () => {
@@ -61,7 +63,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
     };
 
     const handleCancel = () => {
-        setEditting(false);
+        setTabKey(1);
     };
 
     const handleOk = async () => {
@@ -79,9 +81,12 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
             message.error('密码错误');
             return;
         }
-        const updated = await updatePassword(newPassword);
-        if(!updated) {
-            message.error('修改密码失败');
+        if(newPassword) {
+            const updated = await updatePassword(newPassword);
+            if(!updated) {
+                message.error('修改密码失败');
+                return;
+            }
         }
         await saveProfile();
     }
@@ -89,12 +94,12 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
     const beforeUpload = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('只能上传 JPG/PNG 格式的图片!');
+            message.error('只能上传 JPG/PNG 格式的图片');
             return false;
         }
         const isLt2M = file.size / 1024 / 1024 < 16;
         if (!isLt2M) {
-            message.error('图片必须小于 16MB!');
+            message.error('图片必须小于 16MB');
             return false;
         }
         return true;
@@ -180,7 +185,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                 initialValues={initFormValues}
             >
                 <Row gutter={24}>
-                    <Col xs={24} md={{ span: 16, offset: 2 }}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
                         <Form.Item
                             name="username"
                             label="用户名"
@@ -195,7 +200,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                     </Col>
                 </Row>
                 <Row gutter={24}>
-                    <Col xs={24} md={{ span: 16, offset: 2 }}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
                         <Form.Item
                             name="email"
                             label="电子邮箱"
@@ -212,6 +217,21 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                         </Form.Item>
                     </Col>
                 </Row>
+                <Row gutter={24}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
+                        <Form.Item
+                            name="note"
+                            label="个性签名"
+                        >
+                            <Input 
+                                prefix={<EditOutlined style={{ color: '#bfbfbf' }} />} 
+                                size="large" 
+                                showCount 
+                                maxLength={30} 
+                            />
+                        </Form.Item>
+                    </Col>
+                </Row>
 
                 <Divider>
                     <Space>
@@ -221,7 +241,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                 </Divider>
 
                 <Row gutter={24}>
-                    <Col xs={24} md={{ span: 16, offset: 2 }}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
                         <Form.Item
                             name="password"
                             label="新密码"
@@ -238,7 +258,7 @@ export default function ProfileEdit({profile, setProfile, setEditting}) {
                     </Col>
                 </Row>
                 <Row gutter={24}>
-                    <Col xs={24} md={{ span: 16, offset: 2 }}>
+                    <Col xs={24} md={{ span: 18, offset: 2 }}>
                         <Form.Item
                             name="confirm"
                             label="确认新密码"

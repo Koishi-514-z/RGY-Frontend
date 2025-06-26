@@ -10,6 +10,7 @@ import BlogdetailPage from "../page/BlogdetailPage";
 import AdminStatisticPage from "../page/AdminStatisticPage";
 import AdminConsultPage from "../page/AdminConsultPage";
 import AIAssistantPage from "../page/AIAssistantPage";
+import ChatPage from "../page/ChatPage";
 
 export default function AppRouter() {
     return (
@@ -19,6 +20,9 @@ export default function AppRouter() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/home/:userid" element={<HomePage />} />
+                <Route path="/chat" element={<ChatPage />} />
+                <Route path="/chat/:sessionid" element={<ChatPage />} />
                 <Route path="/emotion" element={<EmotionPage />} />
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/blog/:blogid" element={<BlogdetailPage />} />
