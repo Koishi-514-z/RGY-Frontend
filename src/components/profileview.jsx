@@ -1,83 +1,84 @@
-import React, { useState } from "react";
-import { Button, Avatar, Descriptions, Typography, Card } from "antd";
-import { EyeOutlined, EyeInvisibleOutlined, EditOutlined, UserOutlined } from "@ant-design/icons";
+import React from "react";
+import { Typography, Card, Row, Col, Divider, Space, Tag } from "antd";
+import { UserOutlined, MailOutlined, IdcardOutlined } from "@ant-design/icons";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
-export default function ProfileView({profile, setEditting}) {
-    const [show, setShow] = useState(false);
-
-    const handleEdit = () => {
-        setEditting(true);
-    };
-
-    const handleClick = () => {
-        setShow(!show);
-    }
+export default function ProfileView({profile}) {
+    const InfoItem = ({ icon, label, value, tag, tagColor }) => (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ 
+                width: '32px', 
+                display: 'flex', 
+                justifyContent: 'center',
+                marginRight: '12px'
+            }}>
+                {icon}
+            </div>
+            <div style={{ flex: 1 }}>
+                <div style={{ color: '#8c8c8c', fontSize: '14px', marginBottom: '4px' }}>
+                    {label}
+                </div>
+                <div style={{ fontSize: '16px', fontWeight: 500 }}>
+                    {value || '-'}
+                </div>
+            </div>
+            {tag && (
+                <Tag color={tagColor || "blue"} style={{ marginLeft: 'auto' }}>
+                    {tag}
+                </Tag>
+            )}
+        </div>
+    );
 
     return (
-        <div>
-            <>
-                <Avatar 
-                    size={120} 
-                    icon={<UserOutlined />}
-                    src={profile.avatar}
-                    style={{ 
-                        backgroundColor: '#1890ff',
-                        marginBottom: 12
-                    }}
-                />
-                <Title level={4} style={{ marginTop: 16, marginBottom: 4 }}>{profile.username}</Title>
-            </>
-            <Button 
-                type="primary" 
-                icon={<EditOutlined />} 
-                onClick={handleEdit}
-                style={{ width: '100%' }}
-            >
-                Edit
-            </Button>
-            <>
-                <Card 
-                    title={<Title level={4}> 个人信息 </Title>} 
-                    style={{ 
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.09)',
-                        borderRadius: 8
-                    }}
-                >
-                    <Descriptions bordered column={1}>
-                        <Descriptions.Item label="用户名"> {profile.username} </Descriptions.Item>
-                        <Descriptions.Item label="电子邮箱"> {profile.email} </Descriptions.Item>
-                    </Descriptions>
-                </Card>
+        <Card 
+            title={
+                <div style={{ padding: '8px 0' }}>
+                    <Space>
+                        <IdcardOutlined style={{ fontSize: '18px', color: '#1890ff' }} />
+                        <Title level={4} style={{ margin: 0 }}>个人信息</Title>
+                    </Space>
+                </div>
+            }
+            style={{ 
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                borderRadius: '12px',
+            }}
+        >
+            <Row gutter={[0, 16]}>
+                <Col span={24}>
+                    <InfoItem 
+                        icon={<IdcardOutlined style={{ color: '#1890ff' }} />}
+                        label="账户ID" 
+                        value={profile.userid} 
+                    />
+                </Col>
+                <Col span={24}>
+                    <Divider style={{ margin: '4px 0' }} />
+                </Col>
+
+                <Col span={24}>
+                    <InfoItem 
+                        icon={<UserOutlined style={{ color: '#1890ff' }} />}
+                        label="用户名" 
+                        value={profile.username} 
+                    />
+                </Col>
+                <Col span={24}>
+                    <Divider style={{ margin: '4px 0' }} />
+                </Col>
                 
-                <Card 
-                    title={<Title level={4}> 账户安全 </Title>} 
-                    style={{ 
-                        marginTop: 24,
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.09)',
-                        borderRadius: 8
-                    }}
-                >
-                    <Descriptions bordered column={1}>
-                        <Descriptions.Item label="账户ID"> {profile.userid} </Descriptions.Item>
-                        <Descriptions.Item label="密码"> 
-                            <Text> {show ? profile.password : "*************"} </Text>
-                            <Button 
-                                type="default"
-                                onClick={handleClick}
-                                icon={show ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-                                style={{
-                                    borderRadius: 4,
-                                    boxShadow: '0 2px 0 rgba(0,0,0,0.045)',
-                                    fontWeight: 500,
-                                    height: 38
-                                }}
-                            /> 
-                        </Descriptions.Item>
-                    </Descriptions>
-                </Card>
-            </>
-        </div>
+                <Col span={24}>
+                    <InfoItem 
+                        icon={<MailOutlined style={{ color: '#1890ff' }} />}
+                        label="电子邮箱" 
+                        value={profile.email} 
+                        tag="已验证"
+                        tagColor="success"
+                    />
+                </Col>
+            </Row>
+        </Card>
     );
 }

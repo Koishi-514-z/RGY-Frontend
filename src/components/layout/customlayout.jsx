@@ -22,12 +22,6 @@ export default function CustomLayout({content}) {
         }
         fetch();
     }, []);
-    
-    if(!profile) {
-        return (
-            <Loading/>
-        )
-    }
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
@@ -68,14 +62,14 @@ export default function CustomLayout({content}) {
                         <Avatar 
                             size={64} 
                             icon={<UserOutlined />}
-                            src={profile.avatar}
+                            src={profile ? profile.avatar : null}
                             style={{ 
                                 backgroundColor: '#1890ff',
                                 marginBottom: 12
                             }}
                         />
                         <div>
-                            <Text strong style={{ fontSize: 16 }}>{profile.username}</Text>
+                            <Text strong style={{ fontSize: 16 }}>{profile ? profile.username : ''}</Text>
                         </div>
                     </div>
                     <Navbar />

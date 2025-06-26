@@ -7,6 +7,7 @@ import NotFoundPage from "../page/NotFoundPage";
 import EmotionPage from "../page/EmotionPage";
 import CommunityPage from "../page/CommunityPage";
 import BlogdetailPage from "../page/BlogdetailPage";
+import ChatPage from "../page/ChatPage";
 
 export default function AppRouter() {
     return (
@@ -16,6 +17,9 @@ export default function AppRouter() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/home/:userid" element={<HomePage />} />
+                <Route path="/chat" element={<ChatPage />} />
+                <Route path="/chat/:sessionid" element={<ChatPage />} />
                 <Route path="/emotion" element={<EmotionPage />} />
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/blog/:blogid" element={<BlogdetailPage />} />
