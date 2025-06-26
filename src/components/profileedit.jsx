@@ -44,8 +44,10 @@ export default function ProfileEdit({profile, setProfile, setTabKey}) {
             message.success('保存成功');
             setProfile(await getUserProfile());
         }
-        closeModal();
-        setTabKey(1);
+        setTimeout(() => {
+            closeModal();
+            setTabKey(1);
+        }, 1000);
     }
     
     const handleSave = async () => {

@@ -111,7 +111,7 @@ export default function HomePage() {
             diaryid:
             userid:
             timestamp:
-            label: (positive/neutral/negative)
+            label: (0->positive  1->neutral  2->negative)
             content:
         }
 

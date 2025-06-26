@@ -56,8 +56,6 @@ export default function HomeLayout({header, edit, view, emotionCard, intimateCar
         }
     }
 
-
-
     return (
         <Layout style={{ minHeight: "100vh" }}>
             <Content>

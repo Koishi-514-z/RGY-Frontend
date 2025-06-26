@@ -45,7 +45,7 @@ export async function getSessionid(userid) {
     const url = `${PREFIX}/chat/getid?userid=${userid}`;
     let sessionid;
     try {
-        sessionid = await post(url, null);
+        sessionid = await getJson(url);
     } catch (e) {
         console.log(e);
         sessionid = null;
