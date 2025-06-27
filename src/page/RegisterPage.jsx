@@ -8,7 +8,7 @@ export default function RegisterPage() {
     return (
         <div>
             <Row justify="center" align="middle" style={{ minHeight: '100vh', background: '#f0f2f5' }}>
-                <Col xs={22} sm={16} md={12} lg={8} xl={6}>
+                <Col xs={22} sm={20} md={16} lg={12} xl={10}>
                     <Card 
                         style={{ 
                             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',

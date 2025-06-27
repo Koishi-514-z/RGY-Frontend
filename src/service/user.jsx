@@ -88,6 +88,19 @@ export async function updateProfile(profile) {
     return res;
 }
 
+export async function adminVerify(verifyKey) {
+    verifyKey = encodeURIComponent(verifyKey);
+    const url = `${PREFIX}/user/verify/admin?verifyKey=${verifyKey}`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
 export async function verifyPassword(password) {
     password = encodeURIComponent(password);
     const url = `${PREFIX}/user/verify/pwd?password=${password}`;
