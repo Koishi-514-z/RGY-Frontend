@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Menu, Avatar, Typography } from "antd";
+import { Menu, Avatar, Typography, Badge } from "antd";
 import { useNavigate, useParams } from 'react-router-dom';
-import { UserOutlined, MessageOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
@@ -17,23 +17,32 @@ export default function SessionMenu({sessionTags}) {
     }, [sessionid]);
 
 
-    const getLabel = (user) => (
+    const getLabel = (user, unread) => (
         <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
             padding: '8px 0',
             width: '100%'
         }}>
-            <Avatar 
-                src={user.avatar} 
-                icon={<UserOutlined style={{ fontSize: '20px' }} />}
-                size={50}
+            <Badge
+                count={unread}
+                offset={[-16, 8]} 
                 style={{ 
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-                    marginRight: '12px',
-                    flexShrink: 0
+                    backgroundColor: '#1890ff',
+                    boxShadow: '0 0 0 1px #fff'
                 }}
-            />
+            >
+                <Avatar 
+                    src={user.avatar} 
+                    icon={<UserOutlined style={{ fontSize: '20px' }} />}
+                    size={50}
+                    style={{ 
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                        marginRight: '16px',
+                        flexShrink: 0
+                    }}
+                />
+            </Badge>
             <div style={{ flex: 1, overflow: 'hidden' }}>
                 <Text 
                     strong
@@ -54,8 +63,7 @@ export default function SessionMenu({sessionTags}) {
 
     const items = sessionTags.map(sessionTag => ({
         key: sessionTag.sessionid,
-        label: getLabel(sessionTag.other),
-        icon: <MessageOutlined style={{ fontSize: '14px' }} />,
+        label: getLabel(sessionTag.other, sessionTag.unread),
         style: { height: 'auto' }
     }));
 

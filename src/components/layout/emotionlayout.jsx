@@ -5,7 +5,7 @@ import { ProfileOutlined, LineChartOutlined, BookOutlined } from "@ant-design/ic
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-export default function EmotionLayout({scoring, diary, graph, push}) {
+export default function EmotionLayout({scoring, diary, push}) {
     return (
         <Layout style={{ minHeight: "100vh" }}>
             <Header style={{ 
@@ -48,12 +48,6 @@ export default function EmotionLayout({scoring, diary, graph, push}) {
                             }}>
                                 {push}
                             </div>
-                        </Col>
-                    </Row>
-
-                    <Row style={{ marginTop: '24px' }}>
-                        <Col span={24}>
-                            {graph}
                         </Col>
                     </Row>
                 </div>

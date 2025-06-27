@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getSession, getSessionTags } from "../service/chat";
+import { getSession, getSessionTags, updateRead } from "../service/chat";
 import { useParams } from "react-router-dom";
 import { App, Row, Col } from "antd";
 import SessionMenu from "../components/sessionmenu";
@@ -25,6 +25,11 @@ export default function ChatPage() {
         const fetch = async () => {
             if(!sessionid) {
                 setSession(null);
+                return;
+            }
+            const res = await updateRead(sessionid);
+            if(!res) {
+                message.error('更新失败');
                 return;
             }
             const fetched_session = await getSession(sessionid);
