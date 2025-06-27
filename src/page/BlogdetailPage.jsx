@@ -3,7 +3,7 @@ import CustomLayout from "../components/layout/customlayout";
 import { useNavigate, useParams } from "react-router-dom";
 import {getBlogById, likeBlog, cancelLikeBlog, addReply, getAvatar, getBlogs} from "../service/community";
 import { ArrowLeftOutlined, HeartTwoTone } from "@ant-design/icons";
-import { Button, Input, List, Card, App, Pagination } from "antd";
+import {Button, Input, List, Card, App, Pagination, Dropdown} from "antd";
 
 export default function BlogdetailPage() {
     //const {id} = useParams();
@@ -115,8 +115,20 @@ export default function BlogdetailPage() {
         }
     }
 
-    async function handleWarmReply() {
-        const warmMessage = "这是一篇很棒的文章！加油！";
+    async function handleWarmReply(num) {
+        let warmMessage = "";
+        if (num === 0) {
+            warmMessage = "加油加油！";
+        }
+        else if (num === 1) {
+            warmMessage = "你已经很棒了，自信些！";
+        }
+        else if (num === 2) {
+            warmMessage = "不要放弃！有志者事竟成！";
+        }
+        else {
+            warmMessage = "我们与你同在！";
+        }
         const res = await addReply(id, warmMessage);
         if (res.success) {
             message.success("回复成功！");
@@ -126,6 +138,32 @@ export default function BlogdetailPage() {
             message.error("回复失败！");
         }
     }
+    const items = [
+        {
+            key: '1',
+            label: (
+                <button type="text" onClick={() => handleWarmReply(0)}>
+                    加油加油！
+                </button>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <button type="text" onClick={() => handleWarmReply(1)}>
+                    你已经很棒了，自信些！
+                </button>
+            ),
+        },
+        {
+            key: '3',
+            label: (
+                <button type="text" onClick={() => handleWarmReply(2)}>
+                    不要放弃！有志者事竟成！
+                </button>
+            ),
+        }
+    ];
 
     return (
         <CustomLayout content={
@@ -212,9 +250,9 @@ export default function BlogdetailPage() {
                         <Button type="primary" onClick={handleReply} style={{ borderRadius: '8px' }}>
                             回复
                         </Button>
-                        <Button type="default" onClick={handleWarmReply} style={{ borderRadius: '8px' }}>
-                            暖心回应
-                        </Button>
+                        <Dropdown menu={{ items }} placement="bottomLeft" arrow={{ pointAtCenter: true }}>
+                            <Button>暖心回应</Button>
+                        </Dropdown>
                     </div>
                 </div>
             </div>

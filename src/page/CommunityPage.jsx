@@ -1,176 +1,85 @@
-// import React, { useState, useEffect } from "react";
-// import { Button } from "antd";
-//
-// import CustomLayout from "../components/layout/customlayout";
-// import {Col, Divider, message, Row} from "antd";
-// import Title from "antd/es/skeleton/Title";
-// import {getBlogs} from "../service/community";
-// import BlogCard from "../components/blogcard";
-// import { useNavigate } from "react-router-dom";
-//
-// function BlogsSearch(props) {
-//     return null;
-// }
-//
-// export default function CommunityPage() {
-//     const [searchText, setSearchText] = useState('');
-//     const [tags, setTags] = useState('all');
-//     const [blogs, setBlogs] = useState([]);
-//     const navigate = useNavigate();
-//
-//
-//     useEffect(() => {
-//         const fetchBlogs = async () => {
-//             const fetched_blogs = await getBlogs();
-//             console.log(fetched_blogs);
-//             setBlogs(fetched_blogs);
-//         };
-//         fetchBlogs();
-//     },[]);
-//
-//     return (
-//         <CustomLayout content={
-//             <div>
-//                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-//                     <Title level={2}>欢迎来到校园树洞</Title>
-//                     <Button type="primary" onClick={() => navigate('/post')} style={{ fontSize: '16px' }}>
-//                         发帖
-//                     </Button>
-//                 </div>
-//                 <div style={{ marginBottom: '24px' }}>
-//                     <BlogsSearch
-//                         searchText={searchText}
-//                         tags={tags}
-//                         onSearchChange={e => setSearchText(e.target.value)}
-//                         onTagsChange={setTags}
-//                     />
-//                 </div>
-//                 <Title level={3}>所有帖子</Title>
-//                 <Row gutter={[16, 16]}>
-//                     {blogs.map(blog => (
-//                         <Col span={6} key={blog.blogid}>
-//                             <BlogCard blog={blog}  />
-//                         </Col>
-//                     ))}
-//                 </Row>
-//                 <Divider variant="dashed" style={{ borderColor: '#0055FF' }} dashed>
-//                     End
-//                 </Divider>
-//             </div>
-//         }/>
-//     );
-// }
 
-// import React, { useState, useEffect } from "react";
-// import {Button, Col} from "antd";
-//
-// import CustomLayout from "../components/layout/customlayout";
-// import { Divider, message, Row } from "antd";
-// import Title from "antd/es/skeleton/Title";
-// import { getBlogs } from "../service/community";
-// import { useNavigate } from "react-router-dom";
-//
-// function BlogsSearch(props) {
-//     return null;
-// }
-//
-// export default function CommunityPage() {
-//     const [searchText, setSearchText] = useState('');
-//     const [tags, setTags] = useState('all');
-//     const [blogs, setBlogs] = useState([]);
-//     const navigate = useNavigate();
-//
-//     useEffect(() => {
-//         const fetchBlogs = async () => {
-//             const fetched_blogs = await getBlogs();
-//             console.log(fetched_blogs);
-//             setBlogs(fetched_blogs);
-//         };
-//         fetchBlogs();
-//     }, []);
-//
-//     return (
-//         <CustomLayout content={
-//             <div>
-//                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-//                     <Title level={2}>欢迎来到校园树洞</Title>
-//                     <Button type="primary" onClick={() => navigate('/post')} style={{ fontSize: '16px' }}>
-//                         发帖
-//                     </Button>
-//                 </div>
-//                 <div style={{ marginBottom: '24px' }}>
-//                     <BlogsSearch
-//                         searchText={searchText}
-//                         tags={tags}
-//                         onSearchChange={e => setSearchText(e.target.value)}
-//                         onTagsChange={setTags}
-//                     />
-//                 </div>
-//                 <Title level={3}>所有帖子</Title>
-//                 <Row gutter={[16, 16]}>
-//                     {blogs.map(blog => (
-//                         <Col span={24} key={blog.blogid} style={{ marginBottom: '16px' }}>
-//                             <div style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
-//                                 <Title level={4}>{blog.title}</Title>
-//                                 <p>{blog.content}</p>
-//                                 <div>
-//                                     <strong>作者ID:</strong> {blog.userid} <br />
-//                                     <strong>发布时间:</strong> {new Date(blog.timestamp).toLocaleString()} <br />
-//                                     <strong>点赞数:</strong> {blog.likeNum} <br />
-//                                     <strong>标签:</strong> {blog.tag.join(', ')}
-//                                 </div>
-//                             </div>
-//                         </Col>
-//                     ))}
-//                 </Row>
-//                 <Divider variant="dashed" style={{ borderColor: '#0055FF' }} dashed>
-//                     End
-//                 </Divider>
-//             </div>
-//         }/>
-//     );
-// }
 
 import React, { useState, useEffect } from "react";
-import { Avatar, Button, Col, Divider, List, Row, Tag, Typography } from "antd";
-import { UserOutlined, ClockCircleOutlined, LikeOutlined } from "@ant-design/icons";
+import { Avatar, Button, Col, Divider, Input, List, Pagination, Row, Select, Tag, Typography } from "antd";
+import {UserOutlined, ClockCircleOutlined, LikeOutlined, SearchOutlined} from "@ant-design/icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import CustomLayout from "../components/layout/customlayout";
-import {getAvatar, getBlogs} from "../service/community";
+import { getAvatar, getBlogs } from "../service/community";
 import { useNavigate } from "react-router-dom";
+import Search from "antd/es/input/Search";
 
 dayjs.extend(relativeTime);
+const { Option } = Select;
 
-function BlogsSearch(props) {
-    return null;
+function BlogsSearch({ searchText, tags, onSearchChange, onTagsChange, availableTags }) {
+    return (
+    <Row gutter={16}>
+        <Col span={8}>
+            <Search
+                placeholder="搜索书籍或作者"
+                allowClear
+                enterButton={<SearchOutlined />}
+                size="large"
+                value={searchText}
+                onChange={onSearchChange}
+            />
+        </Col>
+        <Col span={8}>
+            <Select
+                placeholder="选择标签过滤"
+                mode="multiple"
+                style={{ width: '100%' }}
+                size="large"
+                value={tags}
+                onChange={onTagsChange}
+            >
+                <Option value="all">全部</Option>
+                <Option value="学习">学习</Option>
+                <Option value="生活">生活</Option>
+                <Option value="情感">情感</Option>
+                <Option value="其他">其他</Option>
+            </Select>
+        </Col>
+    </Row>
+    );
 }
 
 export default function CommunityPage() {
     const [searchText, setSearchText] = useState('');
-    const [tags, setTags] = useState('all');
+    const [tags, setTags] = useState([]);
     const [blogs, setBlogs] = useState([]);
+    const [availableTags, setAvailableTags] = useState([]);
     const navigate = useNavigate();
+    const [avatarsMap, setAvatarsMap] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [avatars, setAvatars] = useState([]);
-    const [avatarsMap, setAvatarsMap ] = useState({});
 
+    // 获取博客数据
     useEffect(() => {
         const fetchBlogs = async () => {
-            const fetched_blogs = await getBlogs();
+            const fetched_blogs = await getBlogs(pageSize, currentPage, searchText, tags);
             setBlogs(fetched_blogs);
         };
         fetchBlogs();
+        console.log(tags);
+    }, [pageSize, currentPage, searchText, tags]);
+
+    useEffect(() => {
+        setAvailableTags(['学习','生活','情感','其他']);
     }, []);
+
+
     useEffect(() => {
         const fetchAvatars = async () => {
-            //遍历blogs，获取所有userid，然后请求对应的头像
+
             const userids = blogs.map(blog => blog.userid);
             const fetched_avatars = await Promise.all(userids.map(userid => getAvatar(userid)));
             setAvatars(fetched_avatars);
         };
         fetchAvatars();
-        //设置所有blog的avatar属性
-
     }, [ blogs]);
     useEffect(() => {
         const fetchAvatarsMap = async () => {
@@ -183,20 +92,25 @@ export default function CommunityPage() {
         };
         fetchAvatarsMap();
     }, [ blogs, avatars ]);
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchText, tags]);
 
     return (
         <CustomLayout content={
             <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                    <Typography.Title level={2}>🎉 欢迎来到校园树洞</Typography.Title>
-                    <Button
-                        type="primary"
-                        onClick={() => navigate('/post')}
-                        style={{ fontSize: 16, height: 40 }}
-                    >
-                        ✍️ 发帖
-                    </Button>
-                </div>
+                {
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                        <Typography.Title level={2}>🎉 欢迎来到校园树洞</Typography.Title>
+                            <Button
+                                type="primary"
+                                onClick={() => navigate('/post')}
+                                style={{ fontSize: 16, height: 40 }}
+                            >
+                                ✍️ 发帖
+                            </Button>
+                    </div>
+                }
 
                 <div style={{ marginBottom: 24 }}>
                     <BlogsSearch
@@ -204,10 +118,13 @@ export default function CommunityPage() {
                         tags={tags}
                         onSearchChange={e => setSearchText(e.target.value)}
                         onTagsChange={setTags}
+                        availableTags={availableTags}
                     />
                 </div>
 
-                <Typography.Title level={4} style={{ marginBottom: 24 }}>📃 所有帖子 ({blogs.length})</Typography.Title>
+                <Typography.Title level={4} style={{ marginBottom: 24 }}>
+                    📃 所有帖子 ({blogs.length})
+                </Typography.Title>
 
                 <List
                     itemLayout="vertical"
@@ -271,6 +188,23 @@ export default function CommunityPage() {
                         </List.Item>
                     )}
                 />
+
+                <Pagination
+                    current={currentPage}
+                    pageSize={pageSize}
+                    total={blogs.length}
+                    onChange={(page, pageSize) => {
+                        setCurrentPage(page);
+                        setPageSize(pageSize);
+                    }}
+                    showSizeChanger
+                    onShowSizeChange={(current, size) => {
+                        setPageSize(size);
+                        setCurrentPage(1);
+                    }}
+                    style={{ margin: '24px 0', textAlign: 'center' }}
+                />
+
                 <Divider dashed style={{ borderColor: '#0055FF' }}>
                     🤗 已经到底啦
                 </Divider>
@@ -278,3 +212,4 @@ export default function CommunityPage() {
         }/>
     );
 }
+
