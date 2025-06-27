@@ -12,7 +12,7 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs}) {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate(`/community`);
+        navigate(`/post`);
     }
     
     const createBlogButton = (

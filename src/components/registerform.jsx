@@ -1,15 +1,20 @@
 import React, { useState } from "react";
-import { Form, Input, Button, App, Typography, Divider, Space } from 'antd';
+import { Form, Input, Button, App, Typography, Divider, Space, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from 'react-router-dom';
-import { userExisted, addUser, login } from "../service/user";
+import { userExisted, addUser, login, adminVerify } from "../service/user";
 
 const { Text } = Typography;
 
 export default function RegisterForm() {
+    const [checked, setChecked] = useState(false);
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const { message, modal } = App.useApp();
+
+    const onChange = (event) => {
+        setChecked(event.target.checked);
+    };
 
     const onFinish = async (values) => {
         const existed = await userExisted(values.username);
@@ -19,6 +24,14 @@ export default function RegisterForm() {
                 content: '用户名已存在',
             });
             return;
+        }
+
+        if(checked) {
+            const res = await adminVerify(values.verifyKey);
+            if(!res) {
+                message.error("Verify Failed");
+                return;
+            }
         }
 
         const now = new Date();
@@ -31,7 +44,8 @@ export default function RegisterForm() {
                 username: values.username,
                 email: values.email,
                 avatar: null,
-                node: null
+                node: null,
+                role: checked
             }
         };
         const add = await addUser(newUser);
@@ -156,6 +170,24 @@ export default function RegisterForm() {
                     prefix={<MailOutlined style={{ color: '#bfbfbf' }} />} 
                     placeholder="请输入邮箱地址" 
                     size="large" 
+                />
+            </Form.Item>
+
+            <Form.Item name="checkbox">
+                <Checkbox
+                    checked={checked}
+                    onChange={onChange}
+                > 
+                    注册为管理员 
+                </Checkbox>
+            </Form.Item>
+
+            <Form.Item name="verifyKey">
+                <Input 
+                    prefix={<LockOutlined />} 
+                    placeholder="verifyKey" 
+                    size="large" 
+                    disabled={!checked}
                 />
             </Form.Item>
 

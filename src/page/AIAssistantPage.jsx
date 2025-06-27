@@ -9,27 +9,38 @@ import {
     message,
     Row,
     Col,
+    Tabs,
 } from 'antd';
 import {
     UserOutlined,
     RobotOutlined,
     ClockCircleOutlined,
+    CalendarOutlined,
 } from '@ant-design/icons';
 import {placeCallBackRequest} from "../service/AIassis";
 import CustomLayout from '../components/layout/customlayout';
+import TabPane from 'antd/es/tabs/TabPane';
 
 const { TextArea } = Input;
 const { Title } = Typography;
 
 const AIAssistant = () => {
     let userid="fakeuser";
-
+    const [activeTab, setActiveTab] = useState("hearing");
     const [messageApi, contextHolder] = message.useMessage();
-    const [messages, setMessages] = useState([]);
+    const [messagesHearing, setMessagesHearing] = useState([{
+            role: 'developer', 
+            content: '你是一位温柔耐心的心理陪伴者。请用关怀和理解的语气倾听用户的表达，不要急于给建议，只需表达共情、理解和支持，让用户感受到被倾听和被接纳。你的回复应简短温暖，鼓励用户继续表达自己的感受。'
+    }]);
+    const [messagesActing, setMessagesActing] = useState([{
+            role: 'developer', 
+            content: '你是一位专业的心理健康引导者。请在倾听用户表达的基础上，适当提出开放性问题，引导用户自我觉察和思考，帮助他们梳理情绪和困惑。也请温和地给出建议或心理调适的小技巧，但要避免直接下结论或诊断。'
+    }])
     const [userInput, setUserInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [usageSeconds, setUsageSeconds] = useState(0);
     const alertShownRef = useRef(false); // 用于解决闭包 stale 状态问题
+    let messages, setMessages;
 
     useEffect(() => {
         const today = new Date().toISOString().split('T')[0];
@@ -65,6 +76,9 @@ const AIAssistant = () => {
         handleOveruse();
     }, [usageSeconds]);
 
+    const handleTabChange = (key) => {
+        setActiveTab(key);
+    };
 
     const sendMessage = async () => {
         if (!userInput.trim()) return;
@@ -128,6 +142,24 @@ const AIAssistant = () => {
         }
     };
 
+    switch(activeTab) {
+        case 'hearing': {
+            messages = messagesHearing;
+            setMessages = setMessagesHearing;
+            break;
+        }
+        case 'acting': {
+            messages = messagesActing;
+            setMessages = setMessagesActing;
+            break;
+        }
+        default: {
+            messages = [];
+            setMessages = null;
+            break;
+        }
+    }
+
     return (
         <CustomLayout content={
             <div>
@@ -150,6 +182,28 @@ const AIAssistant = () => {
                                     AI 虚拟陪伴助手
                                 </Title>
                             </div>
+                            <Tabs 
+                                activeKey={activeTab} 
+                                onChange={handleTabChange}
+                                style={{ marginBottom: '24px' }}
+                            >
+                                <TabPane 
+                                    tab={
+                                        <span>
+                                            <CalendarOutlined /> 倾听模式
+                                        </span>
+                                    } 
+                                    key="hearing"
+                                />
+                                <TabPane 
+                                    tab={
+                                        <span>
+                                            <CalendarOutlined /> 引导模式
+                                        </span>
+                                    } 
+                                    key="acting"
+                                />
+                            </Tabs>
                             <div style={{ color: '#555', fontSize: 16, fontWeight: 500, display: 'flex', alignItems: 'center' }}>
                                 <ClockCircleOutlined style={{ marginRight: 8, color: '#1890ff' }} />
                                 使用时长：
@@ -185,7 +239,7 @@ const AIAssistant = () => {
                                                     />
                                                 )
                                             }
-                                            title={msg.role === 'user' ? '你' : 'AI小伙伴'}
+                                            title={msg.role === msg.role === 'user' ? '你' : 'AI小伙伴'}
                                             description={msg.content}
                                         />
                                     </List.Item>
