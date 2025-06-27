@@ -18,7 +18,7 @@ function BlogsSearch({ searchText, tags, onSearchChange, onTagsChange, available
     <Row gutter={16}>
         <Col span={8}>
             <Search
-                placeholder="搜索书籍或作者"
+                placeholder="搜索帖子或用户"
                 allowClear
                 enterButton={<SearchOutlined />}
                 size="large"
