@@ -43,7 +43,7 @@ export function getReplies() {
 
 */
 
-export async function getBlogs(data = {}) {
+export async function getBlogs(pageSize, currentPage, searchText, tags) {
     const url = `${PREFIX}/blogs/get`;
     let res;
     try {
@@ -51,8 +51,9 @@ export async function getBlogs(data = {}) {
         console.log(res);
     } catch (e) {
         console.log(e);
-        res = null;
+        res = [];
     }
+
     return res;
 }
 
@@ -64,7 +65,7 @@ export async function getBlogById(id) {
         console.log(res);
     } catch (e) {
         console.log(e);
-        res = null;
+        res = {};
     }
     return res;
 }
@@ -150,11 +151,9 @@ export async function getAvatar(userid) {
     let res;
     try {
         res = await getJson(url);
-        //console.log(res);
     } catch (e) {
         console.log(e);
-        res = null;
-        return null;
+        res.avatar = null;
     }
     return res.avatar;
 }

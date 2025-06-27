@@ -30,14 +30,8 @@ export async function get(url) {
         return res;
     } catch (error) {
         message.error("API请求错误：" + error.message);
-        throw new Error(error.message);
-
-    let res = await fetch(url, { method: "GET", credentials: "include" });
-    let res_json = await res.json();
-    if(isError(res_json.code)) {
         window.location.href = '/forbidden';
-        return null;
-
+        throw new Error(error.message);
     }
 }
 
@@ -92,6 +86,23 @@ export async function del(url, data) {
   
 }
 
+export async function post(url, data) {
+    let opts = {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        // credentials: "include"
+    };
+    let res = await fetch(url, opts);
+    let res_json = await res.json();
+    if(isError(res_json.code)) {
+        window.location.href = '/forbidden';
+        return null;
+    }
+    return res_json;
+}
 
 
 
