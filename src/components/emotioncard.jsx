@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Card, List, Space, Typography, Tag, Rate, Divider, App, Avatar } from "antd";
-import { HeartOutlined, SmileOutlined, MehOutlined, FrownOutlined, ThunderboltOutlined } from "@ant-design/icons";
+import { HeartOutlined, SmileOutlined, MehOutlined, FrownOutlined, ThunderboltOutlined, ClockCircleOutlined} from "@ant-design/icons";
 import { getTags, getUrlDatas, checkNegative } from "../service/emotion";
 import Loading from "./loading";
 import PushList from "./pushlist";
+import BookingModal from "./bookingmodal";
 
 const { Title, Text } = Typography;
 
@@ -96,6 +97,9 @@ export default function EmotionCard({emotion}) {
                 borderRadius: '12px',
                 overflow: 'hidden',
             }}
+            extra={
+                <BookingModal />
+            }
         >
             <div style={{ textAlign: 'center', padding: '12px 0 24px' }}>
                 <div style={{ 

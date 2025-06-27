@@ -107,3 +107,16 @@ export async function updateDiary(diary) {
     }
     return res;
 }
+
+export async function bookCounseling(timestamp) {
+    timestamp = encodeURIComponent(timestamp);
+    const url = `${PREFIX}/emotion/book?timestamp=${timestamp}`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
