@@ -34,36 +34,7 @@ export default function PostPage() {
         }
         setLoading(false);
     };
-
-   // const handleCoverUpload = async (info) => {
-   //      if (info.file.status === 'done' || info.file.status ==='success') {
-   //          const file = info.file.originFileObj;
-   //          const formData = new FormData();
-   //          formData.append('file', file);
-   //          formData.append('filename', file.name);
-   //
-   //          try {
-   //              const response = await post('http://localhost:8080/api/saveImg', {
-   //                  method: 'POST',
-   //                  body: formData,
-   //              });
-   //
-   //              if (!response.ok) {
-   //                  message.error('上传失败,请重试');
-   //              }
-   //
-   //              //const fileUrl = URL.createObjectURL(file);
-   //              //setPreviewUrl(fileUrl);
-   //              let responseJson = await response.json();
-   //              let imageUrl = `${PREFIX}/readImg/${responseJson.filename}`;
-   //              setTmpUrl(imageUrl);
-   //              //onAvatarChange(responseJson.filename);
-   //              message.success('上传成功');
-   //          } catch (error) {
-   //              message.error('上传失败，请重试');
-   //          }
-   //      }
-   //  }
+    
 
     return (
         <CustomLayout content={<div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>

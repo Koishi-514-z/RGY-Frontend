@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Avatar, Typography, Card, Row, Col, Space, App } from "antd";
-import { EditOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
+import { EditOutlined, UserOutlined, MailOutlined, RobotOutlined } from "@ant-design/icons";
 import HomeTabs from "./hometabs";
 import { useNavigate } from "react-router-dom";
 import { getSessionid, createSession } from "../service/chat";
@@ -14,6 +14,10 @@ export default function ProfileHeader({profile, tabKey, setTabKey, id}) {
     const handleEdit = () => {
         setTabKey(3);
     };
+
+    const handleAIChat = () => {
+        navigate(`/AIassistant`);
+    }
 
     const handleClick = async () => {
         if(!id) {
@@ -54,7 +58,7 @@ export default function ProfileHeader({profile, tabKey, setTabKey, id}) {
                     />
                 </Col>
 
-                <Col xs={24} sm={10} md={16}>
+                <Col xs={24} sm={10} md={15}>
                     <div style={{ padding: '8px 0' }}>
                         <Title level={3} style={{ marginBottom: 12 }}>
                             {profile.username}
@@ -67,9 +71,8 @@ export default function ProfileHeader({profile, tabKey, setTabKey, id}) {
                         </Space>
                     </div>
                 </Col>
-                <Col xs={24} sm={3} md={2}>
+                <Col xs={24} sm={2} md={2}>
                     <Button 
-                        type="primary" 
                         icon={<MailOutlined />} 
                         onClick={handleClick}
                         size="large"
@@ -81,10 +84,23 @@ export default function ProfileHeader({profile, tabKey, setTabKey, id}) {
                         }}
                     />
                 </Col>
-                <Col xs={24} sm={3} md={2}>
+                <Col xs={24} sm={2} md={1}>
                     {!id && 
                         <Button 
-                            type="primary" 
+                            icon={<RobotOutlined />} 
+                            onClick={handleAIChat}
+                            size="large"
+                            style={{ 
+                                width: '42px',
+                                height: '42px',
+                                borderRadius: '6px',
+                                fontSize: '15px'
+                            }}
+                        />}
+                </Col>
+                <Col xs={24} sm={2} md={1}>
+                    {!id && 
+                        <Button 
                             icon={<EditOutlined />} 
                             onClick={handleEdit}
                             size="large"

@@ -19,12 +19,16 @@ export default function Navbar() {
         {
             label: '树洞社区',
             key: 'community'
+        },
+        {
+            label: 'AI助手',
+            key: 'AIassistant'
         }
     ];
 
     useEffect(() => {
         const path = location.pathname;
-        if (path.includes('/home')) {
+        if (path === '/home') {
             setCurrent('home');
         }
         else if (path.includes('/emotion')) {
@@ -32,6 +36,9 @@ export default function Navbar() {
         }
         else if (path.includes('/community')) {
             setCurrent('community');
+        }
+        else if (path.includes('AIassistant')) {
+            setCurrent('AIassistant');
         }
         else {
             setCurrent(null);
@@ -50,6 +57,10 @@ export default function Navbar() {
             }
             case 'community': {
                 navigate(`/community`);
+                break;
+            }
+            case 'AIassistant': {
+                navigate(`/AIassistant`);
                 break;
             }
             default: {

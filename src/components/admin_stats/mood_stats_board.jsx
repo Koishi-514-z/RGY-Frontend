@@ -20,7 +20,6 @@ export default function MoodStats({ weeklyData, monthlyData }) {
 
     return (
         <Card
-            bordered={false}
             style={{ borderRadius: "16px" }}
             title={
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
