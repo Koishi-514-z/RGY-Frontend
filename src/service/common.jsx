@@ -61,6 +61,7 @@ export async function del(url, data) {
     return res_json;
 }
 
+
 export async function post(url, data) {
     let opts = {
         method: "POST",
