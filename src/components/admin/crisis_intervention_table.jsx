@@ -16,9 +16,6 @@ export default function CrisisInterventionTable({ requests }) {
         <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h2>需要进行危机干预的列表</h2>
-                <Link to="/admin/stats" style={{ fontSize: 14 }}>
-                    返回情绪统计
-                </Link>
             </div>
             <Table
                 columns={columns}

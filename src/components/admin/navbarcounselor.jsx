@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Menu } from "antd";
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export default function NavbarAdmin() {
+export default function NavbarCounselor() {
     const navigate = useNavigate();
     const location = useLocation();
     const [current, setCurrent] = useState(null);
@@ -13,18 +13,25 @@ export default function NavbarAdmin() {
             key: 'stats'
         },
         {
-            label: '心理咨询记录',
+            label: '心理记录',
             key: 'consult'
+        },
+        {
+            label: '推送',
+            key: 'push'
         }
     ];
 
     useEffect(() => {
         const path = location.pathname;
-        if (path.includes('/admin/stats')) {
+        if(path.includes('/admin/stats')) {
             setCurrent('stats');
         }
-        else if (path.includes('/admin/consult')) {
+        else if(path.includes('/admin/consult')) {
             setCurrent('consult');
+        }
+        else if(path.includes('/admin/push')) {
+            setCurrent('push');
         }
         else {
             setCurrent(null);
@@ -39,6 +46,10 @@ export default function NavbarAdmin() {
             }
             case 'consult': {
                 navigate(`/admin/consult`);
+                break;
+            }
+            case 'push': {
+                navigate(`/admin/push`);
                 break;
             }
             default: {

@@ -7,13 +7,24 @@ import { userExisted, addUser, login, adminVerify } from "../service/user";
 const { Text } = Typography;
 
 export default function RegisterForm() {
-    const [checked, setChecked] = useState(false);
+    const [adminChecked, setAdminChecked] = useState(false);
+    const [psyChecked, setPsyChecked] = useState(false);
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const { message, modal } = App.useApp();
 
-    const onChange = (event) => {
-        setChecked(event.target.checked);
+    const onAdminChange = (event) => {
+        setAdminChecked(event.target.checked);
+        if(event.target.checked) {
+            setPsyChecked(false);
+        }
+    };
+
+    const onPsyChange = (event) => {
+        setPsyChecked(event.target.checked);
+        if(event.target.checked) {
+            setAdminChecked(false);
+        }
     };
 
     const onFinish = async (values) => {
@@ -26,7 +37,7 @@ export default function RegisterForm() {
             return;
         }
 
-        if(checked) {
+        if(adminChecked || psyChecked) {
             const res = await adminVerify(values.verifyKey);
             if(!res) {
                 message.error("Verify Failed");
@@ -45,7 +56,7 @@ export default function RegisterForm() {
                 email: values.email,
                 avatar: null,
                 node: null,
-                role: checked
+                role: (adminChecked ? 1 : (psyChecked ? 2 : 0))
             }
         };
         const add = await addUser(newUser);
@@ -174,20 +185,28 @@ export default function RegisterForm() {
             </Form.Item>
 
             <Form.Item name="checkbox">
-                <Checkbox
-                    checked={checked}
-                    onChange={onChange}
-                > 
-                    注册为管理员 
-                </Checkbox>
+                <Space>
+                    <Checkbox
+                        checked={adminChecked}
+                        onChange={onAdminChange}
+                    > 
+                        注册为管理员 
+                    </Checkbox>
+                    <Checkbox
+                        checked={psyChecked}
+                        onChange={onPsyChange}
+                    > 
+                        注册为心理咨询师 
+                    </Checkbox>
+                </Space>
             </Form.Item>
-
+            
             <Form.Item name="verifyKey">
                 <Input 
                     prefix={<LockOutlined />} 
                     placeholder="verifyKey" 
                     size="large" 
-                    disabled={!checked}
+                    disabled={!adminChecked && !psyChecked}
                 />
             </Form.Item>
 

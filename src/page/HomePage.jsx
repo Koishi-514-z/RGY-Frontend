@@ -50,7 +50,7 @@ export default function HomePage() {
             }
             else {
                 const fetched_profile = await getUserProfile();
-                if(fetched_profile.role === 1) {
+                if(fetched_profile.role === 2) {
                     navigate(`/admin/stats`);
                 }
                 const fetched_emotion = await getEmotion();
@@ -172,6 +172,17 @@ export default function HomePage() {
                 role: (0->myself, 1->other)
                 timestamp
                 content
+            }
+        }
+
+        AIsession: {
+            sessionid: 
+            timestamp: (最近一次聊天的时间)
+            messages[]
+
+            message: {
+                role:
+                content:
             }
         }
     */

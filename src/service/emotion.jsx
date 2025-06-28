@@ -36,6 +36,43 @@ export async function getUrlDatas() {
     return res;
 }
 
+export async function getAllUrlDatas() {
+    const url = `${PREFIX}/emotion/url/getall`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = [];
+    }
+    return res;
+}
+
+export async function AddUrlData(urlData) {
+    const url = `${PREFIX}/emotion/url/add`;
+    let res;
+    try {
+        res = await post(url, urlData);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
+export async function deleteUrlData(urlid) {
+    urlid = encodeURIComponent(urlid);
+    const url = `${PREFIX}/emotion/url/add?urlid=${urlid}`;
+    let res;
+    try {
+        res = await del(url, null);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
 export async function checkNegative() {
     const url = `${PREFIX}/emotion/negative`;
     let res;

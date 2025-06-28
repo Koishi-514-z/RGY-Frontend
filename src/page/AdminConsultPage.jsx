@@ -43,7 +43,7 @@ export default function AdminConsultPage() {
     // }, []);
 
     return (
-        <CustomLayout admin={true} content={
+        <CustomLayout role={2} content={
             <div>
                 <Card
                     style={{ 
