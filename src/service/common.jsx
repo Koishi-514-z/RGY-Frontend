@@ -1,5 +1,3 @@
-import {message} from "antd";
-
 const isError = (code) => {
     if(code === 500 || code === 404 || code === 403 || code === 401) {
         return true;
@@ -18,56 +16,34 @@ export async function getJson(url) {
 }
 
 export async function get(url) {
-
-    // let res = await fetch(url, { method: "GET", credentials: "include" });
-    try {
-        let res = await fetch(url, { method: "GET" });
-        let res_json = await res.json();
-        if(isError(res_json.code)) {
-            window.location.href = '/forbidden';
-            return null;
-        }
-        return res;
-    } catch (error) {
-        message.error("API请求错误：" + error.message);
+    let res = await fetch(url, { method: "GET", credentials: "include" });
+    let res_json = await res.json();
+    if(isError(res_json.code)) {
         window.location.href = '/forbidden';
-        throw new Error(error.message);
+        return null;
     }
+    return res;
 }
-
-/*
-增设异常处理
-*/
 
 export async function put(url, data) {
-
-    try {
-        let opts = {
-            method: "PUT",
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            // credentials: "include"
-        };
-        let res = await fetch(url, opts);
-        let res_json = await res.json();
-        if (isError(res_json.code)) {
-            window.location.href = '/forbidden';
-            return null;
-        }
-        return res_json;
+    let opts = {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: "include"
+    };
+    let res = await fetch(url, opts);
+    let res_json = await res.json();
+    if(isError(res_json.code)) {
+        window.location.href = '/forbidden';
+        return null;
     }
-    catch (error) {
-        message.error("API请求错误：" + error.message);
-        throw new Error(error.message);
-    }
+    return res_json;
 }
 
-
 export async function del(url, data) {
-
-
     let opts = {
         method: "DELETE",
         body: JSON.stringify(data),
@@ -81,10 +57,10 @@ export async function del(url, data) {
     if(isError(res_json.code)) {
         window.location.href = '/forbidden';
         return null;
-
     }
-  
+    return res_json;
 }
+
 
 export async function post(url, data) {
     let opts = {
@@ -93,7 +69,7 @@ export async function post(url, data) {
         headers: {
             'Content-Type': 'application/json'
         },
-        // credentials: "include"
+        credentials: "include"
     };
     let res = await fetch(url, opts);
     let res_json = await res.json();
@@ -103,8 +79,6 @@ export async function post(url, data) {
     }
     return res_json;
 }
-
-
 
 export async function readFile(file) {
     return new Promise((resolve, reject) => {

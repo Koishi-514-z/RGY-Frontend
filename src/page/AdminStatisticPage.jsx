@@ -1,6 +1,7 @@
-import MoodStats from "../components/admin_stats/mood_stats_board";
+import MoodStats from "../components/admin/mood_stats_board";
 import {useEffect, useState} from "react";
 import {getMonthlyData, getWeeklyData} from "../service/admin";
+import CustomLayout from "../components/layout/customlayout";
 
 export default function AdminStatisticPage() {
     // 示例数据
@@ -40,6 +41,8 @@ const monthlyData = {
     // }, []);
 
     return (
-       <MoodStats weeklyData={weeklyData} monthlyData={monthlyData}/>
+        <CustomLayout role={2} content={
+            <MoodStats weeklyData={weeklyData} monthlyData={monthlyData}/>
+        }/>
     );
 }

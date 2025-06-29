@@ -20,7 +20,6 @@ export default function MoodStats({ weeklyData, monthlyData }) {
 
     return (
         <Card
-            bordered={false}
             style={{ borderRadius: "16px" }}
             title={
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -33,9 +32,6 @@ export default function MoodStats({ weeklyData, monthlyData }) {
                             { key: "month", label: "本月心理健康统计" },
                         ]}
                     />
-                    <Link href="/admin/consult" style={{ fontSize: 14 }}>
-                        心理咨询请求
-                    </Link>
                 </div>
             }
         >

@@ -65,3 +65,16 @@ export async function postMessage(sessionid, content) {
     }
     return res;
 }
+
+export async function updateRead(sessionid) {
+    sessionid = encodeURIComponent(sessionid);
+    const url = `${PREFIX}/chat/read?sessionid=${sessionid}`;
+    let res;
+    try {
+        res = await put(url, null);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}

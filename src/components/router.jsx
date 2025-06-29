@@ -7,16 +7,18 @@ import NotFoundPage from "../page/NotFoundPage";
 import EmotionPage from "../page/EmotionPage";
 import CommunityPage from "../page/CommunityPage";
 import BlogdetailPage from "../page/BlogdetailPage";
-
 import PostPage from "../page/PostPage";
-
 import AdminStatisticPage from "../page/AdminStatisticPage";
 import AdminConsultPage from "../page/AdminConsultPage";
 import AIAssistantPage from "../page/AIAssistantPage";
 import ChatPage from "../page/ChatPage";
+
 import AdminPage from "../page/AdminPage";
 import AdminCommunityPage from "../page/AdminCommunityPage";
 import AdminBlogdetailPage from "../page/AdminBlogdetailPage";
+
+import AdminPushPage from "../page/AdminPushPage";
+
 
 
 export default function AppRouter() {
@@ -34,14 +36,19 @@ export default function AppRouter() {
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/blog/:blogid" element={<BlogdetailPage />} />
                 <Route path="/post" element={<PostPage />} />
-                <Route path="/forbidden" element={<ForbiddenPage />} />
-                <Route path="/*" element={<NotFoundPage />} />
                 <Route path="/admin/stats" element={<AdminStatisticPage />} />
                 <Route path="/admin/consult" element={<AdminConsultPage />} />
+                <Route path="/admin/push" element={<AdminPushPage />} />
                 <Route path="/AIassistant" element={<AIAssistantPage />} />
+
                 <Route path="/admin/usermanagement" element={<AdminPage />} />
                 <Route path="/admin/blogmanagement" element={<AdminCommunityPage />} />
                 <Route path="/admin/blog/:blogid" element={<AdminBlogdetailPage />} />
+
+                <Route path="/AIassistant/:sessionid" element={<AIAssistantPage />} />
+                <Route path="/forbidden" element={<ForbiddenPage />} />
+                <Route path="/*" element={<NotFoundPage />} />
+
             </Routes>
         </BrowserRouter>
     )

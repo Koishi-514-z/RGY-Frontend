@@ -9,9 +9,10 @@ import HomeLayout from "../components/layout/homelayout";
 import EmotionCard from "../components/emotioncard";
 import BlogCard from "../components/blogcard";
 import IntimateCard from "../components/intimatecard";
-import { getEmotion } from "../service/emotion";
+import { getEmotion, getMonthData, getWeekData } from "../service/emotion";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCommentBlogs, getLikeBlogs, getBlogs } from "../service/blog";
+import EmotionGragh from "../components/emotiongragh";
 
 export default function HomePage() {
     const [profile, setProfile] = useState(null);
@@ -20,6 +21,8 @@ export default function HomePage() {
     const [myBlogs, setMyBlogs] = useState([]);
     const [likeBlogs, setLikeBlogs] = useState([]);
     const [commentBlogs, setCommentBlogs] = useState([]);
+    const [weekData, setWeekData] = useState([]);
+    const [monthData, setMonthData] = useState([]);
     const {userid} = useParams();
     const [tabKey, setTabKey] = useState(userid ? 2 : 1);
     const navigate = useNavigate();
@@ -38,6 +41,8 @@ export default function HomePage() {
                 setProfile(fetched_profile);
                 setEmotion(null);
                 setIntimateUsers(null);
+                setWeekData([]);
+                setMonthData([]);
                 setTabKey(2);
                 setMyBlogs(fetched_blogs);
                 setLikeBlogs(fetched_blogs_like);
@@ -45,11 +50,16 @@ export default function HomePage() {
             }
             else {
                 const fetched_profile = await getUserProfile();
+                if(fetched_profile.role === 2) {
+                    navigate(`/admin/stats`);
+                }
                 const fetched_emotion = await getEmotion();
                 const fetched_users = await getIntimateUsers();
                 const fetched_blogs = await getBlogs(fetched_profile.userid);
                 const fetched_blogs_like = await getLikeBlogs(fetched_profile.userid);
                 const fetched_blogs_comment = await getCommentBlogs(fetched_profile.userid);
+                const fetched_week = await getWeekData();
+                const fetched_month = await getMonthData();
                 setProfile(fetched_profile);
                 setEmotion(fetched_emotion);
                 setIntimateUsers(fetched_users);
@@ -57,6 +67,8 @@ export default function HomePage() {
                 setMyBlogs(fetched_blogs);
                 setLikeBlogs(fetched_blogs_like);
                 setCommentBlogs(fetched_blogs_comment);
+                setWeekData(fetched_week);
+                setMonthData(fetched_month);
             }
         }
         fetch();
@@ -70,16 +82,18 @@ export default function HomePage() {
         )
     }
 
-    const header = <ProfileHeader profile={profile} tabKey={tabKey} setTabKey={setTabKey} id={userid} />;
-    const edit = <ProfileEdit profile={profile} setProfile={setProfile} setTabKey={setTabKey} />;
-    const view = <ProfileView profile={profile} />;
-    const emotionCard = <EmotionCard emotion={emotion} />;
-    const intimateCard = <IntimateCard intimateUsers={intimateUsers} />;
-    const blogCard = <BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} />;
-
     return (
         <CustomLayout content={
-            <HomeLayout header={header} edit={edit} view={view} emotionCard={emotionCard} intimateCard={intimateCard} blogCard={blogCard} tabKey={tabKey} />
+            <HomeLayout 
+                header={<ProfileHeader profile={profile} tabKey={tabKey} setTabKey={setTabKey} id={userid} />} 
+                edit={<ProfileEdit profile={profile} setProfile={setProfile} setTabKey={setTabKey} />} 
+                view={<ProfileView profile={profile} />} 
+                emotionCard={<EmotionCard emotion={emotion} />} 
+                intimateCard={<IntimateCard intimateUsers={intimateUsers} />} 
+                blogCard={<BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} />} 
+                emotionGraph={<EmotionGragh weekData={weekData} monthData={monthData} />} 
+                tabKey={tabKey} 
+            />
         }/>
     )
 
@@ -93,6 +107,7 @@ export default function HomePage() {
                 email:
                 avatar:     *
                 note:       *
+                role:
             }
         }
 
@@ -149,13 +164,25 @@ export default function HomePage() {
             myself:  (id in database)   (simplified)
             other:  (id in database)   (simplified)
             timestamp: (最近一次私信的时间)
+            unread: 
             messages[]
 
             message: {
                 messageid:
-                role: (0->A, 1->B)
+                role: (0->myself, 1->other)
                 timestamp
                 content
+            }
+        }
+
+        AIsession: {
+            sessionid: 
+            timestamp: (最近一次聊天的时间)
+            messages[]
+
+            message: {
+                role:
+                content:
             }
         }
     */

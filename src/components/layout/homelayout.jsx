@@ -4,7 +4,7 @@ import { Layout, Typography, Space, Row, Col, Card } from "antd";
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-export default function HomeLayout({header, edit, view, emotionCard, intimateCard, blogCard, tabKey}) {
+export default function HomeLayout({header, edit, view, emotionCard, intimateCard, blogCard, emotionGraph, tabKey}) {
     let content;
 
     switch(tabKey) {
@@ -46,6 +46,14 @@ export default function HomeLayout({header, edit, view, emotionCard, intimateCar
                     >
                         {edit}
                     </Card>
+                </div> 
+            )
+            break;
+        }
+        case 5: {
+            content = (
+                <div style={{ maxWidth: '90%', margin: '0 auto', padding: '0px 24px' }}>
+                    {emotionGraph}
                 </div> 
             )
             break;

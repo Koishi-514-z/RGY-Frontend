@@ -2,43 +2,36 @@ import React, { useState, useEffect } from "react";
 import { Menu } from "antd";
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export default function Navbar() {
+export default function NavbarCounselor() {
     const navigate = useNavigate();
     const location = useLocation();
     const [current, setCurrent] = useState(null);
 
     const items = [
         {
-            label: '个人主页',
-            key: 'home'
+            label: '心理健康统计',
+            key: 'stats'
         },
         {
-            label: '每日情绪',
-            key: 'emotion'
+            label: '心理记录',
+            key: 'consult'
         },
         {
-            label: '树洞社区',
-            key: 'community'
-        },
-        {
-            label: 'AI助手',
-            key: 'AIassistant'
+            label: '推送',
+            key: 'push'
         }
     ];
 
     useEffect(() => {
         const path = location.pathname;
-        if (path === '/home') {
-            setCurrent('home');
+        if(path.includes('/admin/stats')) {
+            setCurrent('stats');
         }
-        else if (path.includes('/emotion')) {
-            setCurrent('emotion');
+        else if(path.includes('/admin/consult')) {
+            setCurrent('consult');
         }
-        else if (path.includes('/community')) {
-            setCurrent('community');
-        }
-        else if (path.includes('AIassistant')) {
-            setCurrent('AIassistant');
+        else if(path.includes('/admin/push')) {
+            setCurrent('push');
         }
         else {
             setCurrent(null);
@@ -47,24 +40,20 @@ export default function Navbar() {
 
     const onClick = (e) => {
         switch(e.key) {
-            case 'home': {
-                navigate(`/home`);
+            case 'stats': {
+                navigate(`/admin/stats`);
                 break;
             }
-            case 'emotion': {
-                navigate(`/emotion`);
+            case 'consult': {
+                navigate(`/admin/consult`);
                 break;
             }
-            case 'community': {
-                navigate(`/community`);
-                break;
-            }
-            case 'AIassistant': {
-                navigate(`/AIassistant`);
+            case 'push': {
+                navigate(`/admin/push`);
                 break;
             }
             default: {
-                navigate(`/home`);
+                navigate(`/admin/stats`);
                 break;
             }
         }

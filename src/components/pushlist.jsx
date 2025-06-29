@@ -1,17 +1,44 @@
-import React, { useState, useEffect } from "react";
-import { List, Avatar, Typography } from "antd";
-import { Link, useNavigate } from 'react-router-dom';
+import React from "react";
+import { List, Avatar, Typography, Tag, Space } from "antd";
+import { Link } from "react-router-dom";
+import { FileTextOutlined, SoundOutlined, ExportOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
 export default function PushList({urlDatas, inhome}) {
-    const navigate = useNavigate();
-    const maxItems = 2;
-    let showMore = false;
+    const showMore = inhome && urlDatas.length > 3;
+    const displayData = inhome ? urlDatas.slice(0, 3) : urlDatas;
 
-    if(inhome) {
-        showMore = (urlDatas.length > maxItems);
-        urlDatas = urlDatas.slice(0, maxItems);
+    const getTag = (type) => {
+        if(type === 'article') {
+            return (
+                <Tag 
+                    icon={<FileTextOutlined />}
+                    color='#74d800'
+                    style={{ 
+                        borderRadius: 12,
+                        fontWeight: 500,
+                        fontSize: 12,
+                    }}
+                />
+            )
+        }
+        else if(type === 'music') {
+            return (
+                <Tag 
+                    icon={<SoundOutlined />}
+                    color='#4aa5ff'
+                    style={{ 
+                        borderRadius: 12,
+                        fontWeight: 500,
+                        fontSize: 12
+                    }}
+                />
+            )
+        }
+        else {
+            return null;
+        }
     }
 
     return (
@@ -50,22 +77,36 @@ export default function PushList({urlDatas, inhome}) {
                                 />
                             }
                             title={
-                                <a 
-                                    href={data.url} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    style={{ 
-                                        fontSize: '16px', 
-                                        fontWeight: 500,
-                                        color: '#1890ff'
-                                    }}
-                                > 
-                                    {data.title} 
-                                </a>
+                                <Space>
+                                    {getTag(data.type)}
+                                    <a 
+                                        href={data.url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        style={{ 
+                                            fontSize: '16px', 
+                                            fontWeight: 600,
+                                            color: '#262626',
+                                            textDecoration: 'none'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.color = '#1890ff';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.color = '#262626';
+                                        }}
+                                    > 
+                                        {data.title}
+                                    </a>
+                                </Space>
                             }
                             description={
                                 <Text 
-                                    style={{ color: '#595959' }}
+                                    style={{ 
+                                        color: '#595959', 
+                                        fontSize: 14,
+                                        lineHeight: '1.5'
+                                    }}
                                     ellipsis={{ rows: 2 }}
                                 >
                                     {data.description}

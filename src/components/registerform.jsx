@@ -1,15 +1,31 @@
 import React, { useState } from "react";
-import { Form, Input, Button, App, Typography, Divider, Space } from 'antd';
+import { Form, Input, Button, App, Typography, Divider, Space, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from 'react-router-dom';
-import { userExisted, addUser, login } from "../service/user";
+import { userExisted, addUser, login, adminVerify } from "../service/user";
 
 const { Text } = Typography;
 
 export default function RegisterForm() {
+    const [adminChecked, setAdminChecked] = useState(false);
+    const [psyChecked, setPsyChecked] = useState(false);
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const { message, modal } = App.useApp();
+
+    const onAdminChange = (event) => {
+        setAdminChecked(event.target.checked);
+        if(event.target.checked) {
+            setPsyChecked(false);
+        }
+    };
+
+    const onPsyChange = (event) => {
+        setPsyChecked(event.target.checked);
+        if(event.target.checked) {
+            setAdminChecked(false);
+        }
+    };
 
     const onFinish = async (values) => {
         const existed = await userExisted(values.username);
@@ -19,6 +35,14 @@ export default function RegisterForm() {
                 content: '用户名已存在',
             });
             return;
+        }
+
+        if(adminChecked || psyChecked) {
+            const res = await adminVerify(values.verifyKey);
+            if(!res) {
+                message.error("Verify Failed");
+                return;
+            }
         }
 
         const now = new Date();
@@ -31,7 +55,8 @@ export default function RegisterForm() {
                 username: values.username,
                 email: values.email,
                 avatar: null,
-                node: null
+                node: null,
+                role: (adminChecked ? 1 : (psyChecked ? 2 : 0))
             }
         };
         const add = await addUser(newUser);
@@ -156,6 +181,32 @@ export default function RegisterForm() {
                     prefix={<MailOutlined style={{ color: '#bfbfbf' }} />} 
                     placeholder="请输入邮箱地址" 
                     size="large" 
+                />
+            </Form.Item>
+
+            <Form.Item name="checkbox">
+                <Space>
+                    <Checkbox
+                        checked={adminChecked}
+                        onChange={onAdminChange}
+                    > 
+                        注册为管理员 
+                    </Checkbox>
+                    <Checkbox
+                        checked={psyChecked}
+                        onChange={onPsyChange}
+                    > 
+                        注册为心理咨询师 
+                    </Checkbox>
+                </Space>
+            </Form.Item>
+            
+            <Form.Item name="verifyKey">
+                <Input 
+                    prefix={<LockOutlined />} 
+                    placeholder="verifyKey" 
+                    size="large" 
+                    disabled={!adminChecked && !psyChecked}
                 />
             </Form.Item>
 
