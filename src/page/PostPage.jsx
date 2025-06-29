@@ -34,7 +34,6 @@ export default function PostPage() {
         }
         setLoading(false);
     };
-    
 
     return (
         <CustomLayout content={<div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
