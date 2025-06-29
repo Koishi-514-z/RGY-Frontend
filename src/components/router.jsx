@@ -14,6 +14,9 @@ import AdminStatisticPage from "../page/AdminStatisticPage";
 import AdminConsultPage from "../page/AdminConsultPage";
 import AIAssistantPage from "../page/AIAssistantPage";
 import ChatPage from "../page/ChatPage";
+import AdminPage from "../page/AdminPage";
+import AdminCommunityPage from "../page/AdminCommunityPage";
+import AdminBlogdetailPage from "../page/AdminBlogdetailPage";
 
 
 export default function AppRouter() {
@@ -36,6 +39,9 @@ export default function AppRouter() {
                 <Route path="/admin/stats" element={<AdminStatisticPage />} />
                 <Route path="/admin/consult" element={<AdminConsultPage />} />
                 <Route path="/AIassistant" element={<AIAssistantPage />} />
+                <Route path="/admin/usermanagement" element={<AdminPage />} />
+                <Route path="/admin/blogmanagement" element={<AdminCommunityPage />} />
+                <Route path="/admin/blog/:blogid" element={<AdminBlogdetailPage />} />
             </Routes>
         </BrowserRouter>
     )
