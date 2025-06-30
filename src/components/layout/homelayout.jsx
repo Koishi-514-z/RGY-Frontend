@@ -66,7 +66,7 @@ export default function HomeLayout({header, edit, view, emotionCard, intimateCar
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Content>
+            <Content style={{ background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 50%, #f6ffed 100%)' }}>
                 <div style={{ margin: '0 auto' }}>
                     <Row gutter={[24, 24]}>
                         <Col span={24}>

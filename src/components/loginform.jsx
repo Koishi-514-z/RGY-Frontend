@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Checkbox, Form, Input, Row, Col, App, Typography, Divider, Space } from "antd";
 import { useNavigate, Link } from 'react-router-dom';
 import { UserOutlined, LockOutlined, LoginOutlined } from "@ant-design/icons";
-import { login } from "../service/user";
+import { getUserProfile, login } from "../service/user";
 
 const { Text } = Typography;
 
@@ -14,9 +14,25 @@ export default function LoginForm() {
         const result = await login(values.username, values.password);
         if(result) {
             message.success('登录成功');
-            setTimeout(() => {
-                navigate('/home');
-            }, 1500);
+            const fetched_profile = await getUserProfile();
+            if(fetched_profile.role === 0) {
+                setTimeout(() => {
+                    navigate('/home');
+                }, 1500);
+            }
+            else if(fetched_profile.role === 1) {
+                setTimeout(() => {
+                    navigate('/admin/usermanagement');
+                }, 1500);
+            }
+            else if(fetched_profile.role === 2) {
+                setTimeout(() => {
+                    navigate('/admin/stats');
+                }, 1500);
+            }
+            else {
+                navigate('/notfound');
+            }
         }
         else {
             modal.error({

@@ -40,11 +40,9 @@ export default function AppRouter() {
                 <Route path="/admin/consult" element={<AdminConsultPage />} />
                 <Route path="/admin/push" element={<AdminPushPage />} />
                 <Route path="/AIassistant" element={<AIAssistantPage />} />
-
                 <Route path="/admin/usermanagement" element={<AdminPage />} />
                 <Route path="/admin/blogmanagement" element={<AdminCommunityPage />} />
                 <Route path="/admin/blog/:blogid" element={<AdminBlogdetailPage />} />
-
                 <Route path="/AIassistant/:sessionid" element={<AIAssistantPage />} />
                 <Route path="/forbidden" element={<ForbiddenPage />} />
                 <Route path="/*" element={<NotFoundPage />} />

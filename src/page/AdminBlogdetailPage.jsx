@@ -89,7 +89,7 @@ export default function BlogdetailPage() {
     }
 
     return (
-        <CustomLayout content={
+        <CustomLayout role={1} content={
             <div style={{ padding: '24px', backgroundColor: '#f0f2f5', borderRadius: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <Button
@@ -106,17 +106,14 @@ export default function BlogdetailPage() {
                             type="link"
                             icon={<DeleteOutlined />}
                             onClick={handleDelete}
+                            danger
                             style={{
                                 fontSize: '20px',
                                 backgroundColor: isLiked ? "#f0f0f0" : "#f0f0f0",
                                 borderColor: isLiked ? "#ff4d4f" : "#d9d9d9",
-                                color: isLiked ? "#fff" : "#000",
                                 boxShadow: isLiked ? "0 4px 12px rgba(255, 77, 79, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.1)"
                             }}
                         />
-                        <div style={{ fontSize: '14px', color: isLiked ? "#ff4d4f" : "#666", marginTop: '8px' }}>
-                            <span style={{ fontWeight: 'bold' }}>{numLikes}</span>
-                        </div>
                     </div>
                 </div>
                 <div style={{ display: 'flex', gap: '24px', backgroundColor: '#fff', padding: '16px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>

@@ -74,11 +74,10 @@ const AdminPage = () => {
 
   return (
     <div>
-      <CustomLayout content={
+      <CustomLayout role={1} content={
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <Title level={2}>用户管理</Title>
-
           </div>
 
           <Outlet />

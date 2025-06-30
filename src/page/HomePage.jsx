@@ -50,9 +50,6 @@ export default function HomePage() {
             }
             else {
                 const fetched_profile = await getUserProfile();
-                if(fetched_profile.role === 2) {
-                    navigate(`/admin/stats`);
-                }
                 const fetched_emotion = await getEmotion();
                 const fetched_users = await getIntimateUsers();
                 const fetched_blogs = await getBlogs(fetched_profile.userid);

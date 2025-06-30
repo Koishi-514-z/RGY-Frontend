@@ -9,43 +9,43 @@ export default function PushList({urlDatas, inhome}) {
     const showMore = inhome && urlDatas.length > 3;
     const displayData = inhome ? urlDatas.slice(0, 3) : urlDatas;
 
-    const getTag = (type) => {
-        if(type === 'article') {
-            return (
-                <Tag 
-                    icon={<FileTextOutlined />}
-                    color='#74d800'
-                    style={{ 
-                        borderRadius: 12,
-                        fontWeight: 500,
-                        fontSize: 12,
-                    }}
-                />
-            )
-        }
-        else if(type === 'music') {
-            return (
-                <Tag 
-                    icon={<SoundOutlined />}
-                    color='#4aa5ff'
-                    style={{ 
-                        borderRadius: 12,
-                        fontWeight: 500,
-                        fontSize: 12
-                    }}
-                />
-            )
-        }
-        else {
-            return null;
-        }
-    }
+    // const getTag = (type) => {
+    //     if(type === 'article') {
+    //         return (
+    //             <Tag 
+    //                 icon={<FileTextOutlined />}
+    //                 color='#74d800'
+    //                 style={{ 
+    //                     borderRadius: 12,
+    //                     fontWeight: 500,
+    //                     fontSize: 12,
+    //                 }}
+    //             />
+    //         )
+    //     }
+    //     else if(type === 'music') {
+    //         return (
+    //             <Tag 
+    //                 icon={<SoundOutlined />}
+    //                 color='#4aa5ff'
+    //                 style={{ 
+    //                     borderRadius: 12,
+    //                     fontWeight: 500,
+    //                     fontSize: 12
+    //                 }}
+    //             />
+    //         )
+    //     }
+    //     else {
+    //         return null;
+    //     }
+    // }
 
     return (
         <div>
             <List
                 itemLayout="horizontal"
-                dataSource={urlDatas}
+                dataSource={displayData}
                 split={true}
                 
                 style={{ 
@@ -78,7 +78,6 @@ export default function PushList({urlDatas, inhome}) {
                             }
                             title={
                                 <Space>
-                                    {getTag(data.type)}
                                     <a 
                                         href={data.url} 
                                         target="_blank" 

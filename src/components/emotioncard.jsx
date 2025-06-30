@@ -153,8 +153,9 @@ export default function EmotionCard({emotion}) {
                         >
                             我们为您精选了以下内容，希望能帮助您改善心情
                         </Text>
-                        
-                        <PushList urlDatas={urlDatas} inhome={true} />
+                        <div style={{ textAlign: 'left'}}>
+                            <PushList urlDatas={urlDatas} inhome={true} />
+                        </div>
                     </div>
                 )}
             </div>

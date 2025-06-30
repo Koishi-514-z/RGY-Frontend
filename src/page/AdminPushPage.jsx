@@ -3,7 +3,7 @@ import CustomLayout from "../components/layout/customlayout";
 import { Card, Space, Typography } from "antd";
 import { getAllUrlDatas } from "../service/emotion";
 import PushList from "../components/pushlist";
-import PushAddingModal from "../components/admin_stats/pushaddingmodal";
+import PushAddingModal from "../components/admin/pushaddingmodal";
 import { PushpinOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;

@@ -73,9 +73,24 @@ export default function RegisterForm() {
             message.error('登录失败');
         }
         message.success('注册成功');
-        setTimeout(() => {
-            navigate('/home');
-        }, 1500);
+        if(newUser.role === 0) {
+            setTimeout(() => {
+                navigate('/home');
+            }, 1500);
+        }
+        else if(newUser.role === 1) {
+            setTimeout(() => {
+                navigate('/admin/usermanagement');
+            }, 1500);
+        }
+        else if(newUser.role === 2) {
+            setTimeout(() => {
+                navigate('/admin/stats');
+            }, 1500);
+        }
+        else {
+            navigate('/notfound');
+        }
     }
 
     return (

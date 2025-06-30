@@ -79,6 +79,7 @@ export default function CommunityPage() {
         };
         fetchAvatars();
     }, [ blogs]);
+
     useEffect(() => {
         const fetchAvatarsMap = async () => {
             const fetched_avatars_map = {};
@@ -90,12 +91,13 @@ export default function CommunityPage() {
         };
         fetchAvatarsMap();
     }, [ blogs, avatars ]);
+    
     useEffect(() => {
         setCurrentPage(1);
     }, [searchText, tags]);
 
     return (
-        <CustomLayout content={
+        <CustomLayout role={1} content={
             <div style={{ maxWidth: 1200, margin: '0 auto' }}>
                 {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>

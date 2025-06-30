@@ -27,7 +27,7 @@ export default function EmotionLayout({scoring, diary, push}) {
                 </Space>
             </Header>
       
-            <Content style={{ padding: '24px', backgroundColor: '#f0f2f5' }}>
+            <Content style={{ padding: '24px', background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 50%, #f6ffed 100%)' }}>
                 <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                     <Row gutter={[24, 24]}>
                         <Col xs={24} lg={16}>

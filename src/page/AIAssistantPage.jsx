@@ -13,8 +13,8 @@ import {
 import { UserOutlined, RobotOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import CustomLayout from '../components/layout/customlayout';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import AISessionTabs from '../components/admin_stats/AIsessiontabs';
-import AISidbar from '../components/admin_stats/AIsidbar';
+import AISessionTabs from '../components/admin/AIsessiontabs';
+import AISidbar from '../components/admin/AIsidbar';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -38,7 +38,7 @@ const AIAssistant = () => {
     const createAIsession = (oldAIsessions = AIsessions) => {
         const initcontentHearing = {
             role: 'developer', 
-            content: '你是一位温柔耐心的心理陪伴者。请用关怀和理解的语气倾听用户的表达，不要急于给建议，只需表达共情、理解和支持，让用户感受到被倾听和被接纳。你的回复应简短温暖，鼓励用户继续表达自己的感受。'
+            content: '你是一位温柔耐心的心理陪伴者。请用关怀和理解的语气倾听用户的表达，不要急于给建议，只需表达共情、理解和支持，让用户感受到被倾听和被接纳。你的回复应充满温暖，鼓励用户继续表达自己的感受。'
         }
         const initcontentActing = {
             role: 'developer', 
@@ -95,7 +95,6 @@ const AIAssistant = () => {
         const today = new Date().toISOString().split('T')[0];
         const storageKey = `usage_${today}`;
         if(!localStorage.getItem(storageKey)) {
-            localStorage.clear();
             localStorage.setItem(storageKey, '0');
         }
         const storedSeconds = parseInt(localStorage.getItem(storageKey));
@@ -358,7 +357,6 @@ const AIAssistant = () => {
                     </Col>
                 </Row>
             </div>
-            
         }/>
     )
 };

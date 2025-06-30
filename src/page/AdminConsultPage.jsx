@@ -1,7 +1,7 @@
-import ConsultRequestTable from "../components/admin_stats/consult_request_table";
+import ConsultRequestTable from "../components/admin/consult_request_table";
 import {useEffect, useState} from "react";
 import {getConsultRequest, getCrisisIntervention} from "../service/admin";
-import CrisisInterventionTable from "../components/admin_stats/crisis_intervention_table";
+import CrisisInterventionTable from "../components/admin/crisis_intervention_table";
 import CustomLayout from "../components/layout/customlayout";
 import { Card, Divider } from "antd";
 
