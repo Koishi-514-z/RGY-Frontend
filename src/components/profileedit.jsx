@@ -12,7 +12,8 @@ export default function ProfileEdit({profile, setProfile, setTabKey}) {
         username: profile.username,
         password: null,
         confirm: null,
-        email: profile.email
+        email: profile.email,
+        note: profile.note
     };
     const [editForm] = Form.useForm();
     const [verifyForm] = Form.useForm();
@@ -34,6 +35,7 @@ export default function ProfileEdit({profile, setProfile, setTabKey}) {
             ...profile,
             username: formValues.username,
             email: formValues.email,
+            note: formValues.note,
             avatar: avatar
         };
         const res = await updateProfile(newProfile);
@@ -329,6 +331,7 @@ export default function ProfileEdit({profile, setProfile, setTabKey}) {
                         <Text type="secondary">请输入当前密码以确认修改</Text>
                     </div>
                 }
+                centered
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={closeModal}
@@ -343,7 +346,6 @@ export default function ProfileEdit({profile, setProfile, setTabKey}) {
                     style: { borderRadius: '6px' }
                 }}
                 style={{ top: 20 }}
-                bodyStyle={{ padding: '24px' }}
             >
                 <Form
                     form={verifyForm}

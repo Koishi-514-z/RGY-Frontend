@@ -5,26 +5,37 @@ import { HeartOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
-export default function EmotionScoringModal({tags, editting, setEditting, emotion, setEmotion}) {
+export default function EmotionScoringModal({tags, editting, setEditting, setEmotion}) {
+    const [score, setScore] = useState(null);
     const [form] = Form.useForm();
     const { message } = App.useApp();
+
+    const onScoreChange = (score) => {
+        setScore(score);
+    }
 
     const handleClose = () => {
         setEditting(false);
     }
 
+    const getTag = (tagid) => {
+        for(const tag of tags) {
+            if(tag.id === tagid) {
+                return tag;
+            }
+        }
+        return null;
+    } 
+
     const handleOk = async () => {
-        let values;
-        try {
-            values = await form.validateFields();
-        } 
-        catch(e) {
-            message.error('请正确填写');
+        const values = form.getFieldsValue();
+        if(!score || !values.tag) {
+            message.error('请完整填写');
             return;
         }
         const res = await updateEmotion({
-            score: values.score,
-            tagid: values.tag + 1
+            score: score,
+            tag: getTag(parseInt(values.tag) + 1)
         });
         if(!res) {
             message.error('保存失败，请检查网络');
@@ -35,14 +46,12 @@ export default function EmotionScoringModal({tags, editting, setEditting, emotio
     }
 
     const tagStyles = [
-        { color: '#52c41a', backgroundColor: '#f6ffed', borderColor: '#b7eb8f' },
-        { color: '#f5222d', backgroundColor: '#fff1f0', borderColor: '#ffa39e' },
-        { color: '#faad14', backgroundColor: '#fffbe6', borderColor: '#ffe58f' },
-        { color: '#fa8c16', backgroundColor: '#fff7e6', borderColor: '#ffd591' },
-        { color: '#1890ff', backgroundColor: '#e6f7ff', borderColor: '#91d5ff' }
+        { color: '#52c41a', bg: '#f6ffed' },
+        { color: '#f5222d', bg: '#fff1f0' },
+        { color: '#faad14', bg: '#fffbe6' },
+        { color: '#fa8c16', bg: '#fff7e6' },
+        { color: '#1890ff', bg: '#e6f7ff' }
     ];
-
-    console.log(tags);
 
     return (
         <Modal
@@ -73,22 +82,71 @@ export default function EmotionScoringModal({tags, editting, setEditting, emotio
                 form={form}
                 layout="vertical"
                 name="scoringform"
-                initialValues={{
-                    score: emotion.score,
-                    tag: emotion.tag.id
-                }}
             >
                 <Form.Item
                     name="score"
                     label={
-                        <Text strong style={{ fontSize: '16px' }}>心情评分</Text>
+                        <Text strong style={{ fontSize: '16px', color: '#262626' }}>心情评分</Text>
                     }
-                    rules={[{ required: true, message: '请给今天的心情打分' }]}
+                    style={{ marginBottom: '32px' }}
                 >
-                    <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                        <Rate 
-                            style={{ fontSize: '32px' }} 
-                        />
+                    <div style={{
+                        textAlign: 'center',
+                        padding: '24px 20px',
+                        background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%)',
+                        borderRadius: '16px',
+                        position: 'relative'
+                    }}>
+                        <div style={{ marginBottom: '16px' }}>
+                            <Text style={{ 
+                                fontSize: '15px', 
+                                color: '#595959',
+                                display: 'block',
+                                marginBottom: '8px'
+                            }}>
+                                请为今天的心情打分
+                            </Text>
+                            <Text style={{ 
+                                fontSize: '13px', 
+                                color: '#8c8c8c'
+                            }}>
+                                1分=很糟糕 • 3分=一般 • 5分=很开心
+                            </Text>
+                        </div>
+                        
+                        <div style={{ 
+                            display: 'flex', 
+                            justifyContent: 'center', 
+                            alignItems: 'center',
+                            gap: '8px',
+                            marginBottom: '12px'
+                        }}>
+                            <Rate 
+                                style={{ 
+                                    fontSize: '36px',
+                                    color: '#fadb14'
+                                }}
+                                character="⭐"
+                                allowHalf={false}
+                                value={score}
+                                onChange={onScoreChange}
+                            />
+                        </div>
+                        
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            color: '#8c8c8c',
+                            marginTop: '8px',
+                            paddingLeft: '2px',
+                            paddingRight: '2px'
+                        }}>
+                            <span>😢 很糟糕</span>
+                            <span>😐 一般</span>
+                            <span>😊 很开心</span>
+                        </div>
                     </div>
                 </Form.Item>
 
@@ -97,7 +155,6 @@ export default function EmotionScoringModal({tags, editting, setEditting, emotio
                     label={
                         <Text strong style={{ fontSize: '16px' }}>情绪标签</Text>
                     }
-                    rules={[{ required: true, message: '请选择一个情绪标签' }]}
                 >
                     <div style={{ textAlign: 'center', padding: '8px 0' }}>
                         <Radio.Group 
@@ -109,21 +166,15 @@ export default function EmotionScoringModal({tags, editting, setEditting, emotio
                                 const tagStyle = tagStyles[index];
                                 return (
                                     <Radio value={index} key={index} style={{ marginRight: 0 }}>
-                                        <Tag
-                                            color={tagStyle.color}
-                                            style={{
-                                                padding: '8px 16px',
-                                                fontSize: '15px',
-                                                borderRadius: '16px',
-                                                cursor: 'pointer',
+                                        <Tag 
+                                            style={{ 
+                                                padding: '8px 16px', 
+                                                fontSize: '14px',
+                                                borderRadius: '14px',
                                                 margin: 0,
-                                                backgroundColor: tagStyle.backgroundColor,
-                                                borderColor: tagStyle.borderColor,
+                                                backgroundColor: tagStyle.bg,
                                                 color: tagStyle.color,
-                                                borderWidth: '1px',
-                                                borderStyle: 'solid',
-                                                transition: 'all 0.3s',
-                                                boxShadow: `0 2px 6px rgba(0, 0, 0, 0.1)`,
+                                                border: 'none',
                                                 fontWeight: 500
                                             }}
                                         >

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { App, Input, Form, Typography, Modal, Button, Card, Space, Empty, Divider } from "antd";
-import { EditOutlined, BookOutlined, UploadOutlined, FileTextOutlined } from "@ant-design/icons";
+import { App, Input, Form, Typography, Modal, Button, Card, Space, Empty, Divider, Row, Col } from "antd";
+import { EditOutlined, BookOutlined, UploadOutlined, FileTextOutlined, PlusOutlined, HeartOutlined } from "@ant-design/icons";
 import { getDiary, updateDiary } from "../service/emotion";
 
 const { TextArea } = Input;
@@ -58,62 +58,219 @@ export default function EmotionDiary({diary, setDiary}) {
         return `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
     };
 
+    const EmptyDiaryState = () => (
+        <div style={{
+            background: 'linear-gradient(135deg, #e6f7ff 0%, #f6ffed 100%)',
+            borderRadius: '12px',
+            padding: '40px 20px',
+            textAlign: 'center',
+            border: '1px dashed #91d5ff',
+            minHeight: '280px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center'
+        }}>
+            <div style={{
+                fontSize: '64px',
+                marginBottom: '20px',
+                opacity: 0.7,
+                animation: 'float 3s ease-in-out infinite'
+            }}>
+                📝
+            </div>
+            
+            <Title level={4} style={{ 
+                color: '#1890ff',
+                marginBottom: '12px',
+                fontWeight: 600
+            }}>
+                还没有写今天的日记
+            </Title>
+            
+            <Text style={{ 
+                fontSize: '15px',
+                color: '#8c8c8c',
+                display: 'block',
+                marginBottom: '24px',
+                lineHeight: 1.6,
+                maxWidth: '320px'
+            }}>
+                记录今天的心情和感受，让美好的时光永远陪伴您
+            </Text>
+
+            <div style={{
+                background: '#fff',
+                borderRadius: '8px',
+                padding: '16px',
+                marginBottom: '24px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                border: '1px solid #f0f0f0',
+                width: '100%',
+                maxWidth: '400px'
+            }}>
+                <Row gutter={[16, 12]} justify="center">
+                    <Col xs={8}>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ 
+                                fontSize: '20px', 
+                                marginBottom: '8px',
+                                color: '#ff7875'
+                            }}>
+                                💭
+                            </div>
+                            <Text style={{ fontSize: '11px', color: '#595959' }}>
+                                记录想法
+                            </Text>
+                        </div>
+                    </Col>
+                    <Col xs={8}>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ 
+                                fontSize: '20px', 
+                                marginBottom: '8px',
+                                color: '#52c41a'
+                            }}>
+                                🌈
+                            </div>
+                            <Text style={{ fontSize: '11px', color: '#595959' }}>
+                                表达情感
+                            </Text>
+                        </div>
+                    </Col>
+                    <Col xs={8}>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ 
+                                fontSize: '20px', 
+                                marginBottom: '8px',
+                                color: '#1890ff'
+                            }}>
+                                📚
+                            </div>
+                            <Text style={{ fontSize: '11px', color: '#595959' }}>
+                                回忆美好
+                            </Text>
+                        </div>
+                    </Col>
+                </Row>
+            </div>
+
+            <Button 
+                type="primary" 
+                icon={<EditOutlined />}
+                onClick={handleOpen}
+                size="large"
+                style={{ 
+                    height: '44px',
+                    paddingLeft: '24px',
+                    paddingRight: '24px',
+                    borderRadius: '8px',
+                    fontSize: '15px',
+                    fontWeight: 600,
+                    background: 'linear-gradient(135deg, #1890ff 0%, #36cfc9 100%)',
+                    border: 'none',
+                    boxShadow: '0 3px 10px rgba(24, 144, 255, 0.3)'
+                }}
+            >
+                开始写日记
+            </Button>
+
+            <style jsx>{`
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-10px); }
+                }
+            `}</style>
+        </div>
+    );
+
     return (
         <Card 
             title={
                 <div style={{ padding: '8px 0' }}>
                     <Space>
-                        <BookOutlined style={{ fontSize: '18px', color: '#1890ff' }} />
-                        <Title level={4} style={{ margin: 0 }}>情绪日记</Title>
+                        <BookOutlined style={{ 
+                            fontSize: '20px', 
+                            color: '#1890ff',
+                            background: 'rgba(24, 144, 255, 0.1)',
+                            padding: '6px',
+                            borderRadius: '6px'
+                        }} />
+                        <Title level={4} style={{ margin: 0, color: '#262626' }}>
+                            情绪日记
+                        </Title>
                     </Space>
                 </div>
             }
             extra={
                 <Button 
-                    type="primary" 
                     icon={<EditOutlined />}
                     onClick={handleOpen}
                     size="middle"
                     style={{ 
                         borderRadius: '6px',
+                        height: '32px',
+                        fontSize: '13px',
+                        background: 'linear-gradient(135deg, #1890ff15 0%, #1890ff08 100%)',
                     }}
                 >
                     写日记
                 </Button>
             }
             style={{ 
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                 borderRadius: '12px',
                 overflow: 'hidden',
+                border: 'none',
                 marginBottom: '24px'
             }}
         >
-            <div style={{ minHeight: '200px' }}>
+            <div style={{ minHeight: '240px' }}>
                 {diary.content ? (
                     <div>
                         <div style={{ 
                             display: 'flex', 
                             justifyContent: 'space-between', 
                             marginBottom: '16px',
-                            color: '#8c8c8c'
+                            alignItems: 'center'
                         }}>
-                            <Text type="secondary">{formatDate()}</Text>
-                            <Text type="secondary">记录我的心情</Text>
+                            <Space>
+                                <div style={{
+                                    background: 'linear-gradient(135deg, #1890ff15 0%, #1890ff08 100%)',
+                                    padding: '4px 12px',
+                                    borderRadius: '12px',
+                                    border: '1px solid #1890ff20'
+                                }}>
+                                    <Text style={{ 
+                                        fontSize: '12px',
+                                        color: '#1890ff',
+                                        fontWeight: 500
+                                    }}>
+                                        {formatDate()}
+                                    </Text>
+                                </div>
+                            </Space>
+                            <Text type="secondary" style={{ fontSize: '12px' }}>
+                                记录我的心情
+                            </Text>
                         </div>
                         
                         <div style={{ 
-                            padding: '16px', 
-                            backgroundColor: 'rgba(0,0,0,0.02)', 
-                            borderRadius: '8px',
+                            padding: '20px', 
+                            background: 'linear-gradient(135deg, #f9f9f9 0%, #fff 100%)', 
+                            borderRadius: '12px',
+                            border: '1px solid #f0f0f0',
                             borderLeft: '4px solid #1890ff',
-                            minHeight: '120px'
+                            minHeight: '160px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
                         }}>
                             <Paragraph 
                                 style={{ 
                                     fontSize: '15px',
                                     lineHeight: '1.8',
                                     color: '#262626',
-                                    whiteSpace: 'pre-wrap'
+                                    whiteSpace: 'pre-wrap',
+                                    margin: 0
                                 }}
                             >
                                 {diary.content}
@@ -121,26 +278,7 @@ export default function EmotionDiary({diary, setDiary}) {
                         </div>
                     </div>
                 ) : (
-                    <Empty 
-                        image={Empty.PRESENTED_IMAGE_SIMPLE}
-                        description={
-                            <span>
-                                <Text type="secondary">您还没有写今天的日记</Text>
-                            </span>
-                        }
-                        style={{ margin: '40px 0' }}
-                    >
-                        <Button 
-                            type="primary" 
-                            icon={<EditOutlined />}
-                            onClick={handleOpen}
-                            style={{ 
-                                borderRadius: '6px',
-                            }}
-                        >
-                            立即写日记
-                        </Button>
-                    </Empty>
+                    <EmptyDiaryState />
                 )}
             </div>
 

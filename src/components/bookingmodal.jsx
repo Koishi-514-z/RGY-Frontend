@@ -41,7 +41,6 @@ export default function BookingModal() {
     return (
         <div>
             <Button
-                type="primary" 
                 icon={<ClockCircleOutlined />}
                 onClick={handleOpen}
                 style={{

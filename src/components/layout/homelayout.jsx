@@ -1,5 +1,6 @@
 import React from "react";
 import { Layout, Typography, Space, Row, Col, Card } from "antd";
+import ParticleBackground from "./particlebackground";
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -66,7 +67,12 @@ export default function HomeLayout({header, edit, view, emotionCard, intimateCar
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Content style={{ background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 50%, #f6ffed 100%)' }}>
+            <Content style={{ 
+                background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 50%, #f6ffed 100%)', 
+                position: 'relative',
+                overflow: 'hidden'
+            }}>
+                <ParticleBackground />
                 <div style={{ margin: '0 auto' }}>
                     <Row gutter={[24, 24]}>
                         <Col span={24}>

@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Checkbox, Form, Input, Row, Col, App, Typography, Divider, Space } from "antd";
 import { useNavigate, Link } from 'react-router-dom';
 import { UserOutlined, LockOutlined, LoginOutlined } from "@ant-design/icons";
-import { getUserProfile, login } from "../service/user";
+import { getUserProfile, isDisabled, login } from "../service/user";
 
 const { Text } = Typography;
 
@@ -13,6 +13,14 @@ export default function LoginForm() {
     const onFinish = async (values) => {
         const result = await login(values.username, values.password);
         if(result) {
+            const disabled = await isDisabled();
+            if(disabled) {
+                modal.error({
+                    title: 'ERROR',
+                    content: '您的帐户已被禁用，请联系管理员'
+                })
+                return;
+            }
             message.success('登录成功');
             const fetched_profile = await getUserProfile();
             if(fetched_profile.role === 0) {

@@ -25,7 +25,7 @@ export default function ProfileHeader({profile, tabKey, setTabKey, id}) {
             return;
         }   
         let sessionid = await getSessionid(id);
-        if(sessionid === 'NOT FOUND') {
+        if(!sessionid) {
             sessionid = await createSession(id);
             if(!sessionid) {
                 message.error('创建会话失败，请检查网络');
@@ -66,7 +66,7 @@ export default function ProfileHeader({profile, tabKey, setTabKey, id}) {
                         
                         <Space direction="vertical" size={12} style={{ marginBottom: 20 }}>
                             <Space>
-                                <Text style={{ fontSize: '16px' }}>{profile.note ? profile.note : emptyText}</Text>
+                                <Text style={{ fontSize: '14px' }}>{profile.note ? profile.note : emptyText}</Text>
                             </Space>
                         </Space>
                     </div>

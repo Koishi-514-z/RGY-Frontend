@@ -9,6 +9,7 @@ import CustomLayout from "../components/layout/customlayout";
 import { getAvatar, getBlogs } from "../service/community";
 import { useNavigate } from "react-router-dom";
 import Search from "antd/es/input/Search";
+import ParticleBackground from "../components/layout/particlebackground";
 
 dayjs.extend(relativeTime);
 const { Option } = Select;
@@ -99,6 +100,7 @@ export default function CommunityPage() {
     return (
         <CustomLayout content={
             <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+                <ParticleBackground />
                 {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                         <Typography.Title level={2}>🎉 欢迎来到校园树洞</Typography.Title>

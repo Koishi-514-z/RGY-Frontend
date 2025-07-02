@@ -6,6 +6,7 @@ import CustomLayout from "../components/layout/customlayout";
 import {UploadOutlined} from "@ant-design/icons";
 import {post, PREFIX} from "../service/common";
 import useMessage from "antd/es/message/useMessage";
+import ParticleBackground from "../components/layout/particlebackground";
 export default function PostPage() {
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -37,6 +38,7 @@ export default function PostPage() {
 
     return (
         <CustomLayout content={<div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
+            <ParticleBackground />
             <Card style={{ borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
                 <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>发帖</h2>
                 <Form form={form} layout="vertical" onFinish={handleSubmit}>

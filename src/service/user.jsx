@@ -126,3 +126,29 @@ export async function updatePassword(password) {
     }
     return res;
 }
+
+export async function isDisabled() {
+    const url = `${PREFIX}/user/disabled/get`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = true;
+    }
+    return res;
+}
+
+export async function setDisabled(userid, disabled) {
+    userid = encodeURIComponent(userid);
+    disabled = encodeURIComponent(disabled);
+    const url = `${PREFIX}/user/disabled/set?userid=${userid}&disabled=${disabled}`;
+    let res;
+    try {
+        res = await put(url, null);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}

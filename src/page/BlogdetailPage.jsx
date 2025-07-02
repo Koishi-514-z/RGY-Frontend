@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {getBlogById, likeBlog, cancelLikeBlog, addReply, getAvatar, getBlogs} from "../service/community";
 import { ArrowLeftOutlined, HeartTwoTone } from "@ant-design/icons";
 import {Button, Input, List, Card, App, Pagination, Dropdown} from "antd";
+import ParticleBackground from "../components/layout/particlebackground";
 
 export default function BlogdetailPage() {
     //const {id} = useParams();
@@ -168,6 +169,7 @@ export default function BlogdetailPage() {
     return (
         <CustomLayout content={
             <div style={{ padding: '24px', backgroundColor: '#f0f2f5', borderRadius: '8px' }}>
+                <ParticleBackground />
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <Button
                         type="link"

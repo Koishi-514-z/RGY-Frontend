@@ -18,6 +18,7 @@ import AISidbar from '../components/admin/AIsidbar';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
+import ParticleBackground from '../components/layout/particlebackground';
 
 const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
@@ -231,7 +232,6 @@ const AIAssistant = () => {
             }
             updateDatas([...newMessages, {role: 'assistant', content: reply}]);
         } catch (err) {
-            console.error(err);
             message.error('AI 回复失败，请检查网络或 API Key');
         }
     };
@@ -239,6 +239,7 @@ const AIAssistant = () => {
     return (
         <CustomLayout content={
             <div>
+                <ParticleBackground />
                 <Row>
                     <Col span={24}>
                         <div
@@ -258,13 +259,8 @@ const AIAssistant = () => {
                                     AI 虚拟陪伴助手
                                 </Title>
                             </div>
-                            <AISessionTabs activeTab={activeTab} handleTabChange={handleTabChange} />
-                            <div style={{ color: '#555', fontSize: 16, fontWeight: 500, display: 'flex', alignItems: 'center' }}>
-                                <ClockCircleOutlined style={{ marginRight: 8, color: '#1890ff' }} />
-                                使用时长：
-                                <span style={{ color: '#1890ff', margin: '0 4px', fontWeight: 600 }}>
-                                    {Math.floor(usageSeconds / 60)} 分 {usageSeconds % 60} 秒
-                                </span>
+                            <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', paddingLeft: 320 }}>
+                                <AISessionTabs activeTab={activeTab} handleTabChange={handleTabChange} />
                             </div>
                         </div>
                     </Col>

@@ -1,14 +1,12 @@
-/*
-    所有页面的通用Wrapper组件
-*/
-
 import React, { useEffect, useState } from "react";
-import { Typography, Layout, Avatar } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Typography, Layout, Avatar, Badge, Space, Button, Dropdown, Tooltip } from 'antd';
+import { UserOutlined, BellOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons';
 import Navbar from "../navbar";
 import NavbarCounselor from "../admin/navbarcounselor";
 import { getUserProfile } from "../../service/user";
 import NavbarAdmin from "../admin/navbaradmin";
+import MessageInfromer from "../messageinfromer";
+import UserHeader from "../userheader";
 
 const { Header, Content, Sider, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -56,6 +54,11 @@ export default function CustomLayout({content, role = 0}) {
                             校园心理健康互助社区
                         </Title>
                     </div>
+                    
+                    <Space size={16}>
+                        <MessageInfromer />
+                        <UserHeader profile={profile} />
+                    </Space>
                 </Header>
                 
                 <Layout>
@@ -75,15 +78,17 @@ export default function CustomLayout({content, role = 0}) {
                             textAlign: 'center',
                             borderBottom: '1px solid #f0f0f0'
                         }}>
-                            <Avatar 
-                                size={64} 
-                                icon={<UserOutlined />}
-                                src={profile ? profile.avatar : null}
-                                style={{ 
-                                    backgroundColor: '#1890ff',
-                                    marginBottom: 12
-                                }}
-                            />
+                            <div style={{ position: 'relative', display: 'inline-block' }}>
+                                <Avatar 
+                                    size={64} 
+                                    icon={<UserOutlined />}
+                                    src={profile ? profile.avatar : null}
+                                    style={{ 
+                                        backgroundColor: '#1890ff',
+                                        marginBottom: 12
+                                    }}
+                                />
+                            </div>
                             <div>
                                 <Text strong style={{ fontSize: 16 }}> Admin </Text>
                             </div>
@@ -145,9 +150,11 @@ export default function CustomLayout({content, role = 0}) {
                             校园心理健康互助社区
                         </Title>
                     </div>
-                    <div style={{ color: '#fff', fontSize: 14 }}>
-                        <Text style={{ color: '#f9f0ff' }}>专业服务平台</Text>
-                    </div>
+                    
+                    <Space size={16}>
+                        <MessageInfromer />
+                        <UserHeader profile={profile} />
+                    </Space>
                 </Header>
                 
                 <Layout>
@@ -168,16 +175,18 @@ export default function CustomLayout({content, role = 0}) {
                             textAlign: 'center',
                             borderBottom: '2px solid #efdbff'
                         }}>
-                            <Avatar 
-                                size={72} 
-                                icon={<UserOutlined />}
-                                src={profile ? profile.avatar : null}
-                                style={{ 
-                                    backgroundColor: '#722ed1',
-                                    marginBottom: 16,
-                                    border: '2px solid #f9f0ff'
-                                }}
-                            />
+                            <div style={{ position: 'relative', display: 'inline-block' }}>
+                                <Avatar 
+                                    size={72} 
+                                    icon={<UserOutlined />}
+                                    src={profile ? profile.avatar : null}
+                                    style={{ 
+                                        backgroundColor: '#722ed1',
+                                        marginBottom: 16,
+                                        border: '2px solid #f9f0ff'
+                                    }}
+                                />
+                            </div>
                             <div>
                                 <Text strong style={{ fontSize: 18, color: '#531dab' }}>
                                     {profile ? profile.username : ''}
@@ -222,13 +231,14 @@ export default function CustomLayout({content, role = 0}) {
         )
     }
 
+    // 普通用户界面
     return (
         <Layout style={{ minHeight: "100vh" }}>
             <Header style={{ 
                 display: 'flex', 
                 justifyContent: 'space-between', 
                 alignItems: 'center',
-                background: 'linear-gradient(90deg, #1890ff 0%, #36cfc9 100%)', // 蓝绿渐变
+                background: 'linear-gradient(90deg, #1890ff 0%, #36cfc9 100%)',
                 padding: '0 24px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 position: 'sticky',
@@ -241,6 +251,11 @@ export default function CustomLayout({content, role = 0}) {
                         校园心理健康互助社区 
                     </Title>
                 </div>
+                
+                <Space size={16}>
+                    <MessageInfromer />
+                    <UserHeader profile={profile} />
+                </Space>
             </Header>
             
             <Layout>
@@ -253,29 +268,39 @@ export default function CustomLayout({content, role = 0}) {
                         height: 'calc(100vh - 64px)',
                         top: 64,
                         overflow: 'auto',
-                        background: 'linear-gradient(180deg, #e6f7ff 0%, #fff 100%)' 
+                        background: 'linear-gradient(180deg, #e6f7ff 0%, #fff 100%)',
+                        zIndex: 1
                     }}
                 >
                     <div style={{ 
                         padding: '24px 16px',
                         textAlign: 'center',
+                        borderBottom: '1px solid #e6f7ff'
                     }}>
-                        <Avatar 
-                            size={64} 
-                            icon={<UserOutlined />}
-                            src={profile ? profile.avatar : null}
-                            style={{ 
-                                backgroundColor: '#1890ff',
-                                marginBottom: 12,
-                                border: '2px solid #e6f7ff'
-                            }}
-                        />
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                            <Avatar 
+                                size={64} 
+                                icon={<UserOutlined />}
+                                src={profile ? profile.avatar : null}
+                                style={{ 
+                                    backgroundColor: '#1890ff',
+                                    marginBottom: 12,
+                                    border: '2px solid #e6f7ff'
+                                }}
+                            />
+                        </div>
                         <div>
-                            <Text strong style={{ fontSize: 18, color: '#1890ff' }}>
+                            <Text strong style={{ fontSize: 16, color: '#1890ff' }}>
                                 {profile ? profile.username : ''}
                             </Text>
                         </div>
+                        <div style={{ marginTop: 8 }}>
+                            <Text type="secondary" style={{ fontSize: 12 }}>
+                                关注心理健康，快乐每一天
+                            </Text>
+                        </div>
                     </div>
+                    
                     <Navbar />
                 </Sider>
                 <Content style={{ 
@@ -294,11 +319,19 @@ export default function CustomLayout({content, role = 0}) {
                 background: 'linear-gradient(90deg, #f0f9ff 0%, #f6ffed 100%)', 
                 padding: '16px 50px',
                 borderTop: '2px solid #d9f7be',
-                boxShadow: '0 -1px 4px rgba(24, 144, 255, 0.06)'
+                boxShadow: '0 -1px 4px rgba(24, 144, 255, 0.06)',
+                zIndex: 1
             }}>
-                <Text type="secondary" style={{ fontWeight: 500 }}> 
-                    校园心理健康互助社区 ©2025 林淳远 & 郭旭涛 & Koishi 版权所有 
-                </Text>
+                <Space direction="vertical" size={4}>
+                    <Text type="secondary" style={{ fontWeight: 500 }}> 
+                        校园心理健康互助社区 ©2025 林淳远 & 郭旭涛 & Koishi 版权所有 
+                    </Text>
+                    <Space size={16}>
+                        <Text style={{ fontSize: '11px', color: '#bfbfbf' }}>服务热线: 400-123-4567</Text>
+                        <Text style={{ fontSize: '11px', color: '#bfbfbf' }}>邮箱: support@campus-health.com</Text>
+                        <Text style={{ fontSize: '11px', color: '#bfbfbf' }}>在线时间: 9:00-22:00</Text>
+                    </Space>
+                </Space>
             </Footer>
         </Layout>
     );
