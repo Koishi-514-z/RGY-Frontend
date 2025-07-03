@@ -5,7 +5,7 @@ import PushList from "./pushlist";
 
 const { Title, Text } = Typography;
 
-export default function EmotionPush({score, urlDatas}) {
+export default function EmotionPush({score, urlDatas, pageIndex, setPageIndex, pageSize}) {
     const getText = (score) => {
         if (score >= 4.0) return { 
             icon: <SmileOutlined style={{ color: '#52c41a' }} />, 
@@ -240,7 +240,7 @@ export default function EmotionPush({score, urlDatas}) {
                 </Space>
             </div>
             
-            <PushList urlDatas={urlDatas} inhome={true} />
+            <PushList urlDatas={urlDatas} inhome={true} pageIndex={pageIndex} setPageIndex={setPageIndex} pageSize={pageSize} />
         </Card>
     );
 }

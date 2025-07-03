@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { App, Button, DatePicker, Form, Modal, Typography, Space } from "antd";
 import { ClockCircleOutlined, CalendarOutlined } from "@ant-design/icons";
-import { bookCounseling } from "../service/emotion";
+import { addCounseling } from "../service/counseling";
 
 const { Title, Text } = Typography;
 
@@ -29,7 +29,7 @@ export default function BookingModal() {
             return;
         }
         const timestamp = values.time.unix() * 1000;
-        const res = await bookCounseling(timestamp);
+        const res = await addCounseling(timestamp);
         if(!res) {
             message.error('发送预约请求失败');
             return;

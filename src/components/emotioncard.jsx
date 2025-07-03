@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Card, List, Space, Typography, Tag, Rate, Divider, App, Avatar, Empty, Button } from "antd";
-import { HeartOutlined, SmileOutlined, MehOutlined, FrownOutlined, ThunderboltOutlined, ClockCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import { getTags, getUrlDatas, checkNegative } from "../service/emotion";
+import { HeartOutlined, SmileOutlined, MehOutlined, FrownOutlined, PlusOutlined} from "@ant-design/icons";
+import { getTags, checkNegative } from "../service/emotion";
 import Loading from "./loading";
 import PushList from "./pushlist";
 import BookingModal from "./bookingmodal";
 import { useNavigate } from "react-router-dom";
+import { getUrlDatasByTag } from "../service/pushcontent";
 
 const { Title, Text } = Typography;
 
@@ -15,12 +16,13 @@ export default function EmotionCard({emotion}) {
     const [negative, setNegative] = useState(false);
     const { message } = App.useApp();
     const navigate = useNavigate();
+    const pageSize = 3;
 
     useEffect(() => {
         const fetch = async () => {
             const fetched_tags = await getTags();
             const isNegative = await checkNegative();
-            const fetched_urls = await getUrlDatas();
+            const fetched_urls = (emotion.tag ? await getUrlDatasByTag(emotion.tag.id, 0, pageSize) : []);
             setTags(fetched_tags);
             setNegative(isNegative);
             setUrlDatas(fetched_urls);
@@ -107,46 +109,46 @@ export default function EmotionCard({emotion}) {
 
     const title = (
         <div
-        style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '10px 0 8px 0'
-        }}
-    >
-        <div
             style={{
-                width: 38,
-                height: 38,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                background: 'linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%)',
-                borderRadius: '50%',
-                boxShadow: '0 2px 8px rgba(24,144,255,0.10)',
-                marginRight: 8
+                gap: 12,
+                padding: '10px 0 8px 0'
             }}
         >
-            <HeartOutlined style={{ fontSize: 22, color: '#1890ff' }} />
-        </div>
-        <div>
-            <Title
-                level={4}
+            <div
                 style={{
-                    margin: 0,
-                    color: '#222',
-                    fontWeight: 700,
-                    letterSpacing: 1,
-                    textShadow: '0 1px 4px rgba(24,144,255,0.08)'
+                    width: 38,
+                    height: 38,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%)',
+                    borderRadius: '50%',
+                    boxShadow: '0 2px 8px rgba(24,144,255,0.10)',
+                    marginRight: 8
                 }}
             >
-                今日心情
-            </Title>
-            <Text type="secondary" style={{ fontSize: 13, marginLeft: 2 }}>
-                {new Date().toLocaleDateString()}
-            </Text>
+                <HeartOutlined style={{ fontSize: 22, color: '#1890ff' }} />
+            </div>
+            <div>
+                <Title
+                    level={4}
+                    style={{
+                        margin: 0,
+                        color: '#222',
+                        fontWeight: 700,
+                        letterSpacing: 1,
+                        textShadow: '0 1px 4px rgba(24,144,255,0.08)'
+                    }}
+                >
+                    今日心情
+                </Title>
+                <Text type="secondary" style={{ fontSize: 13, marginLeft: 2 }}>
+                    {new Date().toLocaleDateString()}
+                </Text>
+            </div>
         </div>
-    </div>
     )
 
     if (!emotion.tag) {

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { App, Button, Form, Modal, Typography, Space, Image, Input, Radio, Upload } from "antd";
 import { PlusSquareOutlined, EditOutlined, PictureOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { readFile } from "../../service/common";
-import { AddUrlData, getAllUrlDatas } from "../../service/emotion";
+import { AddUrlData } from "../../service/pushcontent";
 
 const { Title, Text } = Typography;
 
-export default function PushAddingModal({setUrlDatas}) {
+export default function PushAddingModal({reloadPage}) {
     const [isModelOpen, setIsModelOpen] = useState(false);
     const [img, setImg] = useState(null);
     const [form] = Form.useForm();
@@ -44,7 +44,7 @@ export default function PushAddingModal({setUrlDatas}) {
             message.error('上传失败');
             return;
         }
-        setUrlDatas(await getAllUrlDatas());
+        reloadPage();
         message.success('添加成功');
         handleClose();
     }

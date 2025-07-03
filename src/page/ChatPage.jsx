@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getSession, getSessionTags, updateRead } from "../service/chat";
 import { useParams } from "react-router-dom";
 import { App, Row, Col } from "antd";
@@ -15,6 +15,7 @@ export default function ChatPage() {
     const [session, setSession] = useState(null);
     const [stompClient, setStompClient] = useState(null);
     const {sessionid} = useParams();
+    const sessionidRef = useRef(sessionid);
     const { message } = App.useApp();
 
     const fetchSessionTags = async () => {
@@ -23,7 +24,7 @@ export default function ChatPage() {
     }
 
     const fetchSession = async () => {
-        const fetched_session = await getSession(sessionid);
+        const fetched_session = await getSession(sessionidRef.current);
         if(!fetched_session) {
             message.error('加载失败');
         }
@@ -31,13 +32,19 @@ export default function ChatPage() {
     }
 
     useEffect(() => {
+        sessionidRef.current = sessionid;
+    }, [sessionid]);
+
+    useEffect(() => {
         const socket = new SockJS("http://localhost:8080/ws");
         const client = Stomp.over(socket);
         client.connect({}, () => {
             client.subscribe("/user/queue/notifications", async (msg) => {
                 const receivedMsg = JSON.parse(msg.body);
-                if(receivedMsg.sessionid === parseInt(sessionid)) {
-                    const res = await updateRead(sessionid);
+                if(receivedMsg.sessionid === parseInt(sessionidRef.current)) {
+                    console.log(receivedMsg.sessionid);
+                    console.log(sessionidRef.current);
+                    const res = await updateRead(sessionidRef.current);
                     if(!res) {
                         message.error('更新失败');
                         return;
@@ -51,6 +58,7 @@ export default function ChatPage() {
             });
         });
         setStompClient(client);
+        return () => client.disconnect();
     }, []);
 
     useEffect(() => {
