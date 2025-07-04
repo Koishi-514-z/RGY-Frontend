@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from "react";
 import { Avatar, Button, Col, Divider, Input, List, Pagination, Row, Select, Tag, Typography } from "antd";
 import {UserOutlined, ClockCircleOutlined, LikeOutlined, SearchOutlined} from "@ant-design/icons";
@@ -50,10 +52,10 @@ export default function CommunityPage() {
     const [blogs, setBlogs] = useState([]);
     const [availableTags, setAvailableTags] = useState([]);
     const navigate = useNavigate();
-    const [avatarsMap, setAvatarsMap] = useState({});
+    //const [avatarsMap, setAvatarsMap] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [avatars, setAvatars] = useState([]);
+    //const [avatars, setAvatars] = useState([]);
 
     // 获取博客数据
     useEffect(() => {
@@ -70,28 +72,28 @@ export default function CommunityPage() {
     }, []);
 
 
-    useEffect(() => {
-        const fetchAvatars = async () => {
+    // useEffect(() => {
+    //     const fetchAvatars = async () => {
+    //
+    //         const userids = blogs.map(blog => blog.userid);
+    //         const fetched_avatars = await Promise.all(userids.map(userid => getAvatar(userid)));
+    //         setAvatars(fetched_avatars);
+    //     };
+    //     fetchAvatars();
+    // }, [ blogs]);
+    //
+    // useEffect(() => {
+    //     const fetchAvatarsMap = async () => {
+    //         const fetched_avatars_map = {};
+    //         for (let i = 0; i < blogs.length; i++) {
+    //             const blog = blogs[i];
+    //             fetched_avatars_map[blog.userid] = avatars[i];
+    //         }
+    //         setAvatarsMap(fetched_avatars_map);
+    //     };
+    //     fetchAvatarsMap();
+    // }, [ blogs, avatars ]);
 
-            const userids = blogs.map(blog => blog.userid);
-            const fetched_avatars = await Promise.all(userids.map(userid => getAvatar(userid)));
-            setAvatars(fetched_avatars);
-        };
-        fetchAvatars();
-    }, [ blogs]);
-
-    useEffect(() => {
-        const fetchAvatarsMap = async () => {
-            const fetched_avatars_map = {};
-            for (let i = 0; i < blogs.length; i++) {
-                const blog = blogs[i];
-                fetched_avatars_map[blog.userid] = avatars[i];
-            }
-            setAvatarsMap(fetched_avatars_map);
-        };
-        fetchAvatarsMap();
-    }, [ blogs, avatars ]);
-    
     useEffect(() => {
         setCurrentPage(1);
     }, [searchText, tags]);
@@ -117,7 +119,7 @@ export default function CommunityPage() {
                 </div>
 
                 <Typography.Title level={4} style={{ marginBottom: 24 }}>
-                    📃 所有帖子 ({blogs.length})
+                    📃 所有帖子
                 </Typography.Title>
 
                 <List
@@ -141,14 +143,14 @@ export default function CommunityPage() {
                             <List.Item.Meta
                                 avatar={
                                     <Avatar
-                                        src={ avatarsMap[blog.userid]|| `https://joesch.moe/api/v1/random?key=${blog.userid}`}
+                                        src={ blog.user.avatar || `https://joesch.moe/api/v1/random?key=${blog.userid}`}
                                         size={40}
                                         icon={<UserOutlined />}
                                     />
                                 }
                                 title={
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span style={{ marginRight: 16 }}>{blog.userid}</span>
+                                        <span style={{ marginRight: 16 }}>{blog.user.username}</span>
                                         <Tag color="blue">
                                             <ClockCircleOutlined />
                                             {new Date(blog.timestamp * 1000).toLocaleString()}

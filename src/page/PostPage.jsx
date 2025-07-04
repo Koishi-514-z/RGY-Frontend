@@ -20,17 +20,18 @@ export default function PostPage() {
         const blog = {
             title: values.title,
             content: values.content,
-            tag: values.tag,
+            tags: values.tag,
             cover: tmpUrl,
         };
+        try {
         const res = await addBlog(blog);
-        if (res && res.success) {
+
             message.success("发帖成功！");
             //console.log("chenggong");
             setTimeout(() => {
                 navigate("/community");
             }, 1000);
-        } else {
+        } catch (e) {
             message.error("发帖失败，请稍后再试！");
         }
         setLoading(false);
