@@ -4,17 +4,18 @@ import { HeartOutlined, SmileOutlined, MehOutlined, FrownOutlined, PlusOutlined,
 import { getTags, checkNegative } from "../../service/emotion";
 import Loading from "../loading";
 import PushList from "../pushlist";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getUrlDatasByTag } from "../../service/pushcontent";
 
 const { Title, Text } = Typography;
 
-export default function EmotionCard({emotion, setTabKey}) {
+export default function EmotionCard({emotion}) {
     const [tags, setTags] = useState([]);
     const [urlDatas, setUrlDatas] = useState([]);
     const [negative, setNegative] = useState(false);
     const { message } = App.useApp();
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const pageSize = 3;
 
     useEffect(() => {
@@ -30,7 +31,7 @@ export default function EmotionCard({emotion, setTabKey}) {
     }, []);
 
     const handleClick = () => {
-        setTabKey(6);
+        setSearchParams({tabKey: 6});
     }
 
     const getEmotionIcon = (score) => {

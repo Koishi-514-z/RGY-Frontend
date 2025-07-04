@@ -10,7 +10,7 @@ import EmotionCard from "../components/home/emotioncard";
 import BlogCard from "../components/home/blogcard";
 import IntimateCard from "../components/home/intimatecard";
 import { getEmotion, getMonthData, getWeekData } from "../service/emotion";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { getCommentBlogs, getLikeBlogs, getBlogs } from "../service/blog";
 import EmotionGragh from "../components/home/emotiongragh";
 
@@ -24,15 +24,18 @@ export default function HomePage() {
     const [weekData, setWeekData] = useState([]);
     const [monthData, setMonthData] = useState([]);
     const {userid} = useParams();
-    const [tabKey, setTabKey] = useState(userid ? 2 : 1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabKey = parseInt(searchParams.get('tabKey'));
     const navigate = useNavigate();
+
+    const [update, setUpdate] = useState(0);
 
     useEffect(() => {
         const fetch = async () => {
             if(userid) {
                 const me = await getUserProfile();
                 if(me.userid === userid) {
-                    navigate(`/home`);
+                    navigate(`/home?tabKey=${1}`);
                 }
                 const fetched_profile = await getSimplifiedProfile(userid);
                 const fetched_blogs = await getBlogs(userid);
@@ -43,10 +46,12 @@ export default function HomePage() {
                 setIntimateUsers(null);
                 setWeekData([]);
                 setMonthData([]);
-                setTabKey(2);
                 setMyBlogs(fetched_blogs);
                 setLikeBlogs(fetched_blogs_like);
                 setCommentBlogs(fetched_blogs_comment);
+                if(!tabKey) {
+                    setSearchParams({tabKey: 2});
+                }
             }
             else {
                 const fetched_profile = await getUserProfile();
@@ -60,16 +65,29 @@ export default function HomePage() {
                 setProfile(fetched_profile);
                 setEmotion(fetched_emotion);
                 setIntimateUsers(fetched_users);
-                setTabKey(1);
                 setMyBlogs(fetched_blogs);
                 setLikeBlogs(fetched_blogs_like);
                 setCommentBlogs(fetched_blogs_comment);
                 setWeekData(fetched_week);
                 setMonthData(fetched_month);
+                if(!tabKey) {
+                    setSearchParams({tabKey: 1});
+                }
             }
         }
         fetch();
     }, [userid]);
+
+    useEffect(() => {
+        const fetch = async () => {
+            if(userid) {
+                return;
+            }
+            const fetched_profile = await getUserProfile();
+            setProfile(fetched_profile);
+        }
+        fetch();
+    }, [update]);
 
     if(!profile || (!userid && !emotion)) {
         return (
@@ -80,12 +98,12 @@ export default function HomePage() {
     }
 
     return (
-        <CustomLayout content={
+        <CustomLayout update={update} content={
             <HomeLayout 
-                header={<ProfileHeader profile={profile} tabKey={tabKey} setTabKey={setTabKey} id={userid} />} 
-                edit={<ProfileEdit profile={profile} setProfile={setProfile} setTabKey={setTabKey} />} 
+                header={<ProfileHeader profile={profile} id={userid} />} 
+                edit={<ProfileEdit profile={profile} setUpdate={setUpdate} />} 
                 view={<ProfileView profile={profile} />} 
-                emotionCard={<EmotionCard emotion={emotion} setTabKey={setTabKey} />} 
+                emotionCard={<EmotionCard emotion={emotion} />} 
                 intimateCard={<IntimateCard intimateUsers={intimateUsers} />} 
                 blogCard={<BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} profile={profile} />} 
                 emotionGraph={<EmotionGragh weekData={weekData} monthData={monthData} />} 

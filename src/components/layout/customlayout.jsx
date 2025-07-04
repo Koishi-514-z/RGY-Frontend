@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Layout, Avatar, Badge, Space, Button, Dropdown, Tooltip } from 'antd';
-import { UserOutlined, BellOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Typography, Layout, Avatar, Space } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import Navbar from "../navbar";
 import NavbarCounselor from "../admin/navbarcounselor";
 import { getUserProfile } from "../../service/user";
@@ -11,7 +11,7 @@ import UserHeader from "../userheader";
 const { Header, Content, Sider, Footer } = Layout;
 const { Title, Text } = Typography;
 
-export default function CustomLayout({content, role = 0}) {
+export default function CustomLayout({content, role = 0, update = 0}) {
     const [profile, setProfile] = useState(null);
 
     useEffect(() => {
@@ -20,7 +20,7 @@ export default function CustomLayout({content, role = 0}) {
             setProfile(fetched_profile);
         }
         fetch();
-    }, []);
+    }, [update]);
 
     if(role === 1) {
         return (

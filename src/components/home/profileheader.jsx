@@ -2,17 +2,18 @@ import React from "react";
 import { Button, Avatar, Typography, Card, Row, Col, Space, App } from "antd";
 import { EditOutlined, UserOutlined, MailOutlined, RobotOutlined } from "@ant-design/icons";
 import HomeTabs from "./hometabs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getSessionid, createSession } from "../../service/chat";
 
 const { Title, Text } = Typography;
 
-export default function ProfileHeader({profile, tabKey, setTabKey, id}) {
+export default function ProfileHeader({profile, id}) {
+    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
     const { message } = App.useApp();
 
     const handleEdit = () => {
-        setTabKey(3);
+        setSearchParams({tabKey: 3});
     };
 
     const handleAIChat = () => {
@@ -113,7 +114,7 @@ export default function ProfileHeader({profile, tabKey, setTabKey, id}) {
                         />}
                 </Col>
                 <Col span={24}>
-                    <HomeTabs tabKey={tabKey} setTabKey={setTabKey} id={id} />
+                    <HomeTabs id={id} />
                 </Col>
             </Row>
         </Card>

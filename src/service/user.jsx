@@ -14,6 +14,18 @@ export async function login(username, password) {
     return res;
 }
 
+export async function logout() {
+    const url = `${PREFIX}/user/logout`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
 export async function userExisted(username) {
     username = encodeURIComponent(username);
     const url = `${PREFIX}/user/existed?username=${username}`;

@@ -1,9 +1,8 @@
 import React from "react";
-import { Layout, Typography, Space, Row, Col, Card } from "antd";
+import { Layout, Row, Col, Card } from "antd";
 import ParticleBackground from "./particlebackground";
 
-const { Header, Content } = Layout;
-const { Title } = Typography;
+const { Content } = Layout;
 
 export default function HomeLayout({header, edit, view, emotionCard, intimateCard, blogCard, emotionGraph, tabKey}) {
     let content;

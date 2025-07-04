@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Avatar, Space, Dropdown } from 'antd';
+import { Typography, Avatar, Space, Dropdown, message, App } from 'antd';
 import { UserOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons';
+import { logout } from "../service/user";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
 export default function UserHeader({profile}) {
+    const navigate = useNavigate();
+    const { message } = App.useApp();
+
     const userMenuItems = [
         {
             key: 'profile',
@@ -27,12 +32,40 @@ export default function UserHeader({profile}) {
         },
     ];
 
+    const handleMenuClick = async ({key}) => {
+        console.log(key);
+        switch (key) {
+            case 'profile': {
+                navigate(`/home?tabKey=${1}`);
+                break;
+            }
+            case 'settings': {
+                navigate(`/home?tabKey=${3}`);
+                break;
+            }
+            case 'logout': {
+                const res = await logout();
+                if(!res) {
+                    message.error('登出失败');
+                }
+                navigate('/login');
+                break;
+            }
+            default: {
+                break;
+            } 
+        }
+    };
+
     const role = profile ? profile.role : 0;
 
     if(role === 1) {
         return (
             <Dropdown
-                menu={{ items: userMenuItems }}
+                menu={{ 
+                    items: userMenuItems,
+                    onClick: handleMenuClick
+                }}
                 placement="bottomRight"
                 trigger={['click']}
             >
@@ -52,7 +85,10 @@ export default function UserHeader({profile}) {
     else if(role === 2) {
         return (
             <Dropdown
-                menu={{ items: userMenuItems }}
+                menu={{ 
+                    items: userMenuItems,
+                    onClick: handleMenuClick
+                }}
                 placement="bottomRight"
                 trigger={['click']}
             >
@@ -74,7 +110,10 @@ export default function UserHeader({profile}) {
     else {
         return (
             <Dropdown
-                menu={{ items: userMenuItems }}
+                menu={{ 
+                    items: userMenuItems,
+                    onClick: handleMenuClick
+                }}
                 placement="bottomRight"
                 trigger={['click']}
             >

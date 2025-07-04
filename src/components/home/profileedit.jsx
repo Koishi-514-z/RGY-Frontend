@@ -4,10 +4,11 @@ import { UserOutlined, MailOutlined, SaveOutlined, CloseOutlined, LockOutlined, 
 import { App } from 'antd';
 import { getUserProfile, updatePassword, updateProfile, verifyPassword } from "../../service/user";
 import { readFile } from "../../service/common";
+import { useSearchParams } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
-export default function ProfileEdit({profile, setProfile, setTabKey}) {
+export default function ProfileEdit({profile, setUpdate}) {
     const initFormValues = {
         username: profile.username,
         password: null,
@@ -20,6 +21,7 @@ export default function ProfileEdit({profile, setProfile, setTabKey}) {
     const [avatar, setAvatar] = useState(profile.avatar);
     const { message } = App.useApp();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -44,11 +46,11 @@ export default function ProfileEdit({profile, setProfile, setTabKey}) {
         }
         else {
             message.success('保存成功');
-            setProfile(await getUserProfile());
+            setUpdate(prev => prev + 1);
         }
         setTimeout(() => {
             closeModal();
-            setTabKey(1);
+            setSearchParams({tabKey: 1});
         }, 1000);
     }
     
@@ -65,7 +67,7 @@ export default function ProfileEdit({profile, setProfile, setTabKey}) {
     };
 
     const handleCancel = () => {
-        setTabKey(1);
+        setSearchParams({tabKey: 1});
     };
 
     const handleOk = async () => {
@@ -119,7 +121,7 @@ export default function ProfileEdit({profile, setProfile, setTabKey}) {
     const customRequest = async ({ file, onSuccess, onError }) => {
         let dataUrl;
         try {
-            dataUrl = await readFile(file.originFileObj);
+            dataUrl = await readFile(file);
         }
         catch {
             onError('error');
