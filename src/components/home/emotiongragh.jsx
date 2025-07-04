@@ -225,7 +225,7 @@ export default function EmotionGragh({weekData, monthData}) {
 
         if(chartType === "line") {
             return (
-                <ResponsiveContainer width="100%" height={360}>
+                <ResponsiveContainer width="100%" height={400}>
                     <LineChart {...chartProps}>
                         {commonElements}
                         <Line 
@@ -243,7 +243,7 @@ export default function EmotionGragh({weekData, monthData}) {
         } 
         else {
             return (
-                <ResponsiveContainer width="100%" height={360}>
+                <ResponsiveContainer width="100%" height={400}>
                     <AreaChart {...chartProps}>
                         {commonElements}
                         <Area 
