@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Card } from "antd";
+import { Card, Typography } from "antd";
 import { getQuote } from "../../service/pushcontent";
+
+const { Text } = Typography;
 
 export default function QuoteCard() {
     const [quote, setQuote] = useState(null);
