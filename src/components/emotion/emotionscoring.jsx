@@ -3,7 +3,7 @@ import { Rate, Tag, Button, Card, Space, Typography, Row, Col, App, Divider } fr
 import { getTags } from "../../service/emotion";
 import { EditOutlined, PlusOutlined, HeartOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import Loading from "../loading";
-import EmotionScoringModal from "../emotionscoringmodal";
+import EmotionScoringModal from "./emotionscoringmodal";
 
 const { Title, Text } = Typography;
 

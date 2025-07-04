@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Card, List, Space, Typography, Tag, Rate, Divider, App, Avatar, Empty, Button } from "antd";
 import { HeartOutlined, SmileOutlined, MehOutlined, FrownOutlined, PlusOutlined, ClockCircleOutlined} from "@ant-design/icons";
-import { getTags, checkNegative } from "../service/emotion";
-import Loading from "./loading";
-import PushList from "./pushlist";
-import BookingModal from "./bookingmodal";
+import { getTags, checkNegative } from "../../service/emotion";
+import Loading from "../loading";
+import PushList from "../pushlist";
 import { useNavigate } from "react-router-dom";
-import { getUrlDatasByTag } from "../service/pushcontent";
+import { getUrlDatasByTag } from "../../service/pushcontent";
 
 const { Title, Text } = Typography;
 

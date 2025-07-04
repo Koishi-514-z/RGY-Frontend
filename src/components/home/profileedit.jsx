@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Form, Input, Button, Avatar, Upload, Typography, Modal, Divider, Row, Col, Space } from "antd";
 import { UserOutlined, MailOutlined, SaveOutlined, CloseOutlined, LockOutlined, CameraOutlined, EditOutlined } from "@ant-design/icons";
 import { App } from 'antd';
-import { getUserProfile, updatePassword, updateProfile, verifyPassword } from "../service/user";
-import { readFile } from "../service/common";
+import { getUserProfile, updatePassword, updateProfile, verifyPassword } from "../../service/user";
+import { readFile } from "../../service/common";
 
 const { Title, Text } = Typography;
 

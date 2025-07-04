@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import CustomLayout from "../components/layout/customlayout";
 import { getIntimateUsers, getUserProfile, getSimplifiedProfile } from "../service/user";
-import ProfileEdit from "../components/profileedit";
+import ProfileEdit from "../components/home/profileedit";
 import ProfileView from "../components/home/profileview";
 import ProfileHeader from "../components/home/profileheader";
 import Loading from "../components/loading";
 import HomeLayout from "../components/layout/homelayout";
-import EmotionCard from "../components/emotioncard";
+import EmotionCard from "../components/home/emotioncard";
 import BlogCard from "../components/home/blogcard";
 import IntimateCard from "../components/home/intimatecard";
 import { getEmotion, getMonthData, getWeekData } from "../service/emotion";

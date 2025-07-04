@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { App, Rate, Form, Radio, Tag, Modal, Typography } from "antd";
-import { getEmotion, updateEmotion } from "../service/emotion";
+import { getEmotion, updateEmotion } from "../../service/emotion";
 import { HeartOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
