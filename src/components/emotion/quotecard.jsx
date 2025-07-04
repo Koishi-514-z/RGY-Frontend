@@ -34,13 +34,13 @@ export default function QuoteCard() {
                     display: 'block',
                     marginBottom: '8px'
                 }}>
-                    "{quote.text}"
+                    "{quote ? quote.text : ''}"
                 </Text>
                 <Text style={{ 
                     fontSize: '12px',
                     color: '#d48806'
                 }}>
-                    —— {quote.author}
+                    —— {quote ? quote.author : ''}
                 </Text>
             </div>
         </Card>
