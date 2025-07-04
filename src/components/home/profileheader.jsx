@@ -3,7 +3,7 @@ import { Button, Avatar, Typography, Card, Row, Col, Space, App } from "antd";
 import { EditOutlined, UserOutlined, MailOutlined, RobotOutlined } from "@ant-design/icons";
 import HomeTabs from "./hometabs";
 import { useNavigate } from "react-router-dom";
-import { getSessionid, createSession } from "../service/chat";
+import { getSessionid, createSession } from "../../service/chat";
 
 const { Title, Text } = Typography;
 

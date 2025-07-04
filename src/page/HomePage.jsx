@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import CustomLayout from "../components/layout/customlayout";
 import { getIntimateUsers, getUserProfile, getSimplifiedProfile } from "../service/user";
 import ProfileEdit from "../components/profileedit";
-import ProfileView from "../components/profileview";
-import ProfileHeader from "../components/profileheader";
+import ProfileView from "../components/home/profileview";
+import ProfileHeader from "../components/home/profileheader";
 import Loading from "../components/loading";
 import HomeLayout from "../components/layout/homelayout";
 import EmotionCard from "../components/emotioncard";
-import BlogCard from "../components/blogcard";
-import IntimateCard from "../components/intimatecard";
+import BlogCard from "../components/home/blogcard";
+import IntimateCard from "../components/home/intimatecard";
 import { getEmotion, getMonthData, getWeekData } from "../service/emotion";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCommentBlogs, getLikeBlogs, getBlogs } from "../service/blog";
-import EmotionGragh from "../components/emotiongragh";
+import EmotionGragh from "../components/home/emotiongragh";
 
 export default function HomePage() {
     const [profile, setProfile] = useState(null);
@@ -85,9 +85,9 @@ export default function HomePage() {
                 header={<ProfileHeader profile={profile} tabKey={tabKey} setTabKey={setTabKey} id={userid} />} 
                 edit={<ProfileEdit profile={profile} setProfile={setProfile} setTabKey={setTabKey} />} 
                 view={<ProfileView profile={profile} />} 
-                emotionCard={<EmotionCard emotion={emotion} />} 
+                emotionCard={<EmotionCard emotion={emotion} setTabKey={setTabKey} />} 
                 intimateCard={<IntimateCard intimateUsers={intimateUsers} />} 
-                blogCard={<BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} />} 
+                blogCard={<BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} profile={profile} />} 
                 emotionGraph={<EmotionGragh weekData={weekData} monthData={monthData} />} 
                 tabKey={tabKey} 
             />

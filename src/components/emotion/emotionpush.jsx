@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Space, Typography } from "antd";
 import { SmileOutlined, MehOutlined, FrownOutlined, HeartOutlined, FileTextOutlined, GiftOutlined } from "@ant-design/icons";
-import PushList from "./pushlist";
+import PushList from "../pushlist";
 
 const { Title, Text } = Typography;
 

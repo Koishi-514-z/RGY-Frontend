@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { App, Input, Form, Typography, Modal, Button, Card, Space, Empty, Divider, Row, Col } from "antd";
 import { EditOutlined, BookOutlined, UploadOutlined, FileTextOutlined, PlusOutlined, HeartOutlined } from "@ant-design/icons";
-import { getDiary, updateDiary } from "../service/emotion";
+import { getDiary, updateDiary } from "../../service/emotion";
 
 const { TextArea } = Input;
 const { Title, Text, Paragraph } = Typography;

@@ -48,6 +48,16 @@ export default function HomeTabs({tabKey, setTabKey, id}) {
             disabled: id
         },
         {
+            key: 6,
+            label: (
+                <span>
+                    <BarChartOutlined style={{ marginRight: 8 }} />
+                    心理咨询
+                </span>
+            ),
+            disabled: id
+        },
+        {
             key: 3,
             label: (
                 <span>

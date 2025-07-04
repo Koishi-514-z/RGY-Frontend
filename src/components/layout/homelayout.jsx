@@ -53,7 +53,7 @@ export default function HomeLayout({header, edit, view, emotionCard, intimateCar
         }
         case 5: {
             content = (
-                <div style={{ maxWidth: '90%', margin: '0 auto', padding: '0px 24px' }}>
+                <div style={{ margin: '0 auto', padding: '0px 24px' }}>
                     {emotionGraph}
                 </div> 
             )
@@ -73,6 +73,7 @@ export default function HomeLayout({header, edit, view, emotionCard, intimateCar
                 overflow: 'hidden'
             }}>
                 <ParticleBackground />
+
                 <div style={{ margin: '0 auto' }}>
                     <Row gutter={[24, 24]}>
                         <Col span={24}>
@@ -80,6 +81,7 @@ export default function HomeLayout({header, edit, view, emotionCard, intimateCar
                         </Col>
                     </Row>
                 </div>
+                
                 {content}
             </Content>
         </Layout>

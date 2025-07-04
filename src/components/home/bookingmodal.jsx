@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { App, Button, DatePicker, Form, Modal, Typography, Space } from "antd";
 import { ClockCircleOutlined, CalendarOutlined } from "@ant-design/icons";
-import { addCounseling } from "../service/counseling";
+import { addCounseling } from "../../service/counseling";
 
 const { Title, Text } = Typography;
 

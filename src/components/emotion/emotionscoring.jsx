@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Rate, Tag, Button, Card, Space, Typography, Row, Col, App, Divider } from "antd";
-import { getTags } from "../service/emotion";
+import { getTags } from "../../service/emotion";
 import { EditOutlined, PlusOutlined, HeartOutlined, ClockCircleOutlined } from "@ant-design/icons";
-import Loading from "../components/loading";
-import EmotionScoringModal from "./emotionscoringmodal";
+import Loading from "../loading";
+import EmotionScoringModal from "../emotionscoringmodal";
 
 const { Title, Text } = Typography;
 

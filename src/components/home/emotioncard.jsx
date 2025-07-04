@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, List, Space, Typography, Tag, Rate, Divider, App, Avatar, Empty, Button } from "antd";
-import { HeartOutlined, SmileOutlined, MehOutlined, FrownOutlined, PlusOutlined} from "@ant-design/icons";
+import { HeartOutlined, SmileOutlined, MehOutlined, FrownOutlined, PlusOutlined, ClockCircleOutlined} from "@ant-design/icons";
 import { getTags, checkNegative } from "../service/emotion";
 import Loading from "./loading";
 import PushList from "./pushlist";
@@ -10,7 +10,7 @@ import { getUrlDatasByTag } from "../service/pushcontent";
 
 const { Title, Text } = Typography;
 
-export default function EmotionCard({emotion}) {
+export default function EmotionCard({emotion, setTabKey}) {
     const [tags, setTags] = useState([]);
     const [urlDatas, setUrlDatas] = useState([]);
     const [negative, setNegative] = useState(false);
@@ -29,6 +29,10 @@ export default function EmotionCard({emotion}) {
         }
         fetch();
     }, []);
+
+    const handleClick = () => {
+        setTabKey(6);
+    }
 
     const getEmotionIcon = (score) => {
         if (score >= 4.0) return { 
@@ -161,7 +165,19 @@ export default function EmotionCard({emotion}) {
                     overflow: 'hidden',
                     border: 'none'
                 }}
-                extra={<BookingModal />}
+                extra={
+                    <Button
+                        icon={<ClockCircleOutlined />}
+                        onClick={handleClick}
+                        style={{
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 12px rgba(24,144,255,0.10)',
+                            padding: '8px 16px'
+                        }}
+                    >
+                        预约心理咨询
+                    </Button>
+                }
             >
                 <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                     <Empty
@@ -235,7 +251,19 @@ export default function EmotionCard({emotion}) {
                 overflow: 'hidden',
                 border: 'none'
             }}
-            extra={<BookingModal />}
+            extra={
+                <Button
+                    icon={<ClockCircleOutlined />}
+                    onClick={handleClick}
+                    style={{
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(24,144,255,0.10)',
+                        padding: '8px 16px'
+                    }}
+                >
+                    预约心理咨询
+                </Button>
+            }
         >
             <div style={{
                 background: `linear-gradient(135deg, ${color}06 0%, ${color}03 100%)`,
