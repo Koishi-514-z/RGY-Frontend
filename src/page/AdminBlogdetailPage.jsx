@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from "react";
 import CustomLayout from "../components/layout/customlayout";
 import { useNavigate, useParams } from "react-router-dom";
@@ -106,11 +108,11 @@ export default function BlogdetailPage() {
                             type="link"
                             icon={<DeleteOutlined />}
                             onClick={handleDelete}
-                            danger
                             style={{
                                 fontSize: '20px',
                                 backgroundColor: isLiked ? "#f0f0f0" : "#f0f0f0",
                                 borderColor: isLiked ? "#ff4d4f" : "#d9d9d9",
+                                //color: isLiked ? "#fff" : "#000",
                                 boxShadow: isLiked ? "0 4px 12px rgba(255, 77, 79, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.1)"
                             }}
                         />
@@ -122,12 +124,12 @@ export default function BlogdetailPage() {
 
                         <div style={{ fontSize: '14px', color: '#666', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <img
-                                src={avatar}
+                                src={blog.user.avatar}
                                 alt="avatar"
                                 style={{ width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
-                                onClick={() => navigate(`/home/${blog.userid}`)}
+                                onClick={() => navigate(`/home/${blog.user.userid}`)}
                             />
-                            <div><span style={{ fontWeight: 'bold', fontSize: '20px', color: '#333' }}>{blog.userid}</span></div>
+                            <div><span style={{ fontWeight: 'bold', fontSize: '20px', color: '#333' }}>{blog.user? blog.user.username:""}</span></div>
                         </div>
                         <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>{blog.title}</h1>
                         <p style={{ fontSize: '16px', lineHeight: '1.6', color: '#555', overflow: 'auto'}}>{paginatedContent}</p>
@@ -146,12 +148,12 @@ export default function BlogdetailPage() {
                                 <div>
                                     <div style={{ fontSize: '14px', color: '#666', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <img
-                                            src={avatarsMap[reply.userid]}
+                                            src={reply.user.avatar}
                                             alt="avatar"
                                             style={{ width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
-                                            onClick={() => navigate(`/home/${reply.userid}`)}
+                                            onClick={() => navigate(`/home/${reply.user.userid}`)}
                                         />
-                                        <div><span style={{ fontWeight: 'bold', fontSize: '15px', color: '#333' }}>{reply.userid}</span></div>
+                                        <div><span style={{ fontWeight: 'bold', fontSize: '15px', color: '#333' }}>{reply.user.username}</span></div>
                                     </div>
                                     <div style={{ fontSize: '14px', marginTop: '4px', color: '#555' }}>{reply.content}</div>
                                     <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>回复于{new Date(reply.timestamp * 1000).toLocaleString()}</div>

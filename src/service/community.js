@@ -13,7 +13,7 @@ reply: {
 
  */
 export async function addReply(blogid,reply) {
-    const url = `${PREFIX}/replies/add`;
+    const url = `${PREFIX}/blogs/addReply`;
     let replyData = {
         blogid: blogid,
         content: reply,
@@ -25,8 +25,7 @@ export async function addReply(blogid,reply) {
         res = await post(url, replyData);
         console.log(res);
     } catch (e) {
-        console.log(e);
-        res = null;
+        throw e;
     }
     return res;
 }
@@ -45,9 +44,15 @@ export function getReplies() {
 
 export async function getBlogs(pageSize, currentPage, searchText, tags) {
     const url = `${PREFIX}/blogs/get`;
+    let params = {
+        pageSize: pageSize,
+        currentPage: currentPage,
+        searchText: searchText,
+        tags: tags
+    };
     let res;
     try {
-        res = await getJson(url);
+        res = await post(url, params);
         console.log(res);
     } catch (e) {
         console.log(e);
@@ -58,6 +63,7 @@ export async function getBlogs(pageSize, currentPage, searchText, tags) {
 }
 
 export async function getBlogById(id) {
+
     const url = `${PREFIX}/blogs/getById/${id}`;
     let res;
     try {
@@ -78,32 +84,36 @@ export async function getBlogById(id) {
 */
 
 export async function likeBlog(blogid) {
-    const url = `${PREFIX}/blogs/like/${blogid}`;
-    let res;
+    const url = `${PREFIX}/blogs/like`;
+
     try {
-        res = await post(url);
-        console.log(res);
+        let params = {
+            blogid: blogid
+        };
+        await post(url, params);
+
     } catch (e) {
-        console.log(e);
-        res = null;
+        throw e;
     }
-    res.success = true;
-    return res;
+    //res.success = true;
+
 }
 
 
 export async function cancelLikeBlog(blogid) {
-    const url = `${PREFIX}/blogs/cancellike/${blogid}`;
-    let res;
+    const url = `${PREFIX}/blogs/cancellike`;
+
     try {
-        res = await post(url);
-        console.log(res);
-        } catch (e) {
-        console.log(e);
-        res = null;
+        let params = {
+            blogid: blogid
+        };
+        await post(url, params);
+
+    } catch (e) {
+        throw e;
     }
-    res.success = true;
-    return res;
+    //res.success = true;
+
 }
 
 
@@ -127,7 +137,7 @@ export async function cancelLikeBlog(blogid) {
 export async function addBlog(blog) {
     const url = `${PREFIX}/blogs/add`;
     blog.timestamp = 0;
-    blog.userid = 0;
+    //blog.userid = 0;
     blog.tag = [];
     blog.likeNum = 0;
     blog.reply = [];
@@ -156,5 +166,20 @@ export async function getAvatar(userid) {
         res.avatar = null;
     }
     return res.avatar;
+}
+
+export async function getLiked(id) {
+    const url = `${PREFIX}/blogs/getIfLiked`;
+    let ret  = false;
+    try {
+        let params = {
+            blogid: id
+        };
+        ret = await post(url, params);
+
+    } catch (e) {
+        throw e;
+    }
+    return ret;
 }
 

@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useEffect } from "react";
 import { Avatar, Button, Col, Divider, Input, List, Pagination, Row, Select, Tag, Typography } from "antd";
 import {UserOutlined, ClockCircleOutlined, LikeOutlined, SearchOutlined} from "@ant-design/icons";
@@ -16,34 +17,34 @@ const { Option } = Select;
 
 function BlogsSearch({ searchText, tags, onSearchChange, onTagsChange, availableTags }) {
     return (
-    <Row gutter={16}>
-        <Col span={8}>
-            <Search
-                placeholder="搜索帖子或用户"
-                allowClear
-                enterButton={<SearchOutlined />}
-                size="large"
-                value={searchText}
-                onChange={onSearchChange}
-            />
-        </Col>
-        <Col span={8}>
-            <Select
-                placeholder="选择标签过滤"
-                mode="multiple"
-                style={{ width: '100%' }}
-                size="large"
-                value={tags}
-                onChange={onTagsChange}
-            >
-                <Option value="all">全部</Option>
-                <Option value="学习">学习</Option>
-                <Option value="生活">生活</Option>
-                <Option value="情感">情感</Option>
-                <Option value="其他">其他</Option>
-            </Select>
-        </Col>
-    </Row>
+        <Row gutter={16}>
+            <Col span={8}>
+                <Search
+                    placeholder="搜索帖子或用户"
+                    allowClear
+                    enterButton={<SearchOutlined />}
+                    size="large"
+                    value={searchText}
+                    onChange={onSearchChange}
+                />
+            </Col>
+            <Col span={8}>
+                <Select
+                    placeholder="选择标签过滤"
+                    mode="multiple"
+                    style={{ width: '100%' }}
+                    size="large"
+                    value={tags}
+                    onChange={onTagsChange}
+                >
+                    <Option value="all">全部</Option>
+                    <Option value="学习">学习</Option>
+                    <Option value="生活">生活</Option>
+                    <Option value="情感">情感</Option>
+                    <Option value="其他">其他</Option>
+                </Select>
+            </Col>
+        </Row>
     );
 }
 
@@ -53,16 +54,18 @@ export default function CommunityPage() {
     const [blogs, setBlogs] = useState([]);
     const [availableTags, setAvailableTags] = useState([]);
     const navigate = useNavigate();
-    const [avatarsMap, setAvatarsMap] = useState({});
+    //const [avatarsMap, setAvatarsMap] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [avatars, setAvatars] = useState([]);
+    const [total, setTotal] = useState(0);
+    //const [avatars, setAvatars] = useState([]);
 
     // 获取博客数据
     useEffect(() => {
         const fetchBlogs = async () => {
             const fetched_blogs = await getBlogs(pageSize, currentPage, searchText, tags);
-            setBlogs(fetched_blogs);
+            setBlogs(fetched_blogs.blogs);
+            setTotal(fetched_blogs.total);
         };
         fetchBlogs();
         console.log(tags);
@@ -73,26 +76,26 @@ export default function CommunityPage() {
     }, []);
 
 
-    useEffect(() => {
-        const fetchAvatars = async () => {
-
-            const userids = blogs.map(blog => blog.userid);
-            const fetched_avatars = await Promise.all(userids.map(userid => getAvatar(userid)));
-            setAvatars(fetched_avatars);
-        };
-        fetchAvatars();
-    }, [ blogs]);
-    useEffect(() => {
-        const fetchAvatarsMap = async () => {
-            const fetched_avatars_map = {};
-            for (let i = 0; i < blogs.length; i++) {
-                const blog = blogs[i];
-                fetched_avatars_map[blog.userid] = avatars[i];
-            }
-            setAvatarsMap(fetched_avatars_map);
-        };
-        fetchAvatarsMap();
-    }, [ blogs, avatars ]);
+    // useEffect(() => {
+    //     const fetchAvatars = async () => {
+    //
+    //         const userids = blogs.map(blog => blog.userid);
+    //         const fetched_avatars = await Promise.all(userids.map(userid => getAvatar(userid)));
+    //         setAvatars(fetched_avatars);
+    //     };
+    //     fetchAvatars();
+    // }, [ blogs]);
+    // useEffect(() => {
+    //     const fetchAvatarsMap = async () => {
+    //         const fetched_avatars_map = {};
+    //         for (let i = 0; i < blogs.length; i++) {
+    //             const blog = blogs[i];
+    //             fetched_avatars_map[blog.userid] = avatars[i];
+    //         }
+    //         setAvatarsMap(fetched_avatars_map);
+    //     };
+    //     fetchAvatarsMap();
+    // }, [ blogs, avatars ]);
     useEffect(() => {
         setCurrentPage(1);
     }, [searchText, tags]);
@@ -104,13 +107,13 @@ export default function CommunityPage() {
                 {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                         <Typography.Title level={2}>🎉 欢迎来到校园树洞</Typography.Title>
-                            <Button
-                                type="primary"
-                                onClick={() => navigate('/post')}
-                                style={{ fontSize: 16, height: 40 }}
-                            >
-                                ✍️ 发帖
-                            </Button>
+                        <Button
+                            type="primary"
+                            onClick={() => navigate('/post')}
+                            style={{ fontSize: 16, height: 40 }}
+                        >
+                            ✍️ 发帖
+                        </Button>
                     </div>
                 }
 
@@ -125,7 +128,7 @@ export default function CommunityPage() {
                 </div>
 
                 <Typography.Title level={4} style={{ marginBottom: 24 }}>
-                    📃 所有帖子 ({blogs.length})
+                    📃 所有帖子
                 </Typography.Title>
 
                 <List
@@ -149,14 +152,14 @@ export default function CommunityPage() {
                             <List.Item.Meta
                                 avatar={
                                     <Avatar
-                                        src={ avatarsMap[blog.userid]|| `https://joesch.moe/api/v1/random?key=${blog.userid}`}
+                                        src={ blog.user.avatar || `https://joesch.moe/api/v1/random?key=${blog.userid}`}
                                         size={40}
                                         icon={<UserOutlined />}
                                     />
                                 }
                                 title={
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span style={{ marginRight: 16 }}>{blog.userid}</span>
+                                        <span style={{ marginRight: 16 }}>{blog.user.username}</span>
                                         <Tag color="blue">
                                             <ClockCircleOutlined />
                                             {new Date(blog.timestamp * 1000).toLocaleString()}
@@ -178,7 +181,7 @@ export default function CommunityPage() {
                                             <Tag icon={<LikeOutlined />} color="red">
                                                 {blog.likeNum} 点赞
                                             </Tag>
-                                            {blog.tag.map((t, i) => (
+                                            {blog.tags.map((t, i) => (
                                                 <Tag key={i} color={i % 3 === 0 ? 'geekblue' : 'green'}>
                                                     #{t}
                                                 </Tag>
@@ -190,11 +193,10 @@ export default function CommunityPage() {
                         </List.Item>
                     )}
                 />
-
                 <Pagination
                     current={currentPage}
                     pageSize={pageSize}
-                    total={blogs.length}
+                    total={total}
                     onChange={(page, pageSize) => {
                         setCurrentPage(page);
                         setPageSize(pageSize);
@@ -214,4 +216,5 @@ export default function CommunityPage() {
         }/>
     );
 }
+
 
