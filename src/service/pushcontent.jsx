@@ -78,3 +78,27 @@ export async function deleteUrlData(urlid) {
     }
     return res;
 }
+
+export async function AddQuote(quote) {
+    const url = `${PREFIX}/pushcontent/quote/add`;
+    let res;
+    try {
+        res = await post(url, quote);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
+export async function getQuote() {
+    const url = `${PREFIX}/pushcontent/quote/get`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = null;
+    }
+    return res;
+}
