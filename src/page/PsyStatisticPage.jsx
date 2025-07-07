@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {getMonthlyData, getWeeklyData} from "../service/admin";
 import CustomLayout from "../components/layout/customlayout";
 
-export default function AdminStatisticPage() {
+export default function PsyStatisticPage() {
     // 示例数据
 const weeklyData = {
     averageScore: 3.8,

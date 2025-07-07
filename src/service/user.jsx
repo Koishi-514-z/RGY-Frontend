@@ -51,6 +51,18 @@ export async function getUserProfile() {
     return res;
 }
 
+export async function getPsyProfile() {
+    const url = `${PREFIX}/user/getpsy`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = null;
+    }
+    return res;
+}
+
 export async function getSimplifiedProfile(userid) {
     userid = encodeURIComponent(userid);
     const url = `${PREFIX}/user/getsim?userid=${userid}`;
@@ -90,6 +102,18 @@ export async function addUser(user) {
 
 export async function updateProfile(profile) {
     const url = `${PREFIX}/user/profile/update`;
+    let res;
+    try {
+        res = await put(url, profile);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
+export async function updatePsyProfile(profile) {
+    const url = `${PREFIX}/user/profile/updatepsy`;
     let res;
     try {
         res = await put(url, profile);

@@ -8,7 +8,7 @@ import { getAllDataNum, getUrlDatas } from "../service/pushcontent";
 
 const { Title } = Typography;
 
-export default function AdminPushPage() {
+export default function PsyPushPage() {
     const [urlDatas, setUrlDatas] = useState([]);
     const [loadedPage, setLoadedPage] = useState([]);
     const [pageIndex, setPageIndex] = useState(0);

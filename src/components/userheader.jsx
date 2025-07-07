@@ -33,27 +33,86 @@ export default function UserHeader({profile}) {
     ];
 
     const handleMenuClick = async ({key}) => {
-        console.log(key);
-        switch (key) {
-            case 'profile': {
-                navigate(`/home?tabKey=${1}`);
-                break;
-            }
-            case 'settings': {
-                navigate(`/home?tabKey=${3}`);
-                break;
-            }
-            case 'logout': {
-                const res = await logout();
-                if(!res) {
-                    message.error('登出失败');
+        if(profile.role === 0) {
+            switch (key) {
+                case 'profile': {
+                    navigate(`/home?tabKey=${1}`);
+                    break;
                 }
-                navigate('/login');
-                break;
+                case 'settings': {
+                    navigate(`/home?tabKey=${3}`);
+                    break;
+                }
+                case 'logout': {
+                    const res = await logout();
+                    if(!res) {
+                        message.error('登出失败');
+                    }
+                    message.success('登出成功');
+                    setTimeout(() => {
+                        navigate('/login');
+                    }, 1500);
+                    break;
+                }
+                default: {
+                    break;
+                } 
             }
-            default: {
-                break;
-            } 
+        }
+        else if(profile.role === 1) {
+            switch (key) {
+                case 'profile': {
+                    navigate(`/admin/home?tabKey=${1}`);
+                    break;
+                }
+                case 'settings': {
+                    navigate(`/admin/home?tabKey=${3}`);
+                    break;
+                }
+                case 'logout': {
+                    const res = await logout();
+                    if(!res) {
+                        message.error('登出失败');
+                    }
+                    message.success('登出成功');
+                    setTimeout(() => {
+                        navigate('/login');
+                    }, 1500);
+                    break;
+                }
+                default: {
+                    break;
+                } 
+            }
+        }
+        else if(profile.role === 2) {
+            switch (key) {
+                case 'profile': {
+                    navigate(`/psy/home?tabKey=${1}`);
+                    break;
+                }
+                case 'settings': {
+                    navigate(`/psy/home?tabKey=${3}`);
+                    break;
+                }
+                case 'logout': {
+                    const res = await logout();
+                    if(!res) {
+                        message.error('登出失败');
+                    }
+                    message.success('登出成功');
+                    setTimeout(() => {
+                        navigate('/login');
+                    }, 1500);
+                    break;
+                }
+                default: {
+                    break;
+                } 
+            }
+        }
+        else {
+            navigate('/notfound');
         }
     };
 

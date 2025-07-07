@@ -4,9 +4,9 @@ import ParticleBackground from "./particlebackground";
 
 const { Content } = Layout;
 
-export default function HomeLayout({header, modal,
+export default function PsyHomeLayout({header, modal,
                                     edit, view, 
-                                    emotionCard, intimateCard, blogCard, emotionGraph, notificationcard, 
+                                    profilecard, notificationcard, crisis, conuseling,
                                     tabKey}) {
     let content;
 
@@ -16,12 +16,11 @@ export default function HomeLayout({header, modal,
                 <div style={{ margin: '0 auto', padding: '0px 24px' }}>
                     <Row gutter={[24, 24]}>
                         <Col span={16}>
-                            {emotionCard}
+                            {profilecard}
                         </Col>
                         <Col span={8}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                                 {view}
-                                {intimateCard}
                             </div>
                         </Col>
                     </Row>
@@ -32,7 +31,7 @@ export default function HomeLayout({header, modal,
         case 2: {
             content = (
                 <div style={{ margin: '0 auto', padding: '0px 48px' }}>
-                    {blogCard}
+                    {conuseling}
                 </div>
             )
             break;
@@ -53,11 +52,11 @@ export default function HomeLayout({header, modal,
             )
             break;
         }
-        case 5: {
+        case 4: {
             content = (
-                <div style={{ margin: '0 auto', padding: '0px 24px' }}>
-                    {emotionGraph}
-                </div> 
+                <div style={{ margin: '0 auto', padding: '0px 48px' }}>
+                    {crisis}
+                </div>
             )
             break;
         }
@@ -78,11 +77,11 @@ export default function HomeLayout({header, modal,
     return (
         <Layout style={{ minHeight: "100vh" }}>
             <Content style={{ 
-                background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 50%, #f6ffed 100%)', 
+                background: '#f9f0ff',
                 position: 'relative',
                 overflow: 'hidden'
             }}>
-                <ParticleBackground />
+                <ParticleBackground role={2} />
 
                 <div style={{ margin: '0 auto' }}>
                     <Row gutter={[24, 24]}>
