@@ -6,7 +6,7 @@ import EmotionScoring from "../components/emotion/emotionscoring";
 import EmotionDiary from "../components/emotion/emotiondiary";
 import CustomLayout from "../components/layout/customlayout";
 import EmotionLayout from "../components/layout/emotionlayout";
-import { getDataNum, getUrlDatasByTag } from "../service/pushcontent";
+import { getAllDataNum, getUrlDatas } from "../service/pushcontent";
 import QuoteCard from "../components/emotion/quotecard";
 import EmotionTips from "../components/emotion/emotiontips";
 
@@ -18,29 +18,29 @@ export default function EmotionPage() {
     const [pageIndex, setPageIndex] = useState(0);
     const pageSize = 8;
 
-    const reloadPage = async (tagid) => {
+    const reloadPage = async () => {
         setLoadedPage([0]);
         setPageIndex(0);
         const datas = [];
-        const num = await getDataNum(tagid);
+        const num = await getAllDataNum();
         for(let i = 0; i < num; ++i) {
             datas.push({});
         }
-        const page = await getUrlDatasByTag(tagid, 0, pageSize);
+        const page = await getUrlDatas(0, pageSize);
         for(let i = 0; i < Math.min(pageSize, page.length); ++i) {
             datas[i] = page[i];
         }
         setUrlDatas(datas);
     }
 
-    const loadPage = async (tagid) => {
+    const loadPage = async () => {
         if(loadedPage.includes(pageIndex)) {
             return;
         }
         const updatedPage = [...loadedPage];
         updatedPage.push(pageIndex);
         const updatedDatas = [...urlDatas];
-        const page = await getUrlDatasByTag(tagid, pageIndex, pageSize);
+        const page = await getUrlDatas(pageIndex, pageSize);
         for(let i = 0; i < Math.min(pageSize, page.length); ++i) {
             updatedDatas[i + pageIndex * pageSize] = page[i];
         }
@@ -52,12 +52,7 @@ export default function EmotionPage() {
         const fetch = async () => {
             const fetched_emotion = await getEmotion();
             const fetched_diary = await getDiary();
-            if(fetched_emotion.tag) {
-                reloadPage(fetched_emotion.tag.id)
-            }
-            else {
-                setUrlDatas([]);
-            }
+            reloadPage();
             setEmotion(fetched_emotion);
             setDiary(fetched_diary);
         }
@@ -68,7 +63,7 @@ export default function EmotionPage() {
         if(urlDatas.length === 0 || !emotion || !emotion.tag) {
             return;
         }
-        loadPage(emotion.tag.id);
+        loadPage();
     }, [pageIndex]);
 
     if(!emotion || !diary) {

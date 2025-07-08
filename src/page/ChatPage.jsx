@@ -11,8 +11,11 @@ import SockJS from "sockjs-client";
 import ParticleBackground from "../components/layout/particlebackground";
 import ChatHeader from "../components/chat/chatheader";
 import SessionStatus from "../components/chat/sessionstatus";
+import { getUserProfile } from "../service/user";
+import Loading from "../components/loading";
 
 export default function ChatPage() {
+    const [profile, setProfile] = useState(null);
     const [sessionTags, setSessionTags] = useState([]);
     const [session, setSession] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('connecting');
@@ -56,10 +59,14 @@ export default function ChatPage() {
         client.connect({}, 
             () => {
                 setConnectionStatus('connected');
-                client.subscribe("/user/queue/notifications", async (msg) => {
+                client.subscribe("/user/queue/notifications/chat", async (msg) => {
                     try {
                         const receivedMsg = JSON.parse(msg.body);
-                        if (receivedMsg.sessionid === parseInt(sessionidRef.current)) {
+                        if(receivedMsg.touserid !== profile.userid) {
+                            message.error('消息发送错误');
+                            return;
+                        }
+                        if (receivedMsg.id === parseInt(sessionidRef.current)) {
                             const res = await updateRead(sessionidRef.current);
                             if (!res) {
                                 message.error('更新失败');
@@ -99,7 +106,6 @@ export default function ChatPage() {
                 setSession(null);
                 return;
             }
-            
             try {
                 const res = await updateRead(sessionid);
                 if (!res) {
@@ -115,10 +121,26 @@ export default function ChatPage() {
         fetch();
     }, [sessionid]);
 
+    useEffect(() => {
+        const fetch = async () => {
+            const fetched_profile = await getUserProfile();
+            setProfile(fetched_profile);
+        }
+        fetch();
+    }, []);
+
+    if(!profile) {
+        return (
+            <CustomLayout role={0} content={
+                <Loading />
+            }/>
+        )
+    }
+
     return (
-        <CustomLayout content={
+        <CustomLayout role={profile.role} content={
             <div style={{ height: 'calc(110vh - 64px - 69px - 48px)' }}>
-                <ParticleBackground />
+                <ParticleBackground role={profile.role} />
 
                 <Row style={{ height: '100%' }}>
                     <Col xs={24} sm={8} md={6} lg={5} xl={4} style={{ height: '100%' }}>

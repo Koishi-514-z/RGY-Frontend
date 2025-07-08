@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CustomLayout from "../components/layout/customlayout";
 import { getIntimateUsers, getUserProfile, getSimplifiedProfile } from "../service/user";
 import ProfileEdit from "../components/home/profileedit";
@@ -10,9 +10,15 @@ import EmotionCard from "../components/home/emotioncard";
 import BlogCard from "../components/home/blogcard";
 import IntimateCard from "../components/home/intimatecard";
 import { getEmotion, getMonthData, getWeekData } from "../service/emotion";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { getCommentBlogs, getLikeBlogs, getBlogs } from "../service/blog";
 import EmotionGragh from "../components/home/emotiongragh";
+import { getPrivateNotification, getPublicNotification } from "../service/notification";
+import NotificationCard from "../components/home/notificationcard";
+import NotificationModal from "../components/home/notificationmodal";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
+import { App } from "antd";
 
 export default function HomePage() {
     const [profile, setProfile] = useState(null);
@@ -23,16 +29,23 @@ export default function HomePage() {
     const [commentBlogs, setCommentBlogs] = useState([]);
     const [weekData, setWeekData] = useState([]);
     const [monthData, setMonthData] = useState([]);
+    const [privateNotifications, setPrivateNotifications] = useState([]); 
+    const [publicNotifications, setPublicNotifications] = useState([]); 
+    const [isModelOpen, setIsModelOpen] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState('connecting');
     const {userid} = useParams();
-    const [tabKey, setTabKey] = useState(userid ? 2 : 1);
+    const useridRef = useRef(null);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabKey = parseInt(searchParams.get('tabKey'));
     const navigate = useNavigate();
+    const { message } = App.useApp();
 
     useEffect(() => {
         const fetch = async () => {
             if(userid) {
                 const me = await getUserProfile();
                 if(me.userid === userid) {
-                    navigate(`/home`);
+                    navigate(`/home?tabKey=${1}`);
                 }
                 const fetched_profile = await getSimplifiedProfile(userid);
                 const fetched_blogs = await getBlogs(userid);
@@ -43,10 +56,14 @@ export default function HomePage() {
                 setIntimateUsers(null);
                 setWeekData([]);
                 setMonthData([]);
-                setTabKey(2);
                 setMyBlogs(fetched_blogs);
                 setLikeBlogs(fetched_blogs_like);
                 setCommentBlogs(fetched_blogs_comment);
+                setPrivateNotifications([]);
+                setPublicNotifications([]);
+                if(!tabKey) {
+                    setSearchParams({tabKey: 2});
+                }
             }
             else {
                 const fetched_profile = await getUserProfile();
@@ -57,19 +74,107 @@ export default function HomePage() {
                 const fetched_blogs_comment = await getCommentBlogs(fetched_profile.userid);
                 const fetched_week = await getWeekData();
                 const fetched_month = await getMonthData();
+                const fetched_notifications_private = await getPrivateNotification();
+                const fetched_notifications_public = await getPublicNotification();
                 setProfile(fetched_profile);
                 setEmotion(fetched_emotion);
                 setIntimateUsers(fetched_users);
-                setTabKey(1);
                 setMyBlogs(fetched_blogs);
                 setLikeBlogs(fetched_blogs_like);
                 setCommentBlogs(fetched_blogs_comment);
                 setWeekData(fetched_week);
                 setMonthData(fetched_month);
+                setPrivateNotifications(fetched_notifications_private);
+                setPublicNotifications(fetched_notifications_public);
+                if(!tabKey) {
+                    setSearchParams({tabKey: 1});
+                }
             }
         }
         fetch();
     }, [userid]);
+
+    const [update, setUpdate] = useState(0);
+    useEffect(() => {
+        const fetch = async () => {
+            if(userid) {
+                return;
+            }
+            const fetched_profile = await getUserProfile();
+            setProfile(fetched_profile);
+        }
+        fetch();
+    }, [update]);
+
+    useEffect(() => {
+        const setModal = () => {
+            if(userid || !profile) {
+                setIsModelOpen(false);
+                return;
+            }
+            if(publicNotifications.filter(item => item.priority === 'high').length || privateNotifications.filter(item => item.priority === 'high').length) {
+                const storage = localStorage.getItem('notificationModal_' + profile.userid);
+                const now = new Date();
+                if(!storage) {
+                    setIsModelOpen(true);
+                }
+                const history = new Date(parseInt(storage));
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const historyDate = new Date(history.getFullYear(), history.getMonth(), history.getDate());
+                if(today.getTime() !== historyDate.getTime()) {
+                    setIsModelOpen(true);
+                }
+            }
+            else {
+                setIsModelOpen(false);
+            }
+        }
+        setModal();
+    }, [profile, privateNotifications, publicNotifications, setIsModelOpen]);
+
+    useEffect(() => {
+        useridRef.current = profile?.userid;
+    }, [profile]);
+
+    useEffect(() => {
+        const socket = new SockJS("http://localhost:8080/ws");
+        const client = Stomp.over(socket);
+        
+        setConnectionStatus('connecting');
+        
+        client.connect({}, 
+            () => {
+                setConnectionStatus('connected');
+                client.subscribe("/user/queue/notifications/notify", async (msg) => {
+                    try {
+                        const receivedMsg = JSON.parse(msg.body);
+                        console.log(receivedMsg);
+                        if(receivedMsg.touserid !== useridRef.current) {
+                            message.error('消息发送错误');
+                            return;
+                        }
+                        const fetched_notifications_private = await getPrivateNotification();
+                        const fetched_notifications_public = await getPublicNotification();
+                        setPrivateNotifications(fetched_notifications_private);
+                        setPublicNotifications(fetched_notifications_public);
+                    } catch (error) {
+                        console.error('处理消息失败:', error);
+                    }
+                });
+            },
+            (error) => {
+                console.error('WebSocket连接失败:', error);
+                setConnectionStatus('disconnected');
+            }
+        );
+        
+        return () => {
+            if(client && client.connected) {
+                client.disconnect();
+            }
+            setConnectionStatus('disconnected');
+        };
+    }, []);
 
     if(!profile || (!userid && !emotion)) {
         return (
@@ -79,108 +184,28 @@ export default function HomePage() {
         )
     }
 
+    const highPublic = publicNotifications.filter(item => item.priority === 'high');
+    const highPrivate = privateNotifications.filter(item => item.priority === 'high');
+
     return (
-        <CustomLayout content={
+        <CustomLayout update={update} content={
             <HomeLayout 
-                header={<ProfileHeader profile={profile} tabKey={tabKey} setTabKey={setTabKey} id={userid} />} 
-                edit={<ProfileEdit profile={profile} setProfile={setProfile} setTabKey={setTabKey} />} 
+                header={<ProfileHeader profile={profile} id={userid} />} 
+                modal={<NotificationModal 
+                    profile={profile}
+                    isModelOpen={isModelOpen} 
+                    setIsModelOpen={setIsModelOpen} 
+                    highPublic={highPublic} 
+                    highPrivate={highPrivate}/>}
+                edit={<ProfileEdit profile={profile} setUpdate={setUpdate} />} 
                 view={<ProfileView profile={profile} />} 
-                emotionCard={<EmotionCard emotion={emotion} setTabKey={setTabKey} />} 
+                emotionCard={<EmotionCard emotion={emotion} />} 
                 intimateCard={<IntimateCard intimateUsers={intimateUsers} />} 
                 blogCard={<BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} profile={profile} />} 
                 emotionGraph={<EmotionGragh weekData={weekData} monthData={monthData} />} 
+                notificationcard={<NotificationCard privateNotifications={privateNotifications} setPrivateNotifications={setPrivateNotifications} publicNotifications={publicNotifications} />}
                 tabKey={tabKey} 
             />
         }/>
     )
-
-    /*
-        user: {
-            password: 
-            stuid:
-            profile: {
-                userid:     *
-                username:   *
-                email:
-                avatar:     *
-                note:       *
-                role:
-            }
-        }
-
-        emotion: {
-            emotionid:
-            userid:
-            timestamp:
-            tag: {
-                id:
-                content:
-            }
-            score:
-        }
-
-        diary: {
-            diaryid:
-            userid:
-            timestamp:
-            label: (0->positive  1->neutral  2->negative)
-            content:
-        }
-
-        blog: {
-            blogid:
-            userid:
-            timestamp:
-            likeNum:
-            title:
-            cover:
-            content:
-            tag[]
-            reply[]
-
-            reply: {
-                replyid:
-                blogid:
-                userid:
-                timestamp:
-                content:
-            }
-        }
-
-        urlData: {
-            urlid:
-            type: (music/article)
-            title:
-            img:
-            description:
-            url:
-        }
-
-        session: {
-            sessionid:
-            myself:  (id in database)   (simplified)
-            other:  (id in database)   (simplified)
-            timestamp: (最近一次私信的时间)
-            unread: 
-            messages[]
-
-            message: {
-                messageid:
-                role: (0->myself, 1->other)
-                timestamp
-                content
-            }
-        }
-
-        AIsession: {
-            sessionid: 
-            timestamp: (最近一次聊天的时间)
-            messages[]
-
-            message: {
-                role:
-                content:
-            }
-        }
-    */
 }

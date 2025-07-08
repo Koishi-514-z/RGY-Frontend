@@ -29,6 +29,18 @@ export async function getUrlDatas(pageIndex, pageSize) {
     return res;
 }
 
+export async function getSimUrlDatas() {
+    const url = `${PREFIX}/pushcontent/getsim`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = [];
+    }
+    return res;
+}
+
 export async function getDataNum(tagid) {
     tagid = encodeURIComponent(tagid);
     const url = `${PREFIX}/pushcontent/getnum?tagid=${tagid}`;

@@ -14,6 +14,18 @@ export async function login(username, password) {
     return res;
 }
 
+export async function logout() {
+    const url = `${PREFIX}/user/logout`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
 export async function userExisted(username) {
     username = encodeURIComponent(username);
     const url = `${PREFIX}/user/existed?username=${username}`;
@@ -29,6 +41,18 @@ export async function userExisted(username) {
 
 export async function getUserProfile() {
     const url = `${PREFIX}/user/get`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = null;
+    }
+    return res;
+}
+
+export async function getPsyProfile() {
+    const url = `${PREFIX}/user/getpsy`;
     let res;
     try {
         res = await getJson(url);
@@ -78,6 +102,18 @@ export async function addUser(user) {
 
 export async function updateProfile(profile) {
     const url = `${PREFIX}/user/profile/update`;
+    let res;
+    try {
+        res = await put(url, profile);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
+export async function updatePsyProfile(profile) {
+    const url = `${PREFIX}/user/profile/updatepsy`;
     let res;
     try {
         res = await put(url, profile);

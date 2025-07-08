@@ -3,7 +3,7 @@ import { Tabs, Tooltip } from "antd";
 import { UserOutlined, FileTextOutlined, SettingOutlined, HeartOutlined, BarChartOutlined } from "@ant-design/icons";
 import { useSearchParams } from "react-router-dom";
 
-export default function HomeTabs({id}) {
+export default function PsyHomeTabs() {
     const [searchParams, setSearchParams] = useSearchParams();
     const tabKey = parseInt(searchParams.get('tabKey'));
 
@@ -19,37 +19,25 @@ export default function HomeTabs({id}) {
                     <UserOutlined style={{ marginRight: 8 }} />
                     个人中心
                 </span>
-            ),
-            disabled: id
+            )
         },
         {
             key: 2,
             label: (
                 <span>
                     <FileTextOutlined style={{ marginRight: 8 }} />
-                    我的博客
+                    心理咨询
                 </span>
-            ),
+            )
         },
         {
             key: 4,
             label: (
                 <span>
-                    <HeartOutlined style={{ marginRight: 8 }} />
-                    心理档案
+                    <FileTextOutlined style={{ marginRight: 8 }} />
+                    危机干预
                 </span>
-            ),
-            disabled: id
-        },
-        {
-            key: 5,
-            label: (
-                <span>
-                    <BarChartOutlined style={{ marginRight: 8 }} />
-                    成长轨迹
-                </span>
-            ),
-            disabled: id
+            )
         },
         {
             key: 7,
@@ -58,18 +46,16 @@ export default function HomeTabs({id}) {
                     <BarChartOutlined style={{ marginRight: 8 }} />
                     我的通知
                 </span>
-            ),
-            disabled: id
+            )
         },
         {
             key: 3,
             label: (
                 <span>
                     <SettingOutlined style={{ marginRight: 8 }} />
-                    账户设置
+                    个人信息编辑
                 </span>
-            ),
-            disabled: id
+            )
         }
     ];
 
