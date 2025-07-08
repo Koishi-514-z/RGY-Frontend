@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Table, Button, message, Typography, Tag, Popconfirm  } from 'antd';
+import { Table, Button, message, Typography, Tag, Popconfirm, Space } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 import { getAllUsers, updateUserPriority } from '../service/AdminService';
 import { Link, useNavigate, Outlet } from 'react-router-dom';
@@ -26,8 +26,6 @@ const AdminPage = () => {
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
-
-
 
   const handleToggleBan = async (userid, currentPriority) => {
     const newPriority = currentPriority === 1 ? 0 : 1;
@@ -78,6 +76,14 @@ const AdminPage = () => {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <Title level={2}>用户管理</Title>
+            <Space>
+              <Button type="primary" onClick={() => navigate('/admin/review')}>
+                内容审核
+              </Button>
+              <Button type="primary" danger onClick={() => navigate('/admin/crisis')}>
+                危机审核
+              </Button>
+            </Space>
           </div>
 
           <Outlet />
@@ -94,4 +100,4 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage; 
+export default AdminPage;

@@ -6,12 +6,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import {getBlogById, likeBlog, cancelLikeBlog, addReply, getAvatar, getBlogs} from "../service/community";
 import {ArrowLeftOutlined, DeleteOutlined, HeartTwoTone} from "@ant-design/icons";
 import {Button, Input, List, Card, App, Pagination, Dropdown} from "antd";
+import Loading from "../components/loading";
 
 export default function BlogdetailPage() {
-    //const {id} = useParams();
-    const id = 1;
+    const param = useParams();
+    const id = param.blogid;
     const navigate = useNavigate();
-    const [blog, setBlog] = useState({});
+    const [blog, setBlog] = useState();
     const [isLiked, setIsLiked] = useState(0);
     const [replies, setReplies] = useState([]);
     const [replyContent, setReplyContent] = useState("");
@@ -25,34 +26,6 @@ export default function BlogdetailPage() {
 
 
     useEffect(() => {
-        const fetchAvatars = async () => {
-            //遍历blogs，获取所有userid，然后请求对应的头像
-            const userids = replies.map(reply => reply.userid);
-            const fetched_avatars = await Promise.all(userids.map(userid => getAvatar(userid)));
-            setAvatars(fetched_avatars);
-        };
-        fetchAvatars();
-        //设置所有blog的avatar属性
-
-    }, [ replies ]);
-    useEffect(() => {
-        const fetchAvatarsMap = async () => {
-            const fetched_avatars_map = {};
-            for (let i = 0; i < replies.length; i++) {
-                const blog = replies[i];
-                fetched_avatars_map[blog.userid] = avatars[i];
-            }
-            setAvatarsMap(fetched_avatars_map);
-        };
-        fetchAvatarsMap();
-    }, [ replies, avatars ]);
-
-    const paginatedContent = blog.content;
-
-
-    const totalPages = blog.content ? Math.ceil(blog.content.length / contentPerPage) : 1;
-
-    useEffect(() => {
         const fetchBlog = async () => {
             const fetched_blog = await getBlogById(id);
             console.log(fetched_blog);
@@ -64,23 +37,13 @@ export default function BlogdetailPage() {
 
     useEffect(() => {
         const fetchReplies = async () => {
-            const fetched_replies = blog.reply;
+            if (!blog) return;
+            const fetched_replies = blog.replies;
             console.log(fetched_replies);
             setReplies(fetched_replies || []);
         };
         fetchReplies();
     }, [blog]);
-
-    useEffect(() => {
-        const fetchAvatar = async () => {
-            const fetched_avatar = await getAvatar(blog.userid);
-            setAvatar(fetched_avatar);
-        };
-        if (blog.userid) {
-            fetchAvatar();
-        }
-    }, [blog.userid]);
-
 
     function handleDelete() {
         message.loading("正在删除...");
@@ -88,6 +51,15 @@ export default function BlogdetailPage() {
             message.success("删除成功！");
             navigate(-1);
         }, 1000);
+    }
+
+
+    if(!blog ) {
+        return (
+            <CustomLayout role={1} content={
+                <Loading />
+            }/>
+        )
     }
 
     return (
@@ -127,14 +99,14 @@ export default function BlogdetailPage() {
                                 src={blog.user.avatar}
                                 alt="avatar"
                                 style={{ width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
-                                onClick={() => navigate(`/home/${blog.user.userid}`)}
+                                onClick={() => navigate(`/admin/user/${blog.user.userid}`)}
                             />
-                            <div><span style={{ fontWeight: 'bold', fontSize: '20px', color: '#333' }}>{blog.user? blog.user.username:""}</span></div>
+                            <div><span style={{ fontWeight: 'bold', fontSize: '20px', color: '#333' }}>{blog.user? blog.user.userid:""}</span></div>
                         </div>
                         <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>{blog.title}</h1>
-                        <p style={{ fontSize: '16px', lineHeight: '1.6', color: '#555', overflow: 'auto'}}>{paginatedContent}</p>
+                        <p style={{ fontSize: '16px', lineHeight: '1.6', color: '#555', overflow: 'auto'}}>{blog.content}</p>
                         <div style={{ color: '#1890ff', fontWeight: 'bold' }}>#<span>{blog.tag?.join(" #")}</span></div>
-                        <div style={{ fontSize: '12px', color: '#999', marginTop: '8px' }}>编辑于{new Date(blog.timestamp * 1000).toLocaleString()}</div>
+                        <div style={{ fontSize: '12px', color: '#999', marginTop: '8px' }}>编辑于{new Date(blog.timestamp).toLocaleString()}</div>
 
 
                     </div>
@@ -151,12 +123,12 @@ export default function BlogdetailPage() {
                                             src={reply.user.avatar}
                                             alt="avatar"
                                             style={{ width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
-                                            onClick={() => navigate(`/home/${reply.user.userid}`)}
+                                            onClick={() => navigate(`/admin/user/${reply.user.userid}`)}
                                         />
-                                        <div><span style={{ fontWeight: 'bold', fontSize: '15px', color: '#333' }}>{reply.user.username}</span></div>
+                                        <div><span style={{ fontWeight: 'bold', fontSize: '15px', color: '#333' }}>{reply.user.userid}</span></div>
                                     </div>
                                     <div style={{ fontSize: '14px', marginTop: '4px', color: '#555' }}>{reply.content}</div>
-                                    <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>回复于{new Date(reply.timestamp * 1000).toLocaleString()}</div>
+                                    <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>回复于{new Date(reply.timestamp ).toLocaleString()}</div>
                                 </div>
                             </Card>
                         )}
