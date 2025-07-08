@@ -52,16 +52,6 @@ export default function HomeTabs({id}) {
             disabled: id
         },
         {
-            key: 6,
-            label: (
-                <span>
-                    <BarChartOutlined style={{ marginRight: 8 }} />
-                    心理咨询
-                </span>
-            ),
-            disabled: id
-        },
-        {
             key: 7,
             label: (
                 <span>

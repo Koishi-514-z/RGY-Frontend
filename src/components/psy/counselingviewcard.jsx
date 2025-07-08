@@ -13,7 +13,7 @@ import dayjs from 'dayjs';
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
-export default function CounselingView({counseling}) {
+export default function CounselingView({counseling, fetchCounseling}) {
     const [selectedTime, setSelectedTime] = useState(null);
     const [dateRange, setDateRange] = useState(null);
     const [dateCounseling, setDateCounseling] = useState([]);
@@ -67,6 +67,8 @@ export default function CounselingView({counseling}) {
         }
         else {
             message.success('操作成功');
+            fetchCounseling();
+            
         }
     }
 
@@ -120,8 +122,8 @@ export default function CounselingView({counseling}) {
             width: 60,
             render: (id) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Text strong style={{ fontSize: '13px' }}>
-                        {id}
+                    <Text strong style={{ fontSize: '13px', color: '#1890ff' }}>
+                        #{id}
                     </Text>
                 </div>
             )

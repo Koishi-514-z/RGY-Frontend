@@ -59,10 +59,14 @@ export default function ChatPage() {
         client.connect({}, 
             () => {
                 setConnectionStatus('connected');
-                client.subscribe("/user/queue/notifications", async (msg) => {
+                client.subscribe("/user/queue/notifications/chat", async (msg) => {
                     try {
                         const receivedMsg = JSON.parse(msg.body);
-                        if (receivedMsg.sessionid === parseInt(sessionidRef.current)) {
+                        if(receivedMsg.touserid !== profile.userid) {
+                            message.error('消息发送错误');
+                            return;
+                        }
+                        if (receivedMsg.id === parseInt(sessionidRef.current)) {
                             const res = await updateRead(sessionidRef.current);
                             if (!res) {
                                 message.error('更新失败');

@@ -53,6 +53,10 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
         setDateCounseling(filteredData);
     }, [selectedTime, dateRange, statusFilter, counseling]);
 
+    const getPsyProfile = (psyid) => {
+        return psyProfiles.find(profile => profile.userid === psyid);
+    }
+
     const handleTimeChange = (date) => {
         if(date) {
             const timestamp = date.unix() * 1000;
@@ -150,7 +154,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
             0: { text: '待处理', color: 'orange', icon: <ClockCircleOutlined /> },
             1: { text: '已接受', color: 'blue', icon: <CheckOutlined /> },
             2: { text: '已完成', color: 'green', icon: <CheckOutlined /> },
-            3: { text: '已拒绝', color: 'red', icon: <CloseOutlined /> }
+            3: { text: '已取消', color: 'red', icon: <CloseOutlined /> }
         };
         
         const config = statusConfig[status];
@@ -173,7 +177,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
             width: 80,
             render: (id) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Text strong style={{ fontSize: '13px', color: '#722ed1' }}>
+                    <Text strong style={{ fontSize: '13px', color: '#1890ff' }}>
                         #{id}
                     </Text>
                 </div>
@@ -181,23 +185,26 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
         },
         {
             title: '咨询师',
-            dataIndex: 'psyName',
-            key: 'psyName',
+            dataIndex: 'psyid',
+            key: 'psyid',
             width: 150,
-            render: (name, record) => (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Avatar 
-                        size={32}
-                        src={record.psyAvatar}
-                        icon={<UserOutlined />}
-                        style={{ backgroundColor: '#722ed1' }}
-                    />
-                    <div>
-                        <div style={{ fontWeight: '500', fontSize: '13px' }}>{name}</div>
-                        <div style={{ fontSize: '11px', color: '#8c8c8c' }}>{record.psyTitle}</div>
+            render: (psyid) => {
+                const psyProfile = getPsyProfile(psyid);
+                return (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Avatar 
+                            size={32}
+                            src={psyProfile.avatar}
+                            icon={<UserOutlined />}
+                            style={{ backgroundColor: '#1890ff' }}
+                        />
+                        <div>
+                            <div style={{ fontWeight: '500', fontSize: '13px' }}>{psyProfile.username}</div>
+                            <div style={{ fontSize: '11px', color: '#8c8c8c' }}>{psyProfile.title}</div>
+                        </div>
                     </div>
-                </div>
-            )
+                );
+            }
         },
         {
             title: '预约时间',
@@ -224,7 +231,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
             render: (type) => (
                 <Tag 
                     style={{ 
-                        background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                        background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                         border: 'none',
                         borderRadius: '8px',
                         color: '#fff',
@@ -245,7 +252,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                 { text: '待处理', value: 0 },
                 { text: '已接受', value: 1 },
                 { text: '已完成', value: 2 },
-                { text: '已拒绝', value: 3 }
+                { text: '已取消', value: 3 }
             ],
             onFilter: (value, record) => record.status === value
         },
@@ -282,9 +289,9 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                                     size="small"
                                     onClick={() => handleContact(psyid)}
                                     style={{ 
-                                        color: '#722ed1',
-                                        backgroundColor: 'rgba(114, 46, 209, 0.1)',
-                                        border: '1px solid rgba(114, 46, 209, 0.3)',
+                                        color: '#1890ff',
+                                        backgroundColor: 'rgba(24, 144, 255, 0.1)',
+                                        border: '1px solid rgba(24, 144, 255, 0.3)',
                                         borderRadius: '6px'
                                     }}
                                 />
@@ -315,18 +322,19 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
     return (
         <Card
             style={{
-                background: 'linear-gradient(135deg, #f9f0ff 0%, #efdbff 100%)',
-                border: '1px solid #d3adf7',
+                background: 'linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%)',
+                border: '1px solid #91d5ff',
                 borderRadius: '16px',
-                boxShadow: '0 8px 24px rgba(114, 46, 209, 0.12)'
+                boxShadow: '0 8px 24px rgba(24, 144, 255, 0.12)'
             }}
         >
             <Row gutter={16} style={{ marginBottom: '24px' }}>
                 <Col span={6}>
                     <Card size="small" style={{ 
-                        background: 'rgba(255, 255, 255, 0.8)',
+                        background: 'rgba(255, 255, 255, 0.9)',
                         border: '1px solid rgba(250, 173, 20, 0.3)',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        borderRadius: '12px'
                     }}>
                         <Statistic 
                             title="待处理" 
@@ -338,9 +346,10 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                 </Col>
                 <Col span={6}>
                     <Card size="small" style={{ 
-                        background: 'rgba(255, 255, 255, 0.8)',
+                        background: 'rgba(255, 255, 255, 0.9)',
                         border: '1px solid rgba(24, 144, 255, 0.3)',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        borderRadius: '12px'
                     }}>
                         <Statistic 
                             title="已接受" 
@@ -352,9 +361,10 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                 </Col>
                 <Col span={6}>
                     <Card size="small" style={{ 
-                        background: 'rgba(255, 255, 255, 0.8)',
+                        background: 'rgba(255, 255, 255, 0.9)',
                         border: '1px solid rgba(82, 196, 26, 0.3)',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        borderRadius: '12px'
                     }}>
                         <Statistic 
                             title="已完成" 
@@ -366,12 +376,13 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                 </Col>
                 <Col span={6}>
                     <Card size="small" style={{ 
-                        background: 'rgba(255, 255, 255, 0.8)',
+                        background: 'rgba(255, 255, 255, 0.9)',
                         border: '1px solid rgba(255, 77, 79, 0.3)',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        borderRadius: '12px'
                     }}>
                         <Statistic 
-                            title="已拒绝" 
+                            title="已取消" 
                             value={stats.rejected} 
                             valueStyle={{ color: '#ff4d4f', fontSize: '20px' }}
                             prefix={<CloseOutlined />}
@@ -381,7 +392,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
             </Row>
 
             <div style={{ marginBottom: '24px' }}>
-                <Title level={4} style={{ margin: 0, color: '#722ed1' }}>
+                <Title level={4} style={{ margin: 0, color: '#1890ff' }}>
                     <CalendarOutlined style={{ marginRight: '8px' }} />
                     我的预约记录
                 </Title>
@@ -392,12 +403,13 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
 
             <Card size="small" style={{ 
                 marginBottom: '16px',
-                background: 'rgba(255, 255, 255, 0.6)',
-                border: '1px solid rgba(114, 46, 209, 0.1)'
+                background: 'rgba(255, 255, 255, 0.8)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                borderRadius: '12px'
             }}>
                 <Row gutter={16} align="middle">
                     <Col>
-                        <Text strong style={{ color: '#722ed1' }}>
+                        <Text strong style={{ color: '#1890ff' }}>
                             <FilterOutlined style={{ marginRight: '4px' }} />
                             筛选条件：
                         </Text>
@@ -451,6 +463,10 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                                     setDateRange(null);
                                     setStatusFilter('all');
                                 }}
+                                style={{
+                                    color: '#1890ff',
+                                    borderColor: '#1890ff'
+                                }}
                             >
                                 重置筛选
                             </Button>
@@ -481,7 +497,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                 }}
                 scroll={{ x: 'max-content' }}
                 style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
+                    background: 'rgba(255, 255, 255, 0.9)',
                     borderRadius: '12px',
                     overflow: 'hidden'
                 }}
@@ -498,7 +514,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                         <div style={{
                             width: '40px',
                             height: '40px',
-                            background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
@@ -507,7 +523,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                             <StarOutlined style={{ color: '#fff', fontSize: '18px' }} />
                         </div>
                         <div>
-                            <Title level={4} style={{ margin: 0, color: '#722ed1' }}>
+                            <Title level={4} style={{ margin: 0, color: '#1890ff' }}>
                                 评价咨询师
                             </Title>
                             <Text style={{ color: '#8c8c8c', fontSize: '12px' }}>
@@ -531,7 +547,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                         type="primary" 
                         onClick={handleSubmit}
                         style={{
-                            background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                             border: 'none',
                             borderRadius: '8px'
                         }}
@@ -545,7 +561,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                 {currentRecord && (
                     <div style={{ padding: '16px 0' }}>
                         <div style={{
-                            background: 'linear-gradient(135deg, rgba(114, 46, 209, 0.05) 0%, rgba(114, 46, 209, 0.1) 100%)',
+                            background: 'linear-gradient(135deg, rgba(24, 144, 255, 0.05) 0%, rgba(24, 144, 255, 0.1) 100%)',
                             borderRadius: '12px',
                             padding: '16px',
                             marginBottom: '24px'
@@ -553,20 +569,20 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <Avatar 
                                     size={48}
-                                    src={currentRecord.psyAvatar}
+                                    src={getPsyProfile(currentRecord.psyid).avatar}
                                     icon={<UserOutlined />}
-                                    style={{ backgroundColor: '#722ed1' }}
+                                    style={{ backgroundColor: '#1890ff' }}
                                 />
                                 <div>
                                     <Text style={{ fontWeight: '600', fontSize: '16px' }}>
-                                        {currentRecord.psyName}
+                                        {getPsyProfile(currentRecord.psyid).username}
                                     </Text>
                                     <Text style={{ 
                                         display: 'block', 
                                         color: '#8c8c8c', 
                                         fontSize: '14px' 
                                     }}>
-                                        {currentRecord.psyTitle}
+                                        {getPsyProfile(currentRecord.psyid).title}
                                     </Text>
                                 </div>
                             </div>
@@ -640,7 +656,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
                                 marginTop: '8px',
                                 fontSize: '16px',
                                 fontWeight: '600',
-                                color: '#722ed1'
+                                color: '#1890ff'
                             }}>
                                 {rating} 分
                             </Text>

@@ -104,12 +104,12 @@ export default function SubscribeCard({psyProfile}) {
                                 height: '60px',
                                 borderRadius: '12px',
                                 border: selectedTimeSlot === timeSlot 
-                                    ? '2px solid #722ed1' 
-                                    : '1px solid rgba(114, 46, 209, 0.2)',
+                                    ? '2px solid #1890ff' 
+                                    : '1px solid rgba(24, 144, 255, 0.2)',
                                 background: selectedTimeSlot === timeSlot 
-                                    ? 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)'
+                                    ? 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)'
                                     : 'rgba(255, 255, 255, 0.8)',
-                                color: selectedTimeSlot === timeSlot ? '#fff' : '#722ed1',
+                                color: selectedTimeSlot === timeSlot ? '#fff' : '#1890ff',
                                 fontWeight: '500',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -117,14 +117,14 @@ export default function SubscribeCard({psyProfile}) {
                                 justifyContent: 'center',
                                 transition: 'all 0.3s ease',
                                 boxShadow: selectedTimeSlot === timeSlot 
-                                    ? '0 4px 12px rgba(114, 46, 209, 0.3)'
+                                    ? '0 4px 12px rgba(24, 144, 255, 0.3)'
                                     : '0 2px 8px rgba(0,0,0,0.1)'
                             }}
                             onClick={() => handleTimeSlotSelect(timeSlot)}
                             onMouseEnter={(e) => {
                                 if (selectedTimeSlot !== timeSlot) {
                                     e.target.style.transform = 'translateY(-2px)';
-                                    e.target.style.boxShadow = '0 4px 16px rgba(114, 46, 209, 0.2)';
+                                    e.target.style.boxShadow = '0 4px 16px rgba(24, 144, 255, 0.2)';
                                 }
                             }}
                             onMouseLeave={(e) => {
@@ -137,7 +137,7 @@ export default function SubscribeCard({psyProfile}) {
                             <ClockCircleOutlined style={{ fontSize: '16px', marginBottom: '4px' }} />
                             <Text style={{ 
                                 fontSize: '14px', 
-                                color: selectedTimeSlot === timeSlot ? '#fff' : '#722ed1',
+                                color: selectedTimeSlot === timeSlot ? '#fff' : '#1890ff',
                                 fontWeight: '600'
                             }}>
                                 {timeSlot}
@@ -154,10 +154,10 @@ export default function SubscribeCard({psyProfile}) {
             <Card 
                 style={{ 
                     background: 'rgba(255, 255, 255, 0.9)',
-                    border: '1px solid rgba(114, 46, 209, 0.15)',
+                    border: '1px solid rgba(24, 144, 255, 0.15)',
                     borderRadius: '16px',
                     overflow: 'hidden',
-                    boxShadow: '0 6px 20px rgba(114, 46, 209, 0.12)',
+                    boxShadow: '0 6px 20px rgba(24, 144, 255, 0.12)',
                     backdropFilter: 'blur(10px)'
                 }}
                 title={
@@ -171,20 +171,20 @@ export default function SubscribeCard({psyProfile}) {
                             <div style={{
                                 width: '48px',
                                 height: '48px',
-                                background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                 borderRadius: '12px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 marginRight: '16px',
-                                boxShadow: '0 4px 12px rgba(114, 46, 209, 0.3)'
+                                boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)'
                             }}>
                                 <CalendarOutlined style={{ color: '#fff', fontSize: '20px' }} />
                             </div>
                             <div>
                                 <Title level={4} style={{ 
                                     margin: 0,
-                                    background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                    background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
                                     backgroundClip: 'text'
@@ -203,9 +203,9 @@ export default function SubscribeCard({psyProfile}) {
                                 size={40}
                                 icon={<UserOutlined />}
                                 style={{ 
-                                    backgroundColor: '#722ed1',
+                                    backgroundColor: '#1890ff',
                                     border: '2px solid #fff',
-                                    boxShadow: '0 2px 8px rgba(114, 46, 209, 0.2)'
+                                    boxShadow: '0 2px 8px rgba(24, 144, 255, 0.2)'
                                 }}
                             />
                             <div>
@@ -215,7 +215,7 @@ export default function SubscribeCard({psyProfile}) {
                                 <Tag 
                                     style={{
                                         marginLeft: '8px',
-                                        background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                        background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                         border: 'none',
                                         borderRadius: '8px',
                                         color: '#fff',
@@ -232,7 +232,7 @@ export default function SubscribeCard({psyProfile}) {
                 <Row gutter={32}>
                     <Col xs={24} lg={8}>
                         <div style={{
-                            background: 'linear-gradient(135deg, rgba(114, 46, 209, 0.05) 0%, rgba(114, 46, 209, 0.1) 100%)',
+                            background: 'linear-gradient(135deg, rgba(24, 144, 255, 0.05) 0%, rgba(24, 144, 255, 0.1) 100%)',
                             borderRadius: '12px',
                             padding: '24px',
                             height: '100%',
@@ -240,7 +240,7 @@ export default function SubscribeCard({psyProfile}) {
                         }}>
                             <Title level={5} style={{ 
                                 marginBottom: '16px',
-                                color: '#722ed1'
+                                color: '#1890ff'
                             }}>
                                 选择日期
                             </Title>
@@ -263,7 +263,7 @@ export default function SubscribeCard({psyProfile}) {
                                     marginBottom: '8px',
                                     fontSize: '14px',
                                     fontWeight: '500',
-                                    color: '#722ed1'
+                                    color: '#1890ff'
                                 }}>
                                     咨询类别
                                 </Text>
@@ -298,7 +298,7 @@ export default function SubscribeCard({psyProfile}) {
                                     <Text style={{ 
                                         fontSize: '16px', 
                                         fontWeight: '600',
-                                        color: '#722ed1'
+                                        color: '#1890ff'
                                     }}>
                                         {selectedDate.format('YYYY年MM月DD日')}
                                     </Text>
@@ -322,7 +322,7 @@ export default function SubscribeCard({psyProfile}) {
                                                 咨询类别
                                             </Text>
                                             <Tag style={{
-                                                background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                                 border: 'none',
                                                 borderRadius: '6px',
                                                 color: '#fff',
@@ -352,7 +352,7 @@ export default function SubscribeCard({psyProfile}) {
                             }}>
                                 <Title level={5} style={{ 
                                     margin: 0,
-                                    color: '#722ed1'
+                                    color: '#1890ff'
                                 }}>
                                     可预约时间段
                                 </Title>
@@ -383,14 +383,14 @@ export default function SubscribeCard({psyProfile}) {
                                 size="large"
                                 icon={<CheckCircleOutlined />}
                                 style={{
-                                    background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                    background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                     border: 'none',
                                     borderRadius: '12px',
                                     fontWeight: '600',
                                     fontSize: '16px',
                                     padding: '12px 32px',
                                     height: 'auto',
-                                    boxShadow: '0 6px 16px rgba(114, 46, 209, 0.3)'
+                                    boxShadow: '0 6px 16px rgba(24, 144, 255, 0.3)'
                                 }}
                                 onClick={() => setConfirmModalVisible(true)}
                             >
@@ -418,7 +418,7 @@ export default function SubscribeCard({psyProfile}) {
                         type="primary" 
                         onClick={handleConfirmAppointment}
                         style={{
-                            background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                             border: 'none',
                             borderRadius: '8px'
                         }}
@@ -435,7 +435,7 @@ export default function SubscribeCard({psyProfile}) {
                                 src={psyProfile.avatar} 
                                 size={48}
                                 icon={<UserOutlined />}
-                                style={{ backgroundColor: '#722ed1' }}
+                                style={{ backgroundColor: '#1890ff' }}
                             />
                             <div>
                                 <Text style={{ fontWeight: '600', fontSize: '16px' }}>
@@ -459,7 +459,7 @@ export default function SubscribeCard({psyProfile}) {
                                 display: 'block', 
                                 fontSize: '16px', 
                                 fontWeight: '600',
-                                color: '#722ed1',
+                                color: '#1890ff',
                                 marginTop: '4px'
                             }}>
                                 {selectedDate?.format('YYYY年MM月DD日')} {formatHour(selectedTimeSlot)}
@@ -470,7 +470,7 @@ export default function SubscribeCard({psyProfile}) {
                             <Text style={{ color: '#8c8c8c', fontSize: '14px' }}>咨询类别</Text>
                             <div style={{ marginTop: '8px' }}>
                                 <Tag style={{
-                                    background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                    background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                     border: 'none',
                                     borderRadius: '8px',
                                     color: '#fff',

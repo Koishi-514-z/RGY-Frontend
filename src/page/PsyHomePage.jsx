@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CustomLayout from "../components/layout/customlayout";
 import { useSearchParams } from "react-router-dom";
 import { getPsyProfile } from "../service/user";
@@ -15,6 +15,9 @@ import { getAvailableTimes, getCounseling } from "../service/counseling";
 import CounselingCard from "../components/psy/counselingcard";
 import { getCrisis } from "../service/crisis";
 import CrisisHandlingCard from "../components/psy/crisishandlingcard";
+import { Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { App } from "antd";
 
 export default function PsyHomePage() {
     const [profile, setProfile] = useState(null);
@@ -26,6 +29,14 @@ export default function PsyHomePage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const tabKey = parseInt(searchParams.get('tabKey'));
     const [isModelOpen, setIsModelOpen] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState('connecting');
+    const useridRef = useRef(null);
+    const { message } = App.useApp();
+
+    const fetchCounseling = async () => {
+        const fetched_counseling = await getCounseling(profile.userid);
+        setCounseling(fetched_counseling);
+    }
 
     useEffect(() => {
         const fetch = async () => {
@@ -58,6 +69,10 @@ export default function PsyHomePage() {
     }, [update]);
 
     useEffect(() => {
+        useridRef.current = profile?.userid;
+    }, [profile]);
+
+    useEffect(() => {
         const setModal = () => {
             if(!profile) {
                 setIsModelOpen(false);
@@ -68,14 +83,12 @@ export default function PsyHomePage() {
                 const now = new Date();
                 if(!storage) {
                     setIsModelOpen(true);
-                    localStorage.setItem('notificationModal_' + profile.userid, JSON.stringify(now.getTime()));
                 }
                 const history = new Date(parseInt(storage));
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 const historyDate = new Date(history.getFullYear(), history.getMonth(), history.getDate());
-                if(today !== historyDate) {
+                if(today.getTime() !== historyDate.getTime()) {
                     setIsModelOpen(true);
-                    localStorage.setItem('notificationModal_' + profile.userid, JSON.stringify(now.getTime()));
                 }
             }
             else {
@@ -84,6 +97,46 @@ export default function PsyHomePage() {
         }
         setModal();
     }, [profile, privateNotifications, publicNotifications, setIsModelOpen]);
+
+    useEffect(() => {
+        const socket = new SockJS("http://localhost:8080/ws");
+        const client = Stomp.over(socket);
+        
+        setConnectionStatus('connecting');
+        
+        client.connect({}, 
+            () => {
+                setConnectionStatus('connected');
+                client.subscribe("/user/queue/notifications/notify", async (msg) => {
+                    try {
+                        const receivedMsg = JSON.parse(msg.body);
+                        console.log(receivedMsg);
+                        if(receivedMsg.touserid !== useridRef.current) {
+                            message.error('消息发送错误');
+                            return;
+                        }
+                        const fetched_notifications_private = await getPrivateNotification();
+                        const fetched_notifications_public = await getPublicNotification();
+                        setPrivateNotifications(fetched_notifications_private);
+                        setPublicNotifications(fetched_notifications_public);
+                    } catch (error) {
+                        console.error('处理消息失败:', error);
+                    }
+                });
+            },
+            (error) => {
+                console.error('WebSocket连接失败:', error);
+                setConnectionStatus('disconnected');
+            }
+        );
+        
+        return () => {
+            if(client && client.connected) {
+                client.disconnect();
+            }
+            setConnectionStatus('disconnected');
+        };
+    }, []);
 
     if(!profile || !availableTimes) {
         return (
@@ -100,14 +153,23 @@ export default function PsyHomePage() {
         <CustomLayout role={2} update={update} content={
             <PsyHomeLayout
                 header={<PsyProfileHeader profile={profile} />}
-                modal={<NotificationModal isModelOpen={isModelOpen} setIsModelOpen={setIsModelOpen} highPublic={highPublic} highPrivate={highPrivate}/>}
+                modal={<NotificationModal 
+                    profile={profile}
+                    isModelOpen={isModelOpen} 
+                    setIsModelOpen={setIsModelOpen} 
+                    highPublic={highPublic} 
+                    highPrivate={highPrivate}/>}
                 edit={<PsyProfileEdit profile={profile} setUpdate={setUpdate} />}
                 view={<PsyAccountCard profile={profile} />} 
                 profilecard={<PsyProfileCard profile={profile} />}
-                conuseling={<CounselingCard availableTimes={availableTimes} setAvailableTimes={setAvailableTimes} counseling={counseling} />}
+                conuseling={<CounselingCard 
+                    availableTimes={availableTimes} 
+                    setAvailableTimes={setAvailableTimes} 
+                    counseling={counseling}
+                    fetchCounseling={fetchCounseling} />}
                 notificationcard={<NotificationCard 
                     privateNotifications={privateNotifications} 
-                    etPrivateNotifications={setPrivateNotifications} 
+                    setPrivateNotifications={setPrivateNotifications} 
                     publicNotifications={publicNotifications} 
                 />}
                 crisis={<CrisisHandlingCard crisisCases={crisisCases} setCrisisCases={setCrisisCases} />}

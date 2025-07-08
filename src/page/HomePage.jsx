@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CustomLayout from "../components/layout/customlayout";
 import { getIntimateUsers, getUserProfile, getSimplifiedProfile } from "../service/user";
 import ProfileEdit from "../components/home/profileedit";
@@ -16,6 +16,9 @@ import EmotionGragh from "../components/home/emotiongragh";
 import { getPrivateNotification, getPublicNotification } from "../service/notification";
 import NotificationCard from "../components/home/notificationcard";
 import NotificationModal from "../components/home/notificationmodal";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
+import { App } from "antd";
 
 export default function HomePage() {
     const [profile, setProfile] = useState(null);
@@ -29,10 +32,13 @@ export default function HomePage() {
     const [privateNotifications, setPrivateNotifications] = useState([]); 
     const [publicNotifications, setPublicNotifications] = useState([]); 
     const [isModelOpen, setIsModelOpen] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState('connecting');
     const {userid} = useParams();
+    const useridRef = useRef(null);
     const [searchParams, setSearchParams] = useSearchParams();
     const tabKey = parseInt(searchParams.get('tabKey'));
     const navigate = useNavigate();
+    const { message } = App.useApp();
 
     useEffect(() => {
         const fetch = async () => {
@@ -111,14 +117,12 @@ export default function HomePage() {
                 const now = new Date();
                 if(!storage) {
                     setIsModelOpen(true);
-                    localStorage.setItem('notificationModal_' + profile.userid, JSON.stringify(now.getTime()));
                 }
                 const history = new Date(parseInt(storage));
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 const historyDate = new Date(history.getFullYear(), history.getMonth(), history.getDate());
-                if(today !== historyDate) {
+                if(today.getTime() !== historyDate.getTime()) {
                     setIsModelOpen(true);
-                    localStorage.setItem('notificationModal_' + profile.userid, JSON.stringify(now.getTime()));
                 }
             }
             else {
@@ -127,6 +131,50 @@ export default function HomePage() {
         }
         setModal();
     }, [profile, privateNotifications, publicNotifications, setIsModelOpen]);
+
+    useEffect(() => {
+        useridRef.current = profile?.userid;
+    }, [profile]);
+
+    useEffect(() => {
+        const socket = new SockJS("http://localhost:8080/ws");
+        const client = Stomp.over(socket);
+        
+        setConnectionStatus('connecting');
+        
+        client.connect({}, 
+            () => {
+                setConnectionStatus('connected');
+                client.subscribe("/user/queue/notifications/notify", async (msg) => {
+                    try {
+                        const receivedMsg = JSON.parse(msg.body);
+                        console.log(receivedMsg);
+                        if(receivedMsg.touserid !== useridRef.current) {
+                            message.error('消息发送错误');
+                            return;
+                        }
+                        const fetched_notifications_private = await getPrivateNotification();
+                        const fetched_notifications_public = await getPublicNotification();
+                        setPrivateNotifications(fetched_notifications_private);
+                        setPublicNotifications(fetched_notifications_public);
+                    } catch (error) {
+                        console.error('处理消息失败:', error);
+                    }
+                });
+            },
+            (error) => {
+                console.error('WebSocket连接失败:', error);
+                setConnectionStatus('disconnected');
+            }
+        );
+        
+        return () => {
+            if(client && client.connected) {
+                client.disconnect();
+            }
+            setConnectionStatus('disconnected');
+        };
+    }, []);
 
     if(!profile || (!userid && !emotion)) {
         return (
@@ -143,7 +191,12 @@ export default function HomePage() {
         <CustomLayout update={update} content={
             <HomeLayout 
                 header={<ProfileHeader profile={profile} id={userid} />} 
-                modal={<NotificationModal isModelOpen={isModelOpen} setIsModelOpen={setIsModelOpen} highPublic={highPublic} highPrivate={highPrivate}/>}
+                modal={<NotificationModal 
+                    profile={profile}
+                    isModelOpen={isModelOpen} 
+                    setIsModelOpen={setIsModelOpen} 
+                    highPublic={highPublic} 
+                    highPrivate={highPrivate}/>}
                 edit={<ProfileEdit profile={profile} setUpdate={setUpdate} />} 
                 view={<ProfileView profile={profile} />} 
                 emotionCard={<EmotionCard emotion={emotion} />} 
@@ -155,94 +208,4 @@ export default function HomePage() {
             />
         }/>
     )
-
-    /*
-        user: {
-            password: 
-            stuid:
-            profile: {
-                userid:     *
-                username:   *
-                email:
-                avatar:     *
-                note:       *
-                role:
-            }
-        }
-
-        emotion: {
-            emotionid:
-            userid:
-            timestamp:
-            tag: {
-                id:
-                content:
-            }
-            score:
-        }
-
-        diary: {
-            diaryid:
-            userid:
-            timestamp:
-            label: (0->positive  1->neutral  2->negative)
-            content:
-        }
-
-        blog: {
-            blogid:
-            userid:
-            timestamp:
-            likeNum:
-            title:
-            cover:
-            content:
-            tag[]
-            reply[]
-
-            reply: {
-                replyid:
-                blogid:
-                userid:
-                timestamp:
-                content:
-            }
-        }
-
-        urlData: {
-            urlid:
-            type: (music/article)
-            title:
-            img:
-            description:
-            url:
-        }
-
-        session: {
-            sessionid:
-            myself:  (id in database)   (simplified)
-            other:  (id in database)   (simplified)
-            timestamp: (最近一次私信的时间)
-            unread: 
-            messages[]
-
-            message: {
-                messageid:
-                role: (0->myself, 1->other)
-                timestamp
-                content
-            }
-        }
-
-        AIsession: {
-            sessionid: 
-            timestamp: (最近一次聊天的时间)
-            messages[]
-
-            message: {
-                role:
-                content:
-            }
-        }
-    */
 }

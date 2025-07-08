@@ -5,7 +5,7 @@ import { getTags, checkNegative } from "../../service/emotion";
 import Loading from "../loading";
 import PushList from "../pushlist";
 import { useNavigate } from "react-router-dom";
-import { getUrlDatasByTag } from "../../service/pushcontent";
+import { getUrlDatas } from "../../service/pushcontent";
 
 const { Title, Text } = Typography;
 
@@ -21,7 +21,7 @@ export default function EmotionCard({emotion}) {
         const fetch = async () => {
             const fetched_tags = await getTags();
             const isNegative = await checkNegative();
-            const fetched_urls = (emotion.tag ? await getUrlDatasByTag(emotion.tag.id, 0, pageSize) : []);
+            const fetched_urls = await getUrlDatas(0, pageSize);
             setTags(fetched_tags);
             setNegative(isNegative);
             setUrlDatas(fetched_urls);

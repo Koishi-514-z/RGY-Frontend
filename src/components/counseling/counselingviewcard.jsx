@@ -32,8 +32,8 @@ export default function CounselingViewCard({psyProfiles}) {
 
     const getSpecialtyColor = (index) => {
         const colors = [
-            '#1890ff', '#52c41a', '#722ed1', '#fa8c16', 
-            '#eb2f96', '#13c2c2', '#faad14', '#f5222d'
+            '#1890ff', '#52c41a', '#fa8c16', '#eb2f96', 
+            '#13c2c2', '#faad14', '#f5222d', '#722ed1'
         ];
         return colors[index % colors.length];
     };
@@ -61,7 +61,7 @@ export default function CounselingViewCard({psyProfiles}) {
                 right: '-50px',
                 width: '150px',
                 height: '150px',
-                background: 'rgba(114, 46, 209, 0.05)',
+                background: 'rgba(24, 144, 255, 0.05)',
                 borderRadius: '50%'
             }} />
             <div style={{
@@ -78,20 +78,20 @@ export default function CounselingViewCard({psyProfiles}) {
                 <div style={{
                     width: '80px',
                     height: '80px',
-                    background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                    background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                     borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 24px',
-                    boxShadow: '0 8px 24px rgba(114, 46, 209, 0.3)'
+                    boxShadow: '0 8px 24px rgba(24, 144, 255, 0.3)'
                 }}>
                     <UserOutlined style={{ fontSize: '32px', color: '#fff' }} />
                 </div>
                 
                 <Title level={4} style={{ 
                     margin: '0 0 8px 0',
-                    background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                    background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text'
@@ -124,27 +124,27 @@ export default function CounselingViewCard({psyProfiles}) {
                 <div style={{
                     margin: '0 -24px 0 -24px',
                     padding: '20px 24px',
-                    borderBottom: '1px solid rgba(114, 46, 209, 0.1)'
+                    borderBottom: '1px solid rgba(24, 144, 255, 0.1)'
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <div style={{
                                 width: '48px',
                                 height: '48px',
-                                background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                 borderRadius: '12px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 marginRight: '16px',
-                                boxShadow: '0 4px 12px rgba(114, 46, 209, 0.3)'
+                                boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)'
                             }}>
                                 <UserOutlined style={{ color: '#fff', fontSize: '20px' }} />
                             </div>
                             <div>
                                 <Title level={4} style={{ 
                                     margin: 0,
-                                    background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                    background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
                                     backgroundClip: 'text'
@@ -166,7 +166,7 @@ export default function CounselingViewCard({psyProfiles}) {
                             <Text style={{ 
                                 fontSize: '12px',
                                 fontWeight: '600',
-                                color: '#722ed1'
+                                color: '#1890ff'
                             }}>
                                 共 {psyProfiles.length} 位咨询师
                             </Text>
@@ -201,9 +201,9 @@ export default function CounselingViewCard({psyProfiles}) {
                             style={{
                                 borderRadius: '16px',
                                 overflow: 'hidden',
-                                border: '1px solid rgba(114, 46, 209, 0.15)',
+                                border: '1px solid rgba(24, 144, 255, 0.15)',
                                 background: 'rgba(255, 255, 255, 0.9)',
-                                boxShadow: '0 6px 20px rgba(114, 46, 209, 0.12)',
+                                boxShadow: '0 6px 20px rgba(24, 144, 255, 0.12)',
                                 transition: 'all 0.3s ease',
                                 backdropFilter: 'blur(10px)'
                             }}
@@ -216,9 +216,9 @@ export default function CounselingViewCard({psyProfiles}) {
                                                 src={psy.avatar} 
                                                 size={80}
                                                 style={{ 
-                                                    boxShadow: '0 6px 16px rgba(114, 46, 209, 0.2)',
+                                                    boxShadow: '0 6px 16px rgba(24, 144, 255, 0.2)',
                                                     border: '4px solid #fff',
-                                                    backgroundColor: '#722ed1'
+                                                    backgroundColor: '#1890ff'
                                                 }}
                                                 icon={<UserOutlined />}
                                             />
@@ -246,7 +246,7 @@ export default function CounselingViewCard({psyProfiles}) {
                                                     </Title>
                                                     <Tag 
                                                         style={{
-                                                            background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                                            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                                             border: 'none',
                                                             borderRadius: '12px',
                                                             color: '#fff',
@@ -285,7 +285,7 @@ export default function CounselingViewCard({psyProfiles}) {
                                                     </Text>
                                                 </Space>
                                                 <Space size={8}>
-                                                    <BookOutlined style={{ color: '#722ed1', fontSize: '14px' }} />
+                                                    <BookOutlined style={{ color: '#1890ff', fontSize: '14px' }} />
                                                     <Text style={{ fontSize: '13px', color: '#595959' }}>
                                                         {formatWorkingYears(psy.workingYears)}
                                                     </Text>
@@ -339,7 +339,7 @@ export default function CounselingViewCard({psyProfiles}) {
                                                 justifyContent: 'space-between',
                                                 alignItems: 'center',
                                                 paddingTop: '16px',
-                                                borderTop: '1px solid rgba(114, 46, 209, 0.1)'
+                                                borderTop: '1px solid rgba(24, 144, 255, 0.1)'
                                             }}>
                                                 <Space size={20}>
                                                     {psy.location && (
@@ -397,8 +397,8 @@ export default function CounselingViewCard({psyProfiles}) {
                                                         icon={<MessageOutlined />}
                                                         style={{
                                                             borderRadius: '8px',
-                                                            border: '1px solid #722ed1',
-                                                            color: '#722ed1'
+                                                            border: '1px solid #1890ff',
+                                                            color: '#1890ff'
                                                         }}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
@@ -411,7 +411,7 @@ export default function CounselingViewCard({psyProfiles}) {
                                                         type="primary"
                                                         size="small"
                                                         style={{
-                                                            background: 'linear-gradient(135deg, #722ed1 0%, #9254de 100%)',
+                                                            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                                             border: 'none',
                                                             borderRadius: '8px',
                                                             fontWeight: '500'

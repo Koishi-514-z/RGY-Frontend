@@ -5,7 +5,7 @@ import TabPane from "antd/es/tabs/TabPane";
 import { MessageOutlined, NotificationOutlined } from "@ant-design/icons";
 import CounselingView from "./counselingviewcard";
 
-export default function CounselingCard({availableTimes, setAvailableTimes, counseling}) {
+export default function CounselingCard({availableTimes, setAvailableTimes, counseling, fetchCounseling}) {
     const [activeTab, setActiveTab] = useState("select");
 
     return (
@@ -43,7 +43,7 @@ export default function CounselingCard({availableTimes, setAvailableTimes, couns
                     }
                     key="view"
                 >
-                    <CounselingView counseling={counseling} />
+                    <CounselingView counseling={counseling} fetchCounseling={fetchCounseling} />
                 </TabPane>
             </Tabs>
         </Card>

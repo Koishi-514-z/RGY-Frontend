@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Typography, Space, Avatar, Tag, Divider } from "antd";
-import { CalendarOutlined, NotificationOutlined, MessageOutlined, ExclamationCircleOutlined, InfoCircleOutlined, CheckOutlined, BellOutlined, WarningOutlined } from "@ant-design/icons";
+import { Modal, Typography, Space, Avatar, Tag, Divider, Button } from "antd";
+import { CalendarOutlined, NotificationOutlined, MessageOutlined, ExclamationCircleOutlined, InfoCircleOutlined, CheckOutlined, BellOutlined, WarningOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
-export default function NotificationModal({isModelOpen, setIsModelOpen, highPublic, highPrivate}) {
+export default function NotificationModal({profile, isModelOpen, setIsModelOpen, highPublic, highPrivate}) {
+    const now = new Date();
+    
+    const handleNotShow = () => {
+        localStorage.setItem('notificationModal_' + profile.userid, JSON.stringify(now.getTime()));
+        setIsModelOpen(false);
+    }
+
     const handleClose = () => {
         setIsModelOpen(false);
     }
@@ -207,6 +214,25 @@ export default function NotificationModal({isModelOpen, setIsModelOpen, highPubl
                 okText="我知道了"
                 cancelText="关闭"
                 centered
+                footer={[
+                    <Button 
+                        key="notToday" 
+                        icon={<ClockCircleOutlined />}
+                        onClick={handleNotShow}
+                        style={{
+                            color: '#8c8c8c',
+                            borderColor: '#d9d9d9'
+                        }}
+                    >
+                        今日不再显示
+                    </Button>,
+                    <Button key="cancel" onClick={handleClose}>
+                        关闭
+                    </Button>,
+                    <Button key="ok" type="primary" onClick={handleOk}>
+                        我知道了
+                    </Button>
+                ]}
             >
                 <div>
                     {highPublic.length > 0 && (

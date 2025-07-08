@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Avatar, Space, Dropdown, message, App } from 'antd';
+import { Typography, Avatar, Space, Dropdown, App } from 'antd';
 import { UserOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons';
 import { logout } from "../service/user";
 import { useNavigate } from "react-router-dom";
