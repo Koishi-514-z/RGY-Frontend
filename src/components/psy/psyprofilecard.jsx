@@ -25,6 +25,8 @@ export default function PsyProfileCard({profile, handleSubscribe, guest = false}
     const navigate = useNavigate();
     const { message } = App.useApp();
 
+    console.log(profile);
+
     const handleCounseling = async () => {
         if(!guest) {
             return;
@@ -197,11 +199,11 @@ export default function PsyProfileCard({profile, handleSubscribe, guest = false}
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                             <Text style={{ fontSize: '13px', color: '#595959' }}>咨询满意度</Text>
                             <Text style={{ fontSize: '13px', color: '#722ed1', fontWeight: 'bold' }}>
-                                {profile.successRate}%
+                                {profile.successRate * 100}%
                             </Text>
                         </div>
                         <Progress 
-                            percent={profile.successRate} 
+                            percent={profile.successRate * 100} 
                             size="small" 
                             strokeColor="#722ed1"
                             showInfo={false}

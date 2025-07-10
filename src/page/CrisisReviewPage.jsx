@@ -19,7 +19,7 @@ const CrisisReviewPage = () => {
     const [searchText, setSearchText] = useState('');
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
     const [selectedCrisis, setSelectedCrisis] = useState(null);
-    const [urgencyLevel, setUrgencyLevel] = useState('high');
+    const [urgencyLevel, setUrgencyLevel] = useState(2);
     const [urgencyFilter, setUrgencyFilter] = useState('all');
     const navigate = useNavigate();
     const [update, setUpdate] = useState(false);
@@ -113,12 +113,13 @@ const CrisisReviewPage = () => {
     };
 
     const getUrgencyTag = (level) => {
+        console.log(level);
         const levels = {
             2: { color: '#ff4d4f', text: '高危' },
             1: { color: '#faad14', text: '中危' },
             0: { color: '#52c41a', text: '低危' }
         };
-        const info = levels[level] || levels.high;
+        const info = levels[level];
         return <Tag color={info.color} style={{ fontWeight: 'bold' }}>{info.text}</Tag>;
     };
 
@@ -171,10 +172,9 @@ const CrisisReviewPage = () => {
             key: 'urgencyLevel',
 
             sorter: (a, b) => {
-
                 return a.urgencyLevel - b.urgencyLevel;
             },
-            render: (level) => getUrgencyTag(level || 'high') // 默认显示高危
+            render: (level) => getUrgencyTag(level) // 默认显示高危
         },
         {
             title: '检测时间',
@@ -390,13 +390,13 @@ const CrisisReviewPage = () => {
                                 onChange={setUrgencyLevel}
                                 className="priority-select"
                             >
-                                <Option value="high">
+                                <Option value={2}>
                                     <Tag color="#ff4d4f">高危</Tag>
                                 </Option>
-                                <Option value="medium">
+                                <Option value={1}>
                                     <Tag color="#faad14">中危</Tag>
                                 </Option>
-                                <Option value="low">
+                                <Option value={0}>
                                     <Tag color="#52c41a">低危</Tag>
                                 </Option>
                             </Select>
