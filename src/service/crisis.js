@@ -13,6 +13,8 @@ export async function getAuditingCrisis() {
     return res;
 }
 
+
+
 export async function getAllConfirmedCrisis() {
     const url = `${PREFIX}/crisis/getall`;
     let res;

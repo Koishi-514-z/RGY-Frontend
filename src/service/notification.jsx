@@ -12,6 +12,8 @@ export async function getPrivateNotification() {
     return notify;
 }
 
+
+
 export async function getPublicNotification() {
     const url = `${PREFIX}/notification/public/get`;
     let notify;
