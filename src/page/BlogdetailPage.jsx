@@ -28,6 +28,10 @@ import ParticleBackground from "../components/layout/particlebackground";
 import Loading from "../components/loading";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
+
+
 dayjs.extend(relativeTime);
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -43,6 +47,7 @@ export default function BlogdetailPage() {
     const { message, modal } = App.useApp();
     const reportRef = useRef(null);
     const [reportReason, setReportReason] = useState(null);
+    const [connectionStatus, setConnectionStatus] = useState('connecting');
 
     // 举报原因选项
     const reportReasons = [
@@ -53,27 +58,27 @@ export default function BlogdetailPage() {
         "其他违规内容"
     ];
 
+    const fetchBlog = async () => {
+        try {
+            const fetchedBlog = await getBlogById(id);
+            setBlog(fetchedBlog);
+            setNumLikes(fetchedBlog.likeNum);
+            setReplies(fetchedBlog.replies || []);
+        } catch (error) {
+            message.error("加载帖子失败");
+        }
+    };
+
+    const getIfLiked = async () => {
+        try {
+            const liked = await getLiked(id);
+            setIsLiked(liked);
+        } catch (error) {
+            console.error("获取点赞状态失败", error);
+        }
+    };
+
     useEffect(() => {
-        const fetchBlog = async () => {
-            try {
-                const fetchedBlog = await getBlogById(id);
-                setBlog(fetchedBlog);
-                setNumLikes(fetchedBlog.likeNum);
-                setReplies(fetchedBlog.replies || []);
-            } catch (error) {
-                message.error("加载帖子失败");
-            }
-        };
-
-        const getIfLiked = async () => {
-            try {
-                const liked = await getLiked(id);
-                setIsLiked(liked);
-            } catch (error) {
-                console.error("获取点赞状态失败", error);
-            }
-        };
-
         fetchBlog();
         getIfLiked();
     }, [id]);
@@ -85,6 +90,41 @@ export default function BlogdetailPage() {
         updateRef();
 
     }, [reportReason]);
+
+    useEffect(() => {
+        const socket = new SockJS("http://localhost:8080/ws");
+        const client = Stomp.over(socket);
+        
+        setConnectionStatus('connecting');
+        
+        client.connect({}, 
+            () => {
+                setConnectionStatus('connected');
+                client.subscribe("/topic/messages/blog", async (msg) => {
+                    try {
+                        const receivedMsg = JSON.parse(msg.body);
+                        console.log(receivedMsg);
+                        fetchBlog();
+                        getIfLiked();
+                        
+                    } catch (error) {
+                        console.error('处理消息失败:', error);
+                    }
+                });
+            },
+            (error) => {
+                console.error('WebSocket连接失败:', error);
+                setConnectionStatus('disconnected');
+            }
+        );
+        
+        return () => {
+            if(client && client.connected) {
+                client.disconnect();
+            }
+            setConnectionStatus('disconnected');
+        };
+    }, []);
 
     // 点赞/取消点赞
 

@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Card, Tabs, List, Avatar, Space, Badge, Button, Typography, Tag, Empty, Tooltip, Divider, App, Popconfirm } from "antd";
 import { BellOutlined, NotificationOutlined, MessageOutlined, EyeOutlined, DeleteOutlined, SettingOutlined, CheckOutlined, ClearOutlined, ExclamationCircleOutlined, InfoCircleOutlined, WarningOutlined } from "@ant-design/icons";
-import { getPrivateNotification, markRead, markAllRead, deleteNotification } from "../../service/notification";
+import { getPrivateNotification, markRead, markAllRead, deleteNotification, markPublicRead, markAllPublicRead, getNotification, markAllPrivateRead } from "../../service/notification";
 
 const { Text, Title } = Typography;
 const { TabPane } = Tabs;
 
-export default function NotificationCard({ privateNotifications, setPrivateNotifications, publicNotifications }) {
+export default function NotificationCard({ privateNotifications, publicNotifications, fetchNotification }) {
     const [activeTab, setActiveTab] = useState("public");
     const { message, modal } = App.useApp();
 
     const unreadPrivate = privateNotifications.filter(item => item.unread).length;
-    const unreadOrHighprivate = privateNotifications.filter(item => item.priority === 'high' || item.unread).length;
-    const highPublic = publicNotifications.filter(item => item.priority === 'high').length;
+    const unreadPublic = publicNotifications.filter(item => item.unread).length;
 
     const markAsRead = async (notificationid) => {
         const res = await markRead(notificationid);
@@ -21,22 +20,37 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
             return;
         }
         message.success('已标记为已读');
-        setPrivateNotifications(await getPrivateNotification());
+        fetchNotification();
     };
 
-    const markAllAsRead = async () => {
+    const markAllPrivateAsRead = async () => {
         if(unreadPrivate === 0) {
             message.info('暂无未读通知');
             return;
         }
         
-        const res = await markAllRead();
+        const res = await markAllPrivateRead();
         if (!res) {
             message.error('批量标记失败');
             return;
         }
         message.success(`已将 ${unreadPrivate} 条通知标记为已读`);
-        setPrivateNotifications(await getPrivateNotification());
+        fetchNotification();
+    };
+
+    const markAllPublicAsRead = async () => {
+        if(unreadPublic === 0) {
+            message.info('暂无未读公告');
+            return;
+        }
+        
+        const res = await markAllPublicRead();
+        if (!res) {
+            message.error('批量标记失败');
+            return;
+        }
+        message.success(`已将 ${unreadPublic} 条公告标记为已读`);
+        fetchNotification();
     };
 
     const handleDelete = async (notificationid) => {
@@ -46,12 +60,12 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
             return;
         }
         message.success('通知已删除');
-        setPrivateNotifications(await getPrivateNotification());
+        fetchNotification();
     };
 
     const clearReadNotifications = () => {
         const readNotifications = privateNotifications.filter(item => !item.unread);
-        if (readNotifications.length === 0) {
+        if(readNotifications.length === 0) {
             message.info('暂无已读通知');
             return;
         }
@@ -72,7 +86,7 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                     }
                 }
                 message.success('已清空所有已读通知');
-                setPrivateNotifications(await getPrivateNotification());
+                fetchNotification();
             }
         });
     };
@@ -140,8 +154,8 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                 key={item.notificationid}
                 style={{
                     padding: '16px',
-                    background: isPrivate && item.unread ? '#f6ffed' : '#fff',
-                    border: isPrivate && item.unread ? '1px solid #b7eb8f' : '1px solid #f0f0f0',
+                    background: item.unread ? '#f6ffed' : '#fff',
+                    border: item.unread ? '1px solid #b7eb8f' : '1px solid #f0f0f0',
                     borderRadius: '8px',
                     marginBottom: '8px',
                     transition: 'all 0.3s ease',
@@ -149,7 +163,7 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                     overflow: 'hidden'
                 }}
                 actions={[
-                    isPrivate && item.unread && (
+                    item.unread && (
                         <Tooltip title="标记为已读">
                             <Button
                                 type="text"
@@ -201,7 +215,7 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                                     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                                 }}
                             />
-                            {isPrivate && item.unread !== 0 && (
+                            {item.unread !== 0 && (
                                 <div style={{
                                     position: 'absolute',
                                     top: -2,
@@ -220,7 +234,7 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                             <Text strong style={{ 
                                 fontSize: '14px',
-                                color: isPrivate && !item.unread ? '#595959' : '#262626',
+                                color: !item.unread ? '#595959' : '#262626',
                                 ...getPriorityStyle(item.priority)
                             }}>
                                 {item.title}
@@ -241,7 +255,7 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                                 <Badge status="error" text="重要" style={{ fontSize: '10px' }} />
                             )}
                             
-                            {isPrivate && !item.unread && (
+                            {!item.unread && (
                                 <Tag color="default" style={{ fontSize: '10px', margin: 0 }}>
                                     已读
                                 </Tag>
@@ -254,7 +268,7 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                                 style={{ 
                                     fontSize: '13px',
                                     lineHeight: '1.4',
-                                    color: isPrivate && !item.unread ? '#8c8c8c' : '#595959',
+                                    color: !item.unread ? '#8c8c8c' : '#595959',
                                     display: 'block',
                                     marginBottom: '8px'
                                 }}
@@ -288,9 +302,9 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                     <Space>
                         <BellOutlined style={{ color: '#1890ff', fontSize: '18px' }} />
                         <Title level={4} style={{ margin: 0 }}>通知消息</Title>
-                        {(highPublic + unreadOrHighprivate > 0) && (
+                        {(unreadPublic + unreadPrivate > 0) && (
                             <Badge 
-                                count={highPublic + unreadOrHighprivate} 
+                                count={unreadPublic + unreadPrivate} 
                                 style={{ 
                                     backgroundColor: '#ff4d4f',
                                     boxShadow: '0 0 0 1px #fff'
@@ -325,9 +339,9 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                         <Space>
                             <NotificationOutlined />
                             <span>公告</span>
-                            {publicNotifications.length > 0 && (
+                            {unreadPublic > 0 && (
                                 <Badge
-                                    count={publicNotifications.length}
+                                    count={unreadPublic}
                                     size="small"
                                     style={{ backgroundColor: '#1890ff' }}
                                 />
@@ -358,9 +372,9 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
                         <Space>
                             <MessageOutlined />
                             <span>私有通知</span>
-                            {unreadOrHighprivate > 0 && (
+                            {unreadPrivate > 0 && (
                                 <Badge
-                                    count={unreadOrHighprivate}
+                                    count={unreadPrivate}
                                     size="small"
                                     style={{ backgroundColor: '#722ed1' }}
                                 />
@@ -395,34 +409,47 @@ export default function NotificationCard({ privateNotifications, setPrivateNotif
             }}>
                 <Text type="secondary" style={{ fontSize: '12px' }}>
                     {activeTab === 'public' 
-                        ? `共 ${publicNotifications?.length || 0} 条公告`
+                        ? `共 ${publicNotifications?.length || 0} 条公告，${unreadPublic} 条未读`
                         : `共 ${privateNotifications?.length || 0} 条通知，${unreadPrivate} 条未读`
                     }
                 </Text>
                 
-                {activeTab === 'private' && (
-                    <Space size={8}>
+                <Space size={8}>
+                    {activeTab === 'public' ? (
                         <Button 
                             type="link" 
                             size="small" 
                             style={{ fontSize: '12px' }}
-                            disabled={unreadPrivate === 0}
-                            onClick={markAllAsRead}
+                            disabled={unreadPublic === 0}
+                            onClick={markAllPublicAsRead}
                             icon={<CheckOutlined />}
                         >
                             全部已读
                         </Button>
-                        <Button 
-                            type="link" 
-                            size="small" 
-                            style={{ fontSize: '12px' }}
-                            onClick={clearReadNotifications}
-                            icon={<ClearOutlined />}
-                        >
-                            清空已读
-                        </Button>
-                    </Space>
-                )}
+                    ) : (
+                        <>
+                            <Button 
+                                type="link" 
+                                size="small" 
+                                style={{ fontSize: '12px' }}
+                                disabled={unreadPrivate === 0}
+                                onClick={markAllPrivateAsRead}
+                                icon={<CheckOutlined />}
+                            >
+                                全部已读
+                            </Button>
+                            <Button 
+                                type="link" 
+                                size="small" 
+                                style={{ fontSize: '12px' }}
+                                onClick={clearReadNotifications}
+                                icon={<ClearOutlined />}
+                            >
+                                清空已读
+                            </Button>
+                        </>
+                    )}
+                </Space>
             </div>
 
             <style jsx>{`

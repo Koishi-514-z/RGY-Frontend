@@ -80,16 +80,6 @@ export default function ProfileHeader({profile, id}) {
                             <Title level={3} style={{ margin: 0, color: '#262626' }}>
                                 {profile.username}
                             </Title>
-                            <Tag 
-                                color="#1890ff" 
-                                style={{ 
-                                    borderRadius: '12px',
-                                    fontSize: '11px',
-                                    fontWeight: '500'
-                                }}
-                            >
-                                活跃用户
-                            </Tag>
                         </div>
                         
                         <Space direction="vertical" size={8} style={{ marginBottom: 16 }}>
