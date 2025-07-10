@@ -54,7 +54,7 @@ export default function NotificationModal({profile, isModelOpen, setIsModelOpen,
         });
     };
 
-    const renderNotificationItem = (item, isPublic = false) => {
+    const renderNotificationItem = (item) => {
         const typeInfo = getNotificationTypeInfo(item.type);
         
         return (
@@ -127,7 +127,7 @@ export default function NotificationModal({profile, isModelOpen, setIsModelOpen,
                                 重要
                             </Tag>
 
-                            {!isPublic && item.unread && (
+                            {item.unread && (
                                 <div style={{
                                     width: '6px',
                                     height: '6px',
@@ -255,7 +255,7 @@ export default function NotificationModal({profile, isModelOpen, setIsModelOpen,
                                 </Tag>
                             </div>
                             
-                            {highPublic.map(item => renderNotificationItem(item, true))}
+                            {highPublic.map(item => renderNotificationItem(item))}
                         </div>
                     )}
 
@@ -283,7 +283,7 @@ export default function NotificationModal({profile, isModelOpen, setIsModelOpen,
                                 </Tag>
                             </div>
                             
-                            {highPrivate.map(item => renderNotificationItem(item, false))}
+                            {highPrivate.map(item => renderNotificationItem(item))}
                         </div>
                     )}
                 </div>

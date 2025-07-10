@@ -13,6 +13,8 @@ import { getBlogs, getLatestBlogs } from "../service/community";
 import CustomLayout from "../components/layout/customlayout";
 import { Header } from "antd/es/layout/layout";
 import ParticleBackground from "../components/layout/particlebackground";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
 
 dayjs.extend(relativeTime);
 const { Option } = Select;
@@ -88,18 +90,18 @@ export default function CommunityPage() {
     const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
 
-    // 获取博客数据
+    const fetchBlogs = async () => {
+        let result;
+        if (sortOrder === 'recommend') {
+            result = await getBlogs(pageSize, currentPage, searchText, tags);
+        } else {
+            result = await getLatestBlogs(pageSize, currentPage, searchText, tags);
+        }
+        setBlogs(result.blogs);
+        setTotal(result.total);
+    };
+
     useEffect(() => {
-        const fetchBlogs = async () => {
-            let result;
-            if (sortOrder === 'recommend') {
-                result = await getBlogs(pageSize, currentPage, searchText, tags);
-            } else {
-                result = await getLatestBlogs(pageSize, currentPage, searchText, tags);
-            }
-            setBlogs(result.blogs);
-            setTotal(result.total);
-        };
         fetchBlogs();
     }, [pageSize, currentPage, searchText, tags, sortOrder]);
 
