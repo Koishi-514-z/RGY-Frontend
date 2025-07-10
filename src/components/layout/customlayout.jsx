@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Layout, Avatar, Badge, Space, Button, Dropdown, Tooltip } from 'antd';
-import { UserOutlined, BellOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Typography, Layout, Avatar, Space } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import Navbar from "../navbar";
 import NavbarCounselor from "../admin/navbarcounselor";
 import { getUserProfile } from "../../service/user";
@@ -11,7 +11,7 @@ import UserHeader from "../userheader";
 const { Header, Content, Sider, Footer } = Layout;
 const { Title, Text } = Typography;
 
-export default function CustomLayout({content, role = 0}) {
+export default function CustomLayout({content, role = 0, update = 0}) {
     const [profile, setProfile] = useState(null);
 
     useEffect(() => {
@@ -20,7 +20,7 @@ export default function CustomLayout({content, role = 0}) {
             setProfile(fetched_profile);
         }
         fetch();
-    }, []);
+    }, [update]);
 
     if(role === 1) {
         return (
@@ -56,7 +56,7 @@ export default function CustomLayout({content, role = 0}) {
                     </div>
                     
                     <Space size={16}>
-                        <MessageInfromer />
+                        <MessageInfromer role={role}/>
                         <UserHeader profile={profile} />
                     </Space>
                 </Header>
@@ -152,7 +152,7 @@ export default function CustomLayout({content, role = 0}) {
                     </div>
                     
                     <Space size={16}>
-                        <MessageInfromer />
+                        <MessageInfromer role={role}/>
                         <UserHeader profile={profile} />
                     </Space>
                 </Header>
@@ -167,7 +167,8 @@ export default function CustomLayout({content, role = 0}) {
                             height: 'calc(100vh - 64px)',
                             top: 64,
                             overflow: 'auto',
-                            background: 'linear-gradient(180deg, #f9f0ff 0%, #fff 100%)' 
+                            background: 'linear-gradient(180deg, #f9f0ff 0%, #fff 100%)',
+                            zIndex: 1
                         }}
                     >
                         <div style={{ 
@@ -221,7 +222,8 @@ export default function CustomLayout({content, role = 0}) {
                     background: '#f9f0ff',
                     padding: '20px 50px',
                     borderTop: '2px solid #efdbff',
-                    boxShadow: '0 -2px 8px rgba(114, 46, 209, 0.08)'
+                    boxShadow: '0 -2px 8px rgba(114, 46, 209, 0.08)',
+                    zIndex: 1
                 }}>
                     <Text style={{ fontWeight: 600, color: '#722ed1' }}>
                         校园心理健康互助社区 ©2025 林淳远 & 郭旭涛 & Koishi 版权所有
@@ -253,7 +255,7 @@ export default function CustomLayout({content, role = 0}) {
                 </div>
                 
                 <Space size={16}>
-                    <MessageInfromer />
+                    <MessageInfromer role={role}/>
                     <UserHeader profile={profile} />
                 </Space>
             </Header>

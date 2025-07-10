@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Space, Typography, Badge, Button, Row, Col, Statistic, Progress, Tag, Tooltip, Empty, Avatar, Divider } from "antd";
+import { Card, Space, Typography, Badge, Button, Row, Col, Statistic, Progress, Tag, Tooltip, Avatar } from "antd";
 import { FileTextOutlined, HeartOutlined, CommentOutlined, PlusOutlined, EyeOutlined, TrophyOutlined, FireOutlined, CalendarOutlined, UserOutlined, RiseOutlined } from "@ant-design/icons";
 import BlogList from "./bloglist";
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ const { Title, Text } = Typography;
 
 export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
     const navigate = useNavigate();
+    console.log(myBlogs);
 
     const handleClick = () => {
         navigate(`/post`);
@@ -31,8 +32,9 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
 
     const getLastPostTime = () => {
         if (myBlogs.length === 0) return null;
-        const latestBlog = myBlogs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-        return new Date(latestBlog.createdAt).toLocaleDateString('zh-CN');
+        const latestBlog = myBlogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+        console.log(latestBlog);
+        return new Date(latestBlog.timestamp).toLocaleDateString('zh-CN');
     };
 
     const getUserLevel = () => {

@@ -32,11 +32,11 @@ export default function IntimateCard({intimateUsers}) {
             <List
                 grid={{ gutter: 24, column: 2, xs: 1, sm: 2 }}
                 dataSource={intimateUsers}
-                renderItem={(user, index) => (
+                renderItem={(data) => (
                     <List.Item>
                         <Card 
                             hoverable={true}
-                            onClick={() => navigate(`/home/${user.userid}`)}
+                            onClick={() => navigate(`/home/${data.intimateProfile.userid}`)}
                             style={{ 
                                 borderRadius: '8px',
                                 transition: 'all 0.3s',
@@ -53,14 +53,14 @@ export default function IntimateCard({intimateUsers}) {
                                 <Avatar 
                                     size={80} 
                                     icon={<UserOutlined />}
-                                    src={user.avatar}
+                                    src={data.intimateProfile.avatar}
                                     style={{ 
-                                        backgroundColor: user.avatar ? 'transparent' : '#1890ff',
+                                        backgroundColor: data.intimateProfile.avatar ? 'transparent' : '#1890ff',
                                         boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
                                         border: '2px solid #fff'
                                     }}
                                 />
-                                <Tooltip title="情绪匹配度">
+                                <Tooltip title={"情绪匹配度：" + data.intimateScore}>
                                     <div style={{ 
                                         position: 'absolute',
                                         bottom: -5,
@@ -92,10 +92,10 @@ export default function IntimateCard({intimateUsers}) {
                                         marginBottom: '4px'
                                     }}
                                 >
-                                    {user.username}
+                                    {data.intimateProfile.username}
                                 </Text>
                                 <Text type="secondary" style={{ fontSize: '13px' }}>
-                                    {user.note || "这个人很神秘，没有留下个性签名"}
+                                    {data.intimateProfile.note || "这个人很神秘，没有留下个性签名"}
                                 </Text>
                             </div>
                         </Card>

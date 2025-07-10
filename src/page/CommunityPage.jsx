@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import {
     Avatar, Button, Col, Divider, Input, Layout, Pagination, Row, Select, Space, Tag, Typography, Menu
@@ -145,7 +144,6 @@ export default function CommunityPage() {
                             </Title>
                         </div>
                     </Space>
-
                     {/* 搜索和标签过滤框 - 放入顶栏 */}
                     <div style={{ flex: 1, maxWidth: '600px', margin: '0 24px' }}>
                         <Row gutter={16}>
@@ -169,7 +167,6 @@ export default function CommunityPage() {
                                     value={tags}
                                     onChange={setTags}
                                 >
-                                    <Option value="all">全部</Option>
                                     <Option value="学习">学习</Option>
                                     <Option value="生活">生活</Option>
                                     <Option value="情感">情感</Option>
@@ -582,14 +579,14 @@ export default function CommunityPage() {
         .skeleton-line.long {
           width: 100%;
         }
-        
+
         @media (max-width: 992px) {
           .ant-layout-header {
             flex-wrap: wrap;
             height: auto !important;
             padding: 16px !important;
           }
-          
+
           .header-search-section {
             order: 3;
             width: 100%;
@@ -614,7 +611,7 @@ export default function CommunityPage() {
             flex-direction: column;
             align-items: flex-start;
           }
-          
+
           .section-header .ant-menu {
             margin-top: 12px;
             width: 100%;

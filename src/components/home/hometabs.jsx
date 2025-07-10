@@ -1,10 +1,14 @@
 import React from "react";
 import { Tabs, Tooltip } from "antd";
-import { UserOutlined, FileTextOutlined, SettingOutlined, HeartOutlined, BarChartOutlined, TeamOutlined } from "@ant-design/icons";
+import { UserOutlined, FileTextOutlined, SettingOutlined, HeartOutlined, BarChartOutlined } from "@ant-design/icons";
+import { useSearchParams } from "react-router-dom";
 
-export default function HomeTabs({tabKey, setTabKey, id}) {
+export default function HomeTabs({id}) {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabKey = parseInt(searchParams.get('tabKey'));
+
     const onChange = (key) => {
-        setTabKey(key);
+        setSearchParams({tabKey: key});
     };
 
     const items = [
@@ -48,11 +52,11 @@ export default function HomeTabs({tabKey, setTabKey, id}) {
             disabled: id
         },
         {
-            key: 6,
+            key: 7,
             label: (
                 <span>
                     <BarChartOutlined style={{ marginRight: 8 }} />
-                    心理咨询
+                    我的通知
                 </span>
             ),
             disabled: id

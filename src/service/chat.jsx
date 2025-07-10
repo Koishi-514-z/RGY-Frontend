@@ -39,7 +39,7 @@ export async function createSession(userid) {
     return sessionid;
 }
 
-//  如不存在，返回'NOT FOUND'
+//  如不存在，返回null
 export async function getSessionid(userid) {
     userid = encodeURIComponent(userid);
     const url = `${PREFIX}/chat/getid?userid=${userid}`;

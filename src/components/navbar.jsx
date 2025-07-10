@@ -21,6 +21,10 @@ export default function Navbar() {
             key: 'community'
         },
         {
+            label: '心理咨询',
+            key: 'counseling'
+        },
+        {
             label: 'AI助手',
             key: 'AIassistant'
         }
@@ -36,6 +40,9 @@ export default function Navbar() {
         }
         else if (path.includes('/community')) {
             setCurrent('community');
+        }
+        else if (path.includes('/counseling')) {
+            setCurrent('counseling');
         }
         else if (path.includes('AIassistant')) {
             setCurrent('AIassistant');
@@ -57,6 +64,10 @@ export default function Navbar() {
             }
             case 'community': {
                 navigate(`/community`);
+                break;
+            }
+             case 'counseling': {
+                navigate(`/counseling`);
                 break;
             }
             case 'AIassistant': {

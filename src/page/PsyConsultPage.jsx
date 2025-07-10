@@ -6,7 +6,7 @@ import CustomLayout from "../components/layout/customlayout";
 import { Card, Divider } from "antd";
 
 
-export default function AdminConsultPage() {
+export default function PsyConsultPage() {
     const requests1 = [
         {
             id: 1,

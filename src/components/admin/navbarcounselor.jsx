@@ -9,12 +9,12 @@ export default function NavbarCounselor() {
 
     const items = [
         {
-            label: '心理健康统计',
-            key: 'stats'
+            label: '个人主页',
+            key: 'home'
         },
         {
-            label: '心理记录',
-            key: 'consult'
+            label: '心理健康统计',
+            key: 'stats'
         },
         {
             label: '推送',
@@ -24,13 +24,13 @@ export default function NavbarCounselor() {
 
     useEffect(() => {
         const path = location.pathname;
-        if(path.includes('/admin/stats')) {
+        if(path.includes('/psy/home')) {
+            setCurrent('home');
+        }
+        else if(path.includes('/psy/stats')) {
             setCurrent('stats');
         }
-        else if(path.includes('/admin/consult')) {
-            setCurrent('consult');
-        }
-        else if(path.includes('/admin/push')) {
+        else if(path.includes('/psy/push')) {
             setCurrent('push');
         }
         else {
@@ -40,20 +40,20 @@ export default function NavbarCounselor() {
 
     const onClick = (e) => {
         switch(e.key) {
-            case 'stats': {
-                navigate(`/admin/stats`);
+            case 'home': {
+                navigate(`/psy/home`);
                 break;
             }
-            case 'consult': {
-                navigate(`/admin/consult`);
+            case 'stats': {
+                navigate(`/psy/stats`);
                 break;
             }
             case 'push': {
-                navigate(`/admin/push`);
+                navigate(`/psy/push`);
                 break;
             }
             default: {
-                navigate(`/admin/stats`);
+                navigate(`/psy/home`);
                 break;
             }
         }

@@ -35,7 +35,7 @@ export default function LoginForm() {
             }
             else if(fetched_profile.role === 2) {
                 setTimeout(() => {
-                    navigate('/admin/stats');
+                    navigate('/psy/home');
                 }, 1500);
             }
             else {

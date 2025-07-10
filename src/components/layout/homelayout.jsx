@@ -1,11 +1,13 @@
 import React from "react";
-import { Layout, Typography, Space, Row, Col, Card } from "antd";
+import { Layout, Row, Col, Card } from "antd";
 import ParticleBackground from "./particlebackground";
 
-const { Header, Content } = Layout;
-const { Title } = Typography;
+const { Content } = Layout;
 
-export default function HomeLayout({header, edit, view, emotionCard, intimateCard, blogCard, emotionGraph, tabKey}) {
+export default function HomeLayout({header, modal,
+                                    edit, view, 
+                                    emotionCard, intimateCard, blogCard, emotionGraph, notificationcard, 
+                                    tabKey}) {
     let content;
 
     switch(tabKey) {
@@ -59,6 +61,14 @@ export default function HomeLayout({header, edit, view, emotionCard, intimateCar
             )
             break;
         }
+        case 7: {
+            content = (
+                <div style={{ margin: '0 auto', padding: '0px 24px' }}>
+                    {notificationcard}
+                </div> 
+            )
+            break;
+        }
         default: {
             content = null;
             break;
@@ -81,7 +91,7 @@ export default function HomeLayout({header, edit, view, emotionCard, intimateCar
                         </Col>
                     </Row>
                 </div>
-                
+                {modal}
                 {content}
             </Content>
         </Layout>
