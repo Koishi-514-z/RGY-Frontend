@@ -1,7 +1,4 @@
-
-import { PREFIX, getJson, post, put, del } from "./common";
-
-
+import {getJson, PREFIX, post, put} from "./common";
 
 export async function getAuditingCrisis() {
     const url = `${PREFIX}/crisis/listAuditing`;
@@ -30,7 +27,7 @@ export async function getAllConfirmedCrisis() {
 export async function confirmCrisis(crisisId,urgencyLevel) {
     const url = `${PREFIX}/crisis/confirm`;
     try {
-        await post(url, { crisisid:crisisId , urgencylevel:urgencyLevel });
+        await post(url, { crisisid:crisisId , urgencyLevel:urgencyLevel });
     } catch (e) {
         throw e;
     }
@@ -69,6 +66,4 @@ export async function updateCrisisStatus(crisisid, status) {
         res = false;
     }
     return res;
-
 }
-
