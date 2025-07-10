@@ -41,11 +41,11 @@ const AdminReviewPage = () => {
         fetchData();
     }, [update]);
 
-    const handleDelete = async (blogId, illegalId, title,type) => {
+    const handleDelete = async (blogId, illegalId, title,type,userid) => {
         if(type === 'blog'){
-            await handleDeleteBlog(blogId, illegalId, title);
+            await handleDeleteBlog(blogId, illegalId, title, userid);
         }else{
-            await handleDeleteReply(blogId, illegalId);
+            await handleDeleteReply(blogId, illegalId, userid);
         }
     };
 
@@ -59,7 +59,7 @@ const AdminReviewPage = () => {
         }
     };
 
-    const handleDeleteBlog = async (blogId, illegalId, title) => {
+    const handleDeleteBlog = async (blogId, illegalId, title, userid) => {
         // confirm({
         //     title: '确认屏蔽帖子',
         //     icon: <ExclamationCircleOutlined />,
@@ -69,7 +69,7 @@ const AdminReviewPage = () => {
         //     cancelText: '取消',
         //     onOk: async () => {
                 try {
-                    await deleteBlog(blogId, illegalId);
+                    await deleteBlog(blogId, illegalId, userid);
                     message.success('帖子已屏蔽');
                     setUpdate(!update);
                     //await fetchData();
@@ -83,7 +83,7 @@ const AdminReviewPage = () => {
 
     };
 
-    const handleDeleteReply = async (replyId, illegalId) => {
+    const handleDeleteReply = async (replyId, illegalId, userid) => {
         // try {
         //     await deleteReply(replyId, illegalId);
         //     message.success('回复已屏蔽');
@@ -102,7 +102,7 @@ const AdminReviewPage = () => {
         //     cancelText: '取消',
         //     onOk: async () => {
                 try {
-                    await deleteReply(replyId, illegalId);
+                    await deleteReply(replyId, illegalId, userid);
                     message.success('回复已屏蔽');
                     setUpdate(!update);
                     //await fetchData();
@@ -158,7 +158,7 @@ const AdminReviewPage = () => {
                 {
                     key: 'block',
                     label: <span style={{ color: '#ff4d4f' }}>屏蔽</span>,
-                    onClick: () => handleDelete(record.contentid, record.illegalid, record.title, type)
+                    onClick: () => handleDelete(record.contentid, record.illegalid, record.title, type,record.userid)
                 },
                 {
                     key: 'approve',
@@ -237,7 +237,7 @@ const AdminReviewPage = () => {
                             <Button
                                 size="small"
                                 danger
-                                onClick={() => handleDelete(record.contentid, record.illegalid, record.title,  'blog')}
+                                onClick={() => handleDelete(record.contentid, record.illegalid, record.title,  'blog',record.userid)}
                             >
                                 屏蔽
                             </Button>
@@ -323,7 +323,7 @@ const AdminReviewPage = () => {
                             <Button
                                 size="small"
                                 danger
-                                onClick={() => handleDelete(record.contentid, record.illegalid, record.title, 'reply')}
+                                onClick={() => handleDelete(record.contentid, record.illegalid, record.title, 'reply',record.userid)}
                             >
                                 屏蔽
                             </Button>

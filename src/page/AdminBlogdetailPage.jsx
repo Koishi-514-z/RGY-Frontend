@@ -38,7 +38,7 @@ const AdminBlogDetailPage = () => {
         //     cancelText: '取消',
         //     onOk: async () => {
         try {
-            await deleteBlog(blog.blogid, null);
+            await deleteBlog(blog.blogid, null, blog.user?.userid);
             message.success('帖子已屏蔽');
             navigate('/admin/review');
         } catch (error) {
@@ -49,7 +49,7 @@ const AdminBlogDetailPage = () => {
     };
 
     // 处理屏蔽回复
-    const handleBlockReply = async (replyId) => {
+    const handleBlockReply = async (replyId,userid) => {
         // confirm({
         //     title: '确认屏蔽回复',
         //     icon: <ExclamationCircleOutlined />,
@@ -59,7 +59,7 @@ const AdminBlogDetailPage = () => {
         //     cancelText: '取消',
         //     onOk: async () => {
         try {
-            await deleteReply(replyId, null);
+            await deleteReply(replyId, null, userid);
             message.success('回复已屏蔽');
             setUpdate(!update);
         } catch (error) {
@@ -185,7 +185,7 @@ const AdminBlogDetailPage = () => {
                                         danger
                                         type="text"
                                         icon={<DeleteOutlined />}
-                                        onClick={() => handleBlockReply(reply.replyid)}
+                                        onClick={() => handleBlockReply(reply.replyid,reply.user?.userid)}
                                     >
                                         屏蔽
                                     </Button>

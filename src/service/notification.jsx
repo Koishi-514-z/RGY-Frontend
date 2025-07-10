@@ -1,5 +1,6 @@
 import { PREFIX, getJson, post, put, del } from "./common";
 
+
 export async function getNotification() {
     const url = `${PREFIX}/notification/get`;
     let notify;
