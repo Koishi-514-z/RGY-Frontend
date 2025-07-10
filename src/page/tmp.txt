@@ -167,6 +167,7 @@ export default function CommunityPage() {
                                     value={tags}
                                     onChange={setTags}
                                 >
+                                    <Option value="all">全部</Option>
                                     <Option value="学习">学习</Option>
                                     <Option value="生活">生活</Option>
                                     <Option value="情感">情感</Option>
