@@ -321,8 +321,13 @@ export async function getIllegalReplies() {
 export async function deleteBlog(blogId, illegalId) {
     const url = `${PREFIX}/blogs/sheldingBlog`;
     try {
-
-        await post(url, { blogid :blogId ,illegalid :illegalId});
+        if (illegalId) {
+            const url = `${PREFIX}/blogs/sheldingBlog`;
+            await post(url, { blogid: blogId, illegalid: illegalId });
+        } else {
+            const url = `${PREFIX}/blogs/delete`;
+            await post(url, { blogid: blogId });
+        }
     } catch (e) {
         throw e;
     }
@@ -331,7 +336,13 @@ export async function deleteBlog(blogId, illegalId) {
 export async function deleteReply(replyId, illegalId) {
     const url = `${PREFIX}/blogs/sheldingReply`;
     try {
-        await post(url, { replyid:replyId, illegalid: illegalId });
+        if (illegalId) {
+            const url = `${PREFIX}/blogs/sheldingReply`;
+            await post(url, { replyid: replyId, illegalid: illegalId });
+        } else {
+            const url = `${PREFIX}/blogs/deleteReply`;
+            await post(url, { replyid: replyId });
+        }
     } catch (e) {
         throw e;
     }
