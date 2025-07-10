@@ -21,6 +21,7 @@ import CrisisReviewPage from "../page/CrisisReviewPage";
 import AdminUserDetailPage from "../page/AdminUserDetailPage";
 import CounselingPage from "../page/CounselingPage";
 import CounselingDetailPage from "../page/CounselingDetailPage";
+import AdminNotificationPage from "../page/AdminNotificationPage";
 
 export default function AppRouter() {
     return (
@@ -47,6 +48,7 @@ export default function AppRouter() {
                 <Route path="/admin/blogmanagement" element={<AdminCommunityPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
                 <Route path="/admin/crisis" element={<CrisisReviewPage />} />
+                <Route path="/admin/notification" element={<AdminNotificationPage />} />
                 <Route path="/admin/blog/:blogid" element={<AdminBlogdetailPage />} />
                 <Route path="/AIassistant/:sessionid" element={<AIAssistantPage />} />
                 <Route path="/admin/user/:userid" element={<AdminUserDetailPage />}/>

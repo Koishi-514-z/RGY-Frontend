@@ -1,4 +1,7 @@
-import {getJson, PREFIX, post, put} from "./common";
+
+import { PREFIX, getJson, post, put, del } from "./common";
+
+
 
 export async function getAuditingCrisis() {
     const url = `${PREFIX}/crisis/listAuditing`;
@@ -66,4 +69,6 @@ export async function updateCrisisStatus(crisisid, status) {
         res = false;
     }
     return res;
+
 }
+

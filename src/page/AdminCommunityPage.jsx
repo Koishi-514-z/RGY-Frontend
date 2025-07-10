@@ -1,211 +1,196 @@
-
-
 import React, { useState, useEffect } from "react";
-import { Avatar, Button, Col, Divider, Input, List, Pagination, Row, Select, Tag, Typography } from "antd";
-import {UserOutlined, ClockCircleOutlined, LikeOutlined, SearchOutlined} from "@ant-design/icons";
+import {Card, Table, Space, Input, Select, Typography, Tag, Button, Tooltip, message} from "antd";
+import { SearchOutlined, InfoCircleOutlined, UserOutlined, LikeOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import CustomLayout from "../components/layout/customlayout";
-import { getAvatar, getBlogs } from "../service/community";
+import { getBlogs, getLatestBlogs } from "../service/community";
 import { useNavigate } from "react-router-dom";
-import Search from "antd/es/input/Search";
 
-dayjs.extend(relativeTime);
+const { Title } = Typography;
 const { Option } = Select;
 
-function BlogsSearch({ searchText, tags, onSearchChange, onTagsChange, availableTags }) {
-    return (
-        <Row gutter={16}>
-            <Col span={8}>
-                <Search
-                    placeholder="搜索帖子或用户"
-                    allowClear
-                    enterButton={<SearchOutlined />}
-                    size="large"
-                    value={searchText}
-                    onChange={onSearchChange}
+const AdminCommunityPage = () => {
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [tags, setTags] = useState([]);
+  const [sortOrder, setSortOrder] = useState('latest');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      setLoading(true);
+      try {
+        const result = sortOrder === 'recommend' 
+          ? await getBlogs(pageSize, currentPage, searchText, tags)
+          : await getLatestBlogs(pageSize, currentPage, searchText, tags);
+        setBlogs(result.blogs);
+        setTotal(result.total);
+      } catch (error) {
+        message.error('加载博客失败: ' + error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlogs();
+  }, [pageSize, currentPage, searchText, tags, sortOrder]);
+
+  const renderEllipsisText = (text) => (
+    <Tooltip title={text} placement="topLeft">
+      <div style={{
+        maxWidth: '100%',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+      }}>
+        {text}
+      </div>
+    </Tooltip>
+  );
+
+  const columns = [
+    {
+      title: '发布时间',
+      dataIndex: 'timestamp',
+      key: 'timestamp',
+      width: 180,
+      render: (timestamp) => dayjs.unix(timestamp / 1000).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: '作者',
+      dataIndex: ['user', 'userid'],
+      key: 'username',
+      width: 150,
+      render: (text, record) => (
+        <Tag color="blue" style={{ cursor: 'pointer' }}
+          onClick={() => navigate(`/admin/user/${record.user.userid}`)}>
+          {text}
+        </Tag>
+      )
+    },
+    {
+      title: '标题',
+      dataIndex: 'title',
+      key: 'title',
+      width: 200,
+      render: renderEllipsisText
+    },
+    {
+      title: '浏览量',
+      dataIndex: 'browsenum',
+      key: 'browsenum',
+      width: 100,
+      render: (num) => (
+        <Space>
+          {num}
+        </Space>
+      )
+    },
+    {
+      title: '标签',
+      dataIndex: 'tags',
+      key: 'tags',
+      width: 200,
+      render: (tags) => (
+        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+          {tags?.map(tag => (
+            <Tag key={tag} color="blue">#{tag}</Tag>
+          ))}
+        </div>
+      )
+    },
+    {
+      title: '操作',
+      key: 'action',
+      fixed: 'right',
+      width: 120,
+      render: (_, record) => (
+        <Button type="link" onClick={() => navigate(`/admin/blog/${record.blogid}`)}>
+          查看详情
+        </Button>
+      ),
+    }
+  ];
+
+  return (
+    <CustomLayout role={1} content={
+      <div style={{ padding: '24px' }}>
+        <Card>
+          <div style={{ marginBottom: 24 }}>
+            <Title level={2}>
+              帖子管理
+              <Tooltip title="管理所有用户发布的帖子">
+                <InfoCircleOutlined style={{ fontSize: 16, marginLeft: 8, color: '#1890ff' }} />
+              </Tooltip>
+            </Title>
+
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              marginTop: 24,
+              marginBottom: 16 
+            }}>
+              <Space size="middle">
+                <Input
+                  placeholder="搜索标题/内容/用户"
+                  prefix={<SearchOutlined />}
+                  onChange={e => setSearchText(e.target.value)}
+                  style={{ width: 300 }}
+                  allowClear
                 />
-            </Col>
-            <Col span={8}>
                 <Select
-                    placeholder="选择标签过滤"
-                    mode="multiple"
-                    style={{ width: '100%' }}
-                    size="large"
-                    value={tags}
-                    onChange={onTagsChange}
+                  mode="multiple"
+                  placeholder="选择标签"
+                  style={{ width: 200 }}
+                  onChange={setTags}
+                  allowClear
                 >
-                    <Option value="all">全部</Option>
-                    <Option value="学习">学习</Option>
-                    <Option value="生活">生活</Option>
-                    <Option value="情感">情感</Option>
-                    <Option value="其他">其他</Option>
+                  <Option value="学习">学习</Option>
+                  <Option value="生活">生活</Option>
+                  <Option value="情感">情感</Option>
+                  <Option value="其他">其他</Option>
                 </Select>
-            </Col>
-        </Row>
-    );
-}
-
-export default function CommunityPage() {
-    const [searchText, setSearchText] = useState('');
-    const [tags, setTags] = useState([]);
-    const [blogs, setBlogs] = useState([]);
-    const [availableTags, setAvailableTags] = useState([]);
-    const navigate = useNavigate();
-    //const [avatarsMap, setAvatarsMap] = useState({});
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-    //const [avatars, setAvatars] = useState([]);
-
-    // 获取博客数据
-    useEffect(() => {
-        const fetchBlogs = async () => {
-            const fetched_blogs = await getBlogs(pageSize, currentPage, searchText, tags);
-            setBlogs(fetched_blogs);
-        };
-        fetchBlogs();
-        console.log(tags);
-    }, [pageSize, currentPage, searchText, tags]);
-
-    useEffect(() => {
-        setAvailableTags(['学习','生活','情感','其他']);
-    }, []);
-
-
-    // useEffect(() => {
-    //     const fetchAvatars = async () => {
-    //
-    //         const userids = blogs.map(blog => blog.userid);
-    //         const fetched_avatars = await Promise.all(userids.map(userid => getAvatar(userid)));
-    //         setAvatars(fetched_avatars);
-    //     };
-    //     fetchAvatars();
-    // }, [ blogs]);
-    //
-    // useEffect(() => {
-    //     const fetchAvatarsMap = async () => {
-    //         const fetched_avatars_map = {};
-    //         for (let i = 0; i < blogs.length; i++) {
-    //             const blog = blogs[i];
-    //             fetched_avatars_map[blog.userid] = avatars[i];
-    //         }
-    //         setAvatarsMap(fetched_avatars_map);
-    //     };
-    //     fetchAvatarsMap();
-    // }, [ blogs, avatars ]);
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [searchText, tags]);
-
-    return (
-        <CustomLayout role={1} content={
-            <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-                {
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                        <Typography.Title level={2}>校园树洞</Typography.Title>
-
-                    </div>
-                }
-
-                <div style={{ marginBottom: 24 }}>
-                    <BlogsSearch
-                        searchText={searchText}
-                        tags={tags}
-                        onSearchChange={e => setSearchText(e.target.value)}
-                        onTagsChange={setTags}
-                        availableTags={availableTags}
-                    />
-                </div>
-
-                <Typography.Title level={4} style={{ marginBottom: 24 }}>
-                    📃 所有帖子
-                </Typography.Title>
-
-                <List
-                    itemLayout="vertical"
-                    dataSource={blogs}
-                    renderItem={blog => (
-                        <List.Item
-                            style={{
-                                background: '#fff',
-                                borderRadius: 8,
-                                marginBottom: 16,
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                ':hover': {
-                                    transform: 'translateY(-2px)'
-                                }
-                            }}
-                            onClick={() => navigate(`/admin/blog/${blog.blogid}`)}
-                        >
-                            <List.Item.Meta
-                                avatar={
-                                    <Avatar
-                                        src={ blog.user.avatar || `https://joesch.moe/api/v1/random?key=${blog.userid}`}
-                                        size={40}
-                                        icon={<UserOutlined />}
-                                    />
-                                }
-                                title={
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span style={{ marginRight: 16 }}>{blog.user.username}</span>
-                                        <Tag color="blue">
-                                            <ClockCircleOutlined />
-                                            {new Date(blog.timestamp * 1000).toLocaleString()}
-                                        </Tag>
-                                    </div>
-                                }
-                                description={
-                                    <>
-                                        <Typography.Title level={5} style={{ marginTop: 8 }}>
-                                            {blog.title}
-                                        </Typography.Title>
-                                        <Typography.Paragraph
-                                            ellipsis={{ rows: 2 }}
-                                            style={{ color: 'rgba(0,0,0,0.7)' }}
-                                        >
-                                            {blog.content.slice(0, 60)}...
-                                        </Typography.Paragraph>
-                                        <div style={{ marginTop: 8 }}>
-                                            <Tag icon={<LikeOutlined />} color="red">
-                                                {blog.likeNum} 点赞
-                                            </Tag>
-                                            {blog.tag.map((t, i) => (
-                                                <Tag key={i} color={i % 3 === 0 ? 'geekblue' : 'green'}>
-                                                    #{t}
-                                                </Tag>
-                                            ))}
-                                        </div>
-                                    </>
-                                }
-                            />
-                        </List.Item>
-                    )}
-                />
-
-                <Pagination
-                    current={currentPage}
-                    pageSize={pageSize}
-                    total={blogs.length}
-                    onChange={(page, pageSize) => {
-                        setCurrentPage(page);
-                        setPageSize(pageSize);
-                    }}
-                    showSizeChanger
-                    onShowSizeChange={(current, size) => {
-                        setPageSize(size);
-                        setCurrentPage(1);
-                    }}
-                    style={{ margin: '24px 0', textAlign: 'center' }}
-                />
-
-                <Divider dashed style={{ borderColor: '#0055FF' }}>
-                    🤗 已经到底啦
-                </Divider>
+              </Space>
+              
+              <Select
+                defaultValue="latest"
+                style={{ width: 120 }}
+                onChange={setSortOrder}
+              >
+                <Option value="latest">最新</Option>
+                <Option value="recommend">最热</Option>
+              </Select>
             </div>
-        }/>
-    );
-}
+          </div>
+
+          <Table
+            columns={columns}
+            dataSource={blogs}
+            rowKey="blogid"
+            loading={loading}
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              total: total,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: total => `共 ${total} 条记录`,
+              onChange: (page, size) => {
+                setCurrentPage(page);
+                setPageSize(size);
+              },
+              pageSizeOptions: ['10', '20', '50']
+            }}
+            scroll={{ x: 1200 }}
+          />
+        </Card>
+      </div>
+    } />
+  );
+};
+
+export default AdminCommunityPage;
 

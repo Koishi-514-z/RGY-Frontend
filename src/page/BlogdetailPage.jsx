@@ -31,6 +31,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 
+
 dayjs.extend(relativeTime);
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -247,13 +248,20 @@ export default function BlogdetailPage() {
         );
     }
 
-    return (
-        <CustomLayout content={
-            <div className="blog-detail-container">
-                <ParticleBackground />
+    if(blog.valid === 0)
+    {
+        return (
+            <CustomLayout content={<div>帖子已被删除</div>} />
+        );
+    }
 
+    return (
+        <CustomLayout style={{position:'relative',zIndex:1}} content={
+
+            <div style={{ width: '80%', position:'relative',zIndex:1}} className="blog-detail-container">
+                <ParticleBackground />
                 {/* 顶部操作栏 */}
-                <div style = {{ position:'relative',zIndex:1}} className="header-actions">
+                <div style = {{ width: '100%', position:'relative',zIndex:1}} className="header-actions">
                     <Button
                         type="text"
                         icon={<ArrowLeftOutlined />}
@@ -283,7 +291,7 @@ export default function BlogdetailPage() {
                 </div>
 
                 {/* 帖子内容区域 */}
-                <div style={{ position:'relative',zIndex:1 }} className="blog-content-card">
+                <div style={{ width: '100%', position:'relative',zIndex:1 }} className="blog-content-card">
                     <div className="blog-header">
                         <Avatar
                             src={blog.user.avatar}
@@ -601,7 +609,10 @@ export default function BlogdetailPage() {
                         }
                     }
                 `}</style>
+
             </div>
+
+
         } />
     );
 }
