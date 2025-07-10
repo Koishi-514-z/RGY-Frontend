@@ -11,7 +11,7 @@ import { getUrlTags } from "../../service/emotion";
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-export default function PushAddingModal({reload}) {
+export default function PushAddingModal({reloadPage}) {
     const [isModelOpen, setIsModelOpen] = useState(false);
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
@@ -68,7 +68,7 @@ export default function PushAddingModal({reload}) {
             return;
         }
         
-        reload();
+        reloadPage();
         message.success('内容发布成功！');
         handleClose();
     }

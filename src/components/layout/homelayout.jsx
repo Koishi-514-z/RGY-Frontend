@@ -19,9 +19,15 @@ export default function HomeLayout({header, modal,
                             {emotionCard}
                         </Col>
                         <Col span={8}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                                {view}
-                                {intimateCard}
+                            {view}
+                        </Col>
+                    </Row>
+                    <Row gutter={[24, 24]} style={{ marginTop: '32px' }}>
+                        <Col span={24}>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <div style={{ width: '500px' }}>
+                                    {intimateCard}
+                                </div>
                             </div>
                         </Col>
                     </Row>

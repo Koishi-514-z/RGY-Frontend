@@ -16,7 +16,6 @@ import ChatPage from "../page/ChatPage";
 import AdminPage from "../page/AdminPage";
 import AdminCommunityPage from "../page/AdminCommunityPage";
 import AdminBlogdetailPage from "../page/AdminBlogdetailPage";
-import AdminPushPage from "../page/AdminPushPage";
 import AdminReviewPage from "../page/AdminReviewPage";
 import CrisisReviewPage from "../page/CrisisReviewPage";
 import AdminUserDetailPage from "../page/AdminUserDetailPage";

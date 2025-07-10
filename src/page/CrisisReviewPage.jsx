@@ -336,7 +336,7 @@ const CrisisReviewPage = () => {
                 key: 'view-user',
                 label: '查看用户详情',
                 icon: <SearchOutlined />,
-                onClick: () => navigate(`/home/${record.userid}`)
+                onClick: () => navigate(`/admin/user/${record.userid}`)
             },
             ...(!isConfirmed ? [
                 {
@@ -361,7 +361,7 @@ const CrisisReviewPage = () => {
             dataIndex: 'userid',
             key: 'userid',
             render: (userid) => (
-                <Button type="link" onClick={() => navigate(`/home/${userid}`)} className="user-link">
+                <Button type="link" onClick={() => navigate(`/admin/user/${userid}`)} className="user-link">
                     <Text strong>{userid}</Text>
                 </Button>
             )
