@@ -163,8 +163,8 @@ export async function updatePassword(password) {
     return res;
 }
 
-export async function isDisabled() {
-    const url = `${PREFIX}/user/disabled/get`;
+export async function isDisabled(username) {
+    const url = `${PREFIX}/user/disabled/get?username=${username}`;
     let res;
     try {
         res = await getJson(url);

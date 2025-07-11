@@ -11,16 +11,16 @@ export default function LoginForm() {
     const { message, modal } = App.useApp();
 
     const onFinish = async (values) => {
+        const disabled = await isDisabled(values.username);
+        if(disabled) {
+            modal.error({
+                title: 'ERROR',
+                content: '您的帐户已被禁用，请联系管理员'
+            })
+            return;
+        }
         const result = await login(values.username, values.password);
         if(result) {
-            const disabled = await isDisabled();
-            if(disabled) {
-                modal.error({
-                    title: 'ERROR',
-                    content: '您的帐户已被禁用，请联系管理员'
-                })
-                return;
-            }
             message.success('登录成功');
             const fetched_profile = await getUserProfile();
             if(fetched_profile.role === 0) {

@@ -150,7 +150,7 @@ export default function HomePage() {
     }, [profile]);
 
     useEffect(() => {
-        const socket = new SockJS("http://localhost:8080/ws");
+        const socket = new SockJS("https://192.168.101.26:8443/ws");
         const client = Stomp.over(socket);
         
         setConnectionStatus('connecting');
