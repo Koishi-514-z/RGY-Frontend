@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Typography, Space, Avatar, Tag, Divider, Button } from "antd";
 import { CalendarOutlined, NotificationOutlined, MessageOutlined, ExclamationCircleOutlined, InfoCircleOutlined, CheckOutlined, BellOutlined, WarningOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { useProfile } from "../context/profilecontext";
+import { useNotification } from "../context/notificationcontext";
 
 const { Title, Text } = Typography;
 
-export default function NotificationModal({profile, isModelOpen, setIsModelOpen, highPublic, highPrivate}) {
+export default function NotificationModal({isModelOpen, setIsModelOpen}) {
+    const { profile } = useProfile();
     const now = new Date();
+
+    const { privateNotifications, publicNotifications } = useNotification();
+
+    const highPublic = publicNotifications.filter(item => item.priority === 'high' && item.unread);
+    const highPrivate = privateNotifications.filter(item => item.priority === 'high' && item.unread);
     
     const handleNotShow = () => {
         localStorage.setItem('notificationModal_' + profile.userid, JSON.stringify(now.getTime()));

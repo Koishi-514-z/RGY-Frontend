@@ -6,7 +6,9 @@ const { Content } = Layout;
 
 export default function HomeLayout({header, modal,
                                     edit, view, 
-                                    emotionCard, intimateCard, blogCard, emotionGraph, notificationcard, 
+                                    emotionCard, intimateCard, blogCard, 
+                                    emotionGraph, historyCard, timeline,
+                                    notificationcard, 
                                     tabKey}) {
     let content;
 
@@ -62,7 +64,17 @@ export default function HomeLayout({header, modal,
         case 5: {
             content = (
                 <div style={{ margin: '0 auto', padding: '0px 24px' }}>
-                    {emotionGraph}
+                    <Row gutter={[24, 24]}>
+                        <Col span={16}>
+                            {emotionGraph}
+                            <div style={{ marginTop: '24px' }}>
+                                {historyCard}
+                            </div>
+                        </Col>
+                        <Col span={8}>
+                            {timeline}
+                        </Col>
+                    </Row>
                 </div> 
             )
             break;

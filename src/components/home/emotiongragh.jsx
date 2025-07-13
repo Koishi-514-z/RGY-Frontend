@@ -207,15 +207,15 @@ export default function EmotionGragh({weekData, monthData}) {
 
         const commonElements = (
             <>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(24, 144, 255, 0.1)" />
                 <XAxis 
                     dataKey="time" 
-                    axisLine={{ stroke: '#f0f0f0' }}
+                    axisLine={{ stroke: 'rgba(24, 144, 255, 0.2)' }}
                     tick={{ fill: '#595959', fontSize: 12 }}
                 />
                 <YAxis 
                     domain={[0, 5]} 
-                    axisLine={{ stroke: '#f0f0f0' }}
+                    axisLine={{ stroke: 'rgba(24, 144, 255, 0.2)' }}
                     tick={{ fill: '#595959', fontSize: 12 }}
                 />
                 <Tooltip content={<CustomTooltip />} />
@@ -225,7 +225,7 @@ export default function EmotionGragh({weekData, monthData}) {
 
         if(chartType === "line") {
             return (
-                <ResponsiveContainer width="100%" height={400}>
+                <ResponsiveContainer width="100%" height={380}>
                     <LineChart {...chartProps}>
                         {commonElements}
                         <Line 
@@ -243,7 +243,7 @@ export default function EmotionGragh({weekData, monthData}) {
         } 
         else {
             return (
-                <ResponsiveContainer width="100%" height={400}>
+                <ResponsiveContainer width="100%" height={380}>
                     <AreaChart {...chartProps}>
                         {commonElements}
                         <Area 
@@ -262,45 +262,110 @@ export default function EmotionGragh({weekData, monthData}) {
     };
 
     return (
-        <div>
-            <Card 
-                title={
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Space>
-                            <LineChartOutlined style={{ fontSize: '18px', color: '#1890ff' }} />
-                            <Title level={4} style={{ margin: 0 }}>情绪趋势分析</Title>
-                        </Space>
-                        
-                        <Radio.Group 
-                            value={chartType} 
-                            onChange={handleChartTypeChange}
-                            buttonStyle="solid"
-                            size="small"
-                        >
-                            <Radio.Button value="area">
-                                <AreaChartOutlined /> 面积图
-                            </Radio.Button>
-                            <Radio.Button value="line">
-                                <LineChartOutlined /> 折线图
-                            </Radio.Button>
-                        </Radio.Group>
+        <Card 
+            style={{ 
+                background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 50%, #f6ffed 100%)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                boxShadow: '0 8px 32px rgba(24, 144, 255, 0.12)',
+                position: 'relative',
+                marginBottom: '24px'
+            }}
+        >
+            {/* 头部区域 */}
+            <div style={{
+                background: 'linear-gradient(135deg, rgba(24, 144, 255, 0.05) 0%, rgba(54, 207, 201, 0.05) 100%)',
+                padding: '24px',
+                margin: '-24px -24px 24px -24px',
+                position: 'relative',
+                zIndex: 1
+            }}>
+                <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '16px'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{
+                            width: '56px',
+                            height: '56px',
+                            background: 'linear-gradient(135deg, #1890ff 0%, #36cfc9 100%)',
+                            borderRadius: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginRight: '16px',
+                            boxShadow: '0 6px 16px rgba(24, 144, 255, 0.3)',
+                            position: 'relative'
+                        }}>
+                            <LineChartOutlined style={{ color: '#fff', fontSize: '24px' }} />
+                            <div style={{
+                                position: 'absolute',
+                                top: '8px',
+                                right: '8px',
+                                width: '8px',
+                                height: '8px',
+                                background: '#52c41a',
+                                borderRadius: '50%',
+                                border: '2px solid #fff'
+                            }} />
+                        </div>
+                        <div>
+                            <Title level={4} style={{ 
+                                margin: 0, 
+                                background: 'linear-gradient(135deg, #1890ff 0%, #36cfc9 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text'
+                            }}>
+                                情绪趋势分析
+                            </Title>
+                            <Text style={{ 
+                                color: '#595959', 
+                                fontSize: '14px',
+                                fontWeight: '500'
+                            }}>
+                                追踪你的情绪变化轨迹
+                            </Text>
+                        </div>
                     </div>
-                }
-                style={{ 
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    marginBottom: '24px'
-                }}
-            >
+                    
+                    <Radio.Group 
+                        value={chartType} 
+                        onChange={handleChartTypeChange}
+                        buttonStyle="solid"
+                        size="small"
+                        style={{
+                            background: 'rgba(255, 255, 255, 0.8)',
+                            borderRadius: '8px',
+                            padding: '2px'
+                        }}
+                    >
+                        <Radio.Button value="area">
+                            <AreaChartOutlined /> 面积图
+                        </Radio.Button>
+                        <Radio.Button value="line">
+                            <LineChartOutlined /> 折线图
+                        </Radio.Button>
+                    </Radio.Group>
+                </div>
+
+                {/* 标签页 */}
                 <Tabs 
                     activeKey={activeTab} 
                     onChange={handleTabChange}
-                    style={{ marginBottom: '16px' }}
+                    style={{ 
+                        marginBottom: '0',
+                        '& .ant-tabs-nav': {
+                            marginBottom: '0'
+                        }
+                    }}
                 >
                     <TabPane 
                         tab={
-                            <span>
+                            <span style={{ fontSize: '14px', fontWeight: '500' }}>
                                 <CalendarOutlined /> 本周趋势
                             </span>
                         } 
@@ -308,24 +373,41 @@ export default function EmotionGragh({weekData, monthData}) {
                     />
                     <TabPane 
                         tab={
-                            <span>
+                            <span style={{ fontSize: '14px', fontWeight: '500' }}>
                                 <CalendarOutlined /> 本月趋势
                             </span>
                         } 
                         key="month"
                     />
                 </Tabs>
+            </div>
 
+            {/* 内容区域 */}
+            <div style={{ padding: '0 24px 24px' }}>
+                {/* 趋势提示 */}
                 {trend && (
                     <div 
                         style={{ 
-                            backgroundColor: trend.isPositive ? 'rgba(82, 196, 26, 0.1)' : 'rgba(245, 34, 45, 0.1)', 
-                            padding: '16px',
-                            borderRadius: '8px',
+                            background: trend.isPositive 
+                                ? 'linear-gradient(135deg, rgba(82, 196, 26, 0.1), rgba(82, 196, 26, 0.05))'
+                                : 'linear-gradient(135deg, rgba(245, 34, 45, 0.1), rgba(245, 34, 45, 0.05))',
+                            padding: '16px 20px',
+                            borderRadius: '12px',
                             marginBottom: '24px',
-                            border: `1px solid ${trend.isPositive ? '#b7eb8f' : '#ffccc7'}`
+                            border: `1px solid ${trend.isPositive ? 'rgba(82, 196, 26, 0.2)' : 'rgba(245, 34, 45, 0.2)'}`,
+                            position: 'relative',
+                            overflow: 'hidden'
                         }}
                     >
+                        <div style={{
+                            position: 'absolute',
+                            top: -10,
+                            right: -10,
+                            width: 40,
+                            height: 40,
+                            background: `linear-gradient(135deg, ${trend.isPositive ? '#52c41a' : '#f5222d'}15, transparent)`,
+                            borderRadius: '50%'
+                        }} />
                         <Row align="middle" gutter={16}>
                             <Col>
                                 {trend.isPositive ? (
@@ -355,147 +437,321 @@ export default function EmotionGragh({weekData, monthData}) {
                     </div>
                 )}
 
-                <Row gutter={[24, 24]}>
-                    <Col xs={24} lg={16}>
-                        {stats && (
-                            <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
-                                <Col xs={24} sm={12} md={6}>
-                                    <Card size="small" style={{ textAlign: 'center', border: '1px solid #e6f7ff' }}>
-                                        <Statistic
-                                            title="记录次数"
-                                            value={stats.total}
-                                            prefix={<ClockCircleOutlined style={{ color: '#1890ff' }} />}
-                                            valueStyle={{ color: '#1890ff', fontSize: '20px' }}
-                                        />
-                                    </Card>
-                                </Col>
-                                <Col xs={24} sm={12} md={6}>
-                                    <Card size="small" style={{ textAlign: 'center', border: '1px solid #f6ffed' }}>
-                                        <Statistic
-                                            title="平均分数"
-                                            value={average?.value}
-                                            prefix={<HeartOutlined style={{ color: '#52c41a' }} />}
-                                            valueStyle={{ color: '#52c41a', fontSize: '20px' }}
-                                        />
-                                    </Card>
-                                </Col>
-                                <Col xs={24} sm={12} md={6}>
-                                    <Card size="small" style={{ textAlign: 'center', border: '1px solid #fff7e6' }}>
-                                        <Statistic
-                                            title="最高分数"
-                                            value={stats.max.score}
-                                            prefix={<TrophyOutlined style={{ color: '#faad14' }} />}
-                                            valueStyle={{ color: '#faad14', fontSize: '20px' }}
-                                        />
-                                        <Text type="secondary" style={{ fontSize: '10px' }}>
-                                            {new Date(stats.max.timestamp).toLocaleDateString()}
-                                        </Text>
-                                    </Card>
-                                </Col>
-                                <Col xs={24} sm={12} md={6}>
-                                    <Card size="small" style={{ textAlign: 'center', border: '1px solid #fff1f0' }}>
-                                        <Statistic
-                                            title="最低分数"
-                                            value={stats.min.score}
-                                            prefix={<FallOutlined style={{ color: '#f5222d' }} />}
-                                            valueStyle={{ color: '#f5222d', fontSize: '20px' }}
-                                        />
-                                        <Text type="secondary" style={{ fontSize: '10px' }}>
-                                            {new Date(stats.min.timestamp).toLocaleDateString()}
-                                        </Text>
-                                    </Card>
-                                </Col>
-                            </Row>
-                        )}
+                {/* 统计卡片 */}
+                {stats && (
+                    <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+                        <Col xs={24} sm={12} md={6}>
+                            <div style={{
+                                background: 'linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%)',
+                                border: '1px solid rgba(24, 144, 255, 0.2)',
+                                borderRadius: '12px',
+                                padding: '12px 16px',
+                                textAlign: 'center',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '90px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center'
+                            }}>
+                                <div style={{
+                                    position: 'absolute',
+                                    top: -5,
+                                    right: -5,
+                                    width: 20,
+                                    height: 20,
+                                    background: 'linear-gradient(135deg, #1890ff20, transparent)',
+                                    borderRadius: '50%'
+                                }} />
+                                <ClockCircleOutlined style={{ color: '#1890ff', fontSize: '18px', marginBottom: '6px' }} />
+                                <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff', marginBottom: '2px' }}>
+                                    {stats.total}
+                                </div>
+                                <Text style={{ color: '#595959', fontSize: '11px' }}>记录次数</Text>
+                            </div>
+                        </Col>
+                        <Col xs={24} sm={12} md={6}>
+                            <div style={{
+                                background: 'linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%)',
+                                border: '1px solid rgba(82, 196, 26, 0.2)',
+                                borderRadius: '12px',
+                                padding: '12px 16px',
+                                textAlign: 'center',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '90px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center'
+                            }}>
+                                <div style={{
+                                    position: 'absolute',
+                                    top: -5,
+                                    right: -5,
+                                    width: 20,
+                                    height: 20,
+                                    background: 'linear-gradient(135deg, #52c41a20, transparent)',
+                                    borderRadius: '50%'
+                                }} />
+                                <HeartOutlined style={{ color: '#52c41a', fontSize: '18px', marginBottom: '6px' }} />
+                                <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#52c41a', marginBottom: '2px' }}>
+                                    {average?.value}
+                                </div>
+                                <Text style={{ color: '#595959', fontSize: '11px' }}>平均分数</Text>
+                            </div>
+                        </Col>
+                        <Col xs={24} sm={12} md={6}>
+                            <div style={{
+                                background: 'linear-gradient(135deg, #fffbe6 0%, #fff1b8 100%)',
+                                border: '1px solid rgba(250, 173, 20, 0.2)',
+                                borderRadius: '12px',
+                                padding: '12px 16px',
+                                textAlign: 'center',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '90px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center'
+                            }}>
+                                <div style={{
+                                    position: 'absolute',
+                                    top: -5,
+                                    right: -5,
+                                    width: 20,
+                                    height: 20,
+                                    background: 'linear-gradient(135deg, #faad1420, transparent)',
+                                    borderRadius: '50%'
+                                }} />
+                                <TrophyOutlined style={{ color: '#faad14', fontSize: '18px', marginBottom: '6px' }} />
+                                <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#faad14', marginBottom: '2px' }}>
+                                    {stats.max.score}
+                                </div>
+                                <Text style={{ color: '#595959', fontSize: '11px' }}>最高分数</Text>
+                                <Text style={{ color: '#8c8c8c', fontSize: '9px', marginTop: '2px' }}>
+                                    {new Date(stats.max.timestamp).toLocaleDateString()}
+                                </Text>
+                            </div>
+                        </Col>
+                        <Col xs={24} sm={12} md={6}>
+                            <div style={{
+                                background: 'linear-gradient(135deg, #fff2f0 0%, #ffccc7 100%)',
+                                border: '1px solid rgba(245, 34, 45, 0.2)',
+                                borderRadius: '12px',
+                                padding: '12px 16px',
+                                textAlign: 'center',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '90px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center'
+                            }}>
+                                <div style={{
+                                    position: 'absolute',
+                                    top: -5,
+                                    right: -5,
+                                    width: 20,
+                                    height: 20,
+                                    background: 'linear-gradient(135deg, #f5222d20, transparent)',
+                                    borderRadius: '50%'
+                                }} />
+                                <FallOutlined style={{ color: '#f5222d', fontSize: '18px', marginBottom: '6px' }} />
+                                <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#f5222d', marginBottom: '2px' }}>
+                                    {stats.min.score}
+                                </div>
+                                <Text style={{ color: '#595959', fontSize: '11px' }}>最低分数</Text>
+                                <Text style={{ color: '#8c8c8c', fontSize: '9px', marginTop: '2px' }}>
+                                    {new Date(stats.min.timestamp).toLocaleDateString()}
+                                </Text>
+                            </div>
+                        </Col>
+                    </Row>
+                )}
 
-                        <Divider style={{ margin: '24px 0' }}/>
-                        
-                        {renderChart()}
-                    </Col>
+                {/* 主图表 */}
+                <div style={{
+                    background: 'rgba(255, 255, 255, 0.8)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    border: '1px solid rgba(24, 144, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    marginBottom: '24px'
+                }}>
+                    {renderChart()}
+                </div>
 
-                    <Col xs={24} lg={8}>
-                        <Card 
-                            title={
+                {/* 分析图表 */}
+                <Row gutter={[20, 20]}>
+                    <Col xs={24} lg={12}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%)',
+                            border: '1px solid rgba(24, 144, 255, 0.15)',
+                            borderRadius: '16px',
+                            overflow: 'hidden',
+                            height: '260px'
+                        }}>
+                            <div style={{
+                                background: 'linear-gradient(135deg, rgba(24, 144, 255, 0.05) 0%, rgba(54, 207, 201, 0.05) 100%)',
+                                padding: '12px 20px',
+                                borderBottom: '1px solid rgba(24, 144, 255, 0.1)'
+                            }}>
                                 <Space>
                                     <BarChartOutlined style={{ color: '#1890ff' }} />
-                                    <Text strong>时间分布分析</Text>
+                                    <Text strong style={{ fontSize: '14px' }}>时间分布分析</Text>
                                 </Space>
-                            }
-                            style={{ 
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                                borderRadius: '8px'
-                            }}
-                        >
-                            {timeDistribution.length > 0 ? (
-                                <ResponsiveContainer width="100%" height={200}>
-                                    <BarChart data={timeDistribution}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
-                                        <XAxis dataKey="time" tick={{ fontSize: 12 }} />
-                                        <YAxis tick={{ fontSize: 12 }} />
-                                        <Tooltip 
-                                            formatter={(value, name) => [
-                                                `${value} ${name === 'count' ? '次' : '分'}`,
-                                                name === 'count' ? '记录次数' : '平均分数'
-                                            ]}
-                                        />
-                                        <Bar dataKey="count" fill="#91d5ff" name="count" />
-                                        <Bar dataKey="avgScore" fill="#1890ff" name="avgScore" />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            ) : (
-                                <Empty description="暂无时间分布数据" />
-                            )}
-                        </Card>
+                            </div>
+                            <div style={{ padding: '12px' }}>
+                                {timeDistribution.length > 0 ? (
+                                    <ResponsiveContainer width="100%" height={180}>
+                                        <BarChart data={timeDistribution} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(24, 144, 255, 0.1)" />
+                                            <XAxis 
+                                                dataKey="time" 
+                                                tick={{ fontSize: 10, fill: '#595959' }}
+                                                axisLine={{ stroke: 'rgba(24, 144, 255, 0.2)' }}
+                                            />
+                                            <YAxis 
+                                                tick={{ fontSize: 10, fill: '#595959' }}
+                                                axisLine={{ stroke: 'rgba(24, 144, 255, 0.2)' }}
+                                            />
+                                            <Tooltip 
+                                                contentStyle={{
+                                                    background: 'linear-gradient(135deg, #fff 0%, #f8fcff 100%)',
+                                                    border: '1px solid rgba(24, 144, 255, 0.2)',
+                                                    borderRadius: '8px',
+                                                    boxShadow: '0 4px 12px rgba(24, 144, 255, 0.15)',
+                                                    fontSize: '12px'
+                                                }}
+                                                formatter={(value, name) => [
+                                                    `${value} ${name === 'count' ? '次' : '分'}`,
+                                                    name === 'count' ? '记录次数' : '平均分数'
+                                                ]}
+                                            />
+                                            <Bar 
+                                                dataKey="count" 
+                                                fill="#91d5ff" 
+                                                name="count"
+                                                radius={[3, 3, 0, 0]}
+                                            />
+                                            <Bar 
+                                                dataKey="avgScore" 
+                                                fill="#1890ff" 
+                                                name="avgScore"
+                                                radius={[3, 3, 0, 0]}
+                                            />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                ) : (
+                                    <Empty 
+                                        description="暂无时间分布数据" 
+                                        style={{ padding: '40px 0', color: '#8c8c8c' }}
+                                        imageStyle={{ height: 50 }}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </Col>
 
-                        <Divider style={{ margin: '12px 0' }}/>
-
-                        <Card 
-                            title={
+                    <Col xs={24} lg={12}>
+                        <div style={{
+                            background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%)',
+                            border: '1px solid rgba(24, 144, 255, 0.15)',
+                            borderRadius: '16px',
+                            overflow: 'hidden',
+                            height: '260px'
+                        }}>
+                            <div style={{
+                                background: 'linear-gradient(135deg, rgba(24, 144, 255, 0.05) 0%, rgba(54, 207, 201, 0.05) 100%)',
+                                padding: '12px 20px',
+                                borderBottom: '1px solid rgba(24, 144, 255, 0.1)'
+                            }}>
                                 <Space>
                                     <HeartOutlined style={{ color: '#1890ff' }} />
-                                    <Text strong>情绪分级统计</Text>
+                                    <Text strong style={{ fontSize: '14px' }}>情绪分级统计</Text>
                                 </Space>
-                            }
-                            style={{ 
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                                borderRadius: '8px'
-                            }}
-                        >
-                            {emotionLevelStats.length > 0 ? (
-                                <Space direction="vertical" style={{ width: '100%' }} size={12}>
-                                    {emotionLevelStats.map((item, index) => (
-                                        <div key={index} style={{ 
-                                            display: 'flex', 
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            padding: '8px 0'
-                                        }}>
-                                            <Space>
-                                                <Badge color={item.color} />
-                                                <Text strong>{item.level}</Text>
-                                                <Text type="secondary">({item.count}次)</Text>
-                                            </Space>
-                                            <div style={{ flex: 1, marginLeft: 16, marginRight: 16 }}>
-                                                <Progress 
-                                                    percent={item.percentage} 
-                                                    strokeColor={item.color}
-                                                    size="small"
-                                                    showInfo={false}
-                                                />
-                                            </div>
-                                            <Text style={{ color: item.color, fontWeight: 'bold' }}>
-                                                {item.percentage}%
-                                            </Text>
-                                        </div>
-                                    ))}
-                                </Space>
-                            ) : (
-                                <Empty description="暂无情绪分级数据" />
-                            )}
-                        </Card>
+                            </div>
+                            <div style={{ padding: '12px' }}>
+                                {emotionLevelStats.length > 0 ? (
+                                    <div style={{ 
+                                        height: '180px',
+                                        overflowY: 'auto'
+                                    }}>
+                                        <Space direction="vertical" style={{ width: '100%' }} size={8}>
+                                            {emotionLevelStats.map((item, index) => (
+                                                <div key={index} style={{ 
+                                                    display: 'flex', 
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                    padding: '8px 12px',
+                                                    background: `linear-gradient(135deg, ${item.color}08, ${item.color}05)`,
+                                                    borderRadius: '8px',
+                                                    border: `1px solid ${item.color}20`,
+                                                    transition: 'all 0.3s ease',
+                                                    cursor: 'pointer'
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.transform = 'translateY(-1px)';
+                                                    e.currentTarget.style.boxShadow = `0 4px 8px ${item.color}20`;
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.transform = 'translateY(0)';
+                                                    e.currentTarget.style.boxShadow = 'none';
+                                                }}
+                                                >
+                                                    <Space size={6}>
+                                                        <div style={{
+                                                            width: '8px',
+                                                            height: '8px',
+                                                            background: `linear-gradient(135deg, ${item.color}, ${item.color}cc)`,
+                                                            borderRadius: '50%',
+                                                            boxShadow: `0 2px 4px ${item.color}30`
+                                                        }} />
+                                                        <Text strong style={{ fontSize: '12px', color: '#262626' }}>
+                                                            {item.level}
+                                                        </Text>
+                                                        <Text type="secondary" style={{ fontSize: '10px' }}>
+                                                            ({item.count}次)
+                                                        </Text>
+                                                    </Space>
+                                                    <div style={{ flex: 1, marginLeft: 10, marginRight: 10 }}>
+                                                        <Progress 
+                                                            percent={parseFloat(item.percentage)} 
+                                                            strokeColor={{
+                                                                '0%': item.color,
+                                                                '100%': `${item.color}cc`
+                                                            }}
+                                                            size="small"
+                                                            showInfo={false}
+                                                            trailColor="rgba(0,0,0,0.06)"
+                                                            strokeWidth={4}
+                                                        />
+                                                    </div>
+                                                    <Text style={{ 
+                                                        color: item.color, 
+                                                        fontWeight: 'bold',
+                                                        fontSize: '12px',
+                                                        minWidth: '35px',
+                                                        textAlign: 'right'
+                                                    }}>
+                                                        {item.percentage}%
+                                                    </Text>
+                                                </div>
+                                            ))}
+                                        </Space>
+                                    </div>
+                                ) : (
+                                    <Empty 
+                                        description="暂无情绪分级数据" 
+                                        style={{ padding: '40px 0', color: '#8c8c8c' }}
+                                        imageStyle={{ height: 50 }}
+                                    />
+                                )}
+                            </div>
+                        </div>
                     </Col>
                 </Row>
-            </Card>
-        </div>
+            </div>
+        </Card>
     );
 }

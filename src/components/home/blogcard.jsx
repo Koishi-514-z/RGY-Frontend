@@ -38,15 +38,13 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
     };
 
     const getUserLevel = () => {
-        const stats = getStats();
-        const score = stats.totalPosts * 2 + stats.totalLikes + stats.totalComments * 1.5;
-        if(score >= 100) {
+        if(profile.level >= 30) {
             return { level: '活跃达人', color: '#ff4d4f', icon: <FireOutlined /> };
         } 
-        if(score >= 50) {
+        if(profile.level >= 20) {
             return { level: '资深用户', color: '#faad14', icon: <TrophyOutlined /> };
         }
-        if(score >= 20) {
+        if(profile.level >= 10) {
             return { level: '活跃用户', color: '#52c41a', icon: <RiseOutlined /> };
         }
         return { level: '新手用户', color: '#1890ff', icon: <UserOutlined /> };

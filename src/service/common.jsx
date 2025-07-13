@@ -94,6 +94,5 @@ export async function readFile(file) {
 }
 
 // export const BASEURL = 'http://localhost:8080';
-// export const BASEURL = 'https://localhost:8443';
-export const BASEURL = 'https://192.168.101.26:8443';
+export const BASEURL = 'https://localhost:8443';
 export const PREFIX = `${BASEURL}/api`;

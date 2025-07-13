@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Card, Avatar, Space, List, Badge, Tooltip, Button, Empty, Tag } from "antd";
-import { UserOutlined, HeartFilled, IdcardOutlined, MessageOutlined, UserAddOutlined, EyeOutlined, FireOutlined, CrownOutlined } from "@ant-design/icons";
+import { UserOutlined, HeartFilled, IdcardOutlined, FireOutlined, CrownOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 const { Text, Title } = Typography;
@@ -41,7 +41,6 @@ export default function IntimateCard({ intimateUsers }) {
     };
 
     const renderUserCard = (data) => {
-        console.log(data);
         const intimateLevel = getIntimateLevel(data.intimateScore);
         
         return (

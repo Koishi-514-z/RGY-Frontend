@@ -1,10 +1,11 @@
 import React from "react";
 import { Tabs, Tooltip } from "antd";
 import { UserOutlined, FileTextOutlined, SettingOutlined, HeartOutlined, BarChartOutlined } from "@ant-design/icons";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 export default function HomeTabs({id}) {
     const [searchParams, setSearchParams] = useSearchParams();
+    const { userid } = useParams();
     const tabKey = parseInt(searchParams.get('tabKey'));
 
     const onChange = (key) => {
@@ -27,19 +28,9 @@ export default function HomeTabs({id}) {
             label: (
                 <span>
                     <FileTextOutlined style={{ marginRight: 8 }} />
-                    我的博客
+                    {!userid ? '我的博客' : 'TA的博客'}
                 </span>
             ),
-        },
-        {
-            key: 4,
-            label: (
-                <span>
-                    <HeartOutlined style={{ marginRight: 8 }} />
-                    心理档案
-                </span>
-            ),
-            disabled: id
         },
         {
             key: 5,

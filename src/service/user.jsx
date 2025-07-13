@@ -88,6 +88,18 @@ export async function getIntimateUsers() {
     return res;
 }
 
+export async function getMilestone() {
+    const url = `${PREFIX}/user/milestone`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = null;
+    }
+    return res;
+}
+
 export async function addUser(user) {
     const url = `${PREFIX}/user/add`;
     let res;
@@ -182,6 +194,32 @@ export async function setDisabled(userid, disabled) {
     let res;
     try {
         res = await put(url, null);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
+export async function postAuthCode(email) {
+    email = encodeURIComponent(email);
+    const url = `${PREFIX}/user/secure/code?email=${email}`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
+
+export async function checkAuthCode(authCode) {
+    authCode = encodeURIComponent(authCode);
+    const url = `${PREFIX}/user/secure/check?authCode=${authCode}`;
+    let res;
+    try {
+        res = await getJson(url);
     } catch (e) {
         console.log(e);
         res = false;

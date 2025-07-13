@@ -3,10 +3,10 @@ import { Badge, Button, Tooltip } from 'antd';
 import { BellOutlined } from "@ant-design/icons";
 import { getNotification } from "../service/notification";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "./context/notificationcontext";
 
 export default function MessageInfromer({role}) {
-    const [privateNotifications, setPrivateNotifications] = useState([]); 
-    const [publicNotifications, setPublicNotifications] = useState([]); 
+    const { privateNotifications, setPrivateNotifications, publicNotifications, setPublicNotifications } = useNotification();
     const navigate = useNavigate();
     
     useEffect(() => {

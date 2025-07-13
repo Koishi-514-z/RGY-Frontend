@@ -21,6 +21,7 @@ export default function ChatPage() {
     const [connectionStatus, setConnectionStatus] = useState('connecting');
     const { sessionid } = useParams();
     const sessionidRef = useRef(sessionid);
+    const useridRef = useRef(null);
     const { message } = App.useApp();
 
     const fetchSessionTags = async () => {
@@ -52,7 +53,11 @@ export default function ChatPage() {
     }, [sessionid]);
 
     useEffect(() => {
-        const socket = new SockJS("https://192.168.101.26:8443/ws");
+        useridRef.current = profile?.userid;
+    }, [profile]);
+
+    useEffect(() => {
+        const socket = new SockJS("https://localhost:8443/ws");
         const client = Stomp.over(socket);
         
         setConnectionStatus('connecting');
@@ -63,7 +68,8 @@ export default function ChatPage() {
                 client.subscribe("/user/queue/notifications/chat", async (msg) => {
                     try {
                         const receivedMsg = JSON.parse(msg.body);
-                        if(receivedMsg.touserid !== profile.userid) {
+                        console.log(receivedMsg);
+                        if(receivedMsg.touserid !== useridRef.current) {
                             message.error('消息发送错误');
                             return;
                         }

@@ -1,10 +1,13 @@
 import React from "react";
 import { Typography, Card, Row, Col, Space, Tag, Avatar } from "antd";
 import { UserOutlined, MailOutlined, IdcardOutlined, SafetyOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { useProfile } from "../context/profilecontext";
 
 const { Title, Text } = Typography;
 
-export default function ProfileView({profile}) {
+export default function ProfileView() {
+    const { profile } = useProfile();
+
     const InfoItem = ({ icon, label, value, tag, tagColor }) => (
         <div style={{ 
             display: 'flex', 

@@ -12,6 +12,32 @@ export async function getEmotion() {
     return res;
 }
 
+export async function getRecordNum() {
+    const url = `${PREFIX}/emotion/record/getnum`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = null;
+    }
+    return res;
+}
+
+export async function getHistoryRecords(pageIndex, pageSize) {
+    pageIndex = encodeURIComponent(pageIndex);
+    pageSize = encodeURIComponent(pageSize);
+    const url = `${PREFIX}/emotion/record/get?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+    let res;
+    try {
+        res = await getJson(url);
+    } catch (e) {
+        console.log(e);
+        res = [];
+    }
+    return res;
+}
+
 export async function getTags() {
     const url = `${PREFIX}/emotion/tag/getall`;
     let res;

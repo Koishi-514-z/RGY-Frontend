@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { Form, Input, Button, App, Typography, Divider, Space, Checkbox, Row, Col } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined, UserAddOutlined } from "@ant-design/icons";
+import { UserOutlined, LockOutlined, MailOutlined, UserAddOutlined, SafetyOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from 'react-router-dom';
-import { userExisted, addUser, login, adminVerify } from "../service/user";
+import { userExisted, addUser, login, adminVerify, postAuthCode, checkAuthCode } from "../service/user";
 
 const { Text } = Typography;
 
 export default function RegisterForm() {
     const [adminChecked, setAdminChecked] = useState(false);
     const [psyChecked, setPsyChecked] = useState(false);
+    const [countdown, setCountdown] = useState(0);
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const { message, modal } = App.useApp();
@@ -27,6 +28,38 @@ export default function RegisterForm() {
         }
     };
 
+    const sendEmailCode = async () => {
+        const email = form.getFieldValue('email');
+        if(!email) {
+            message.error('请先输入邮箱地址');
+            return;
+        }
+        
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@sjtu\.edu\.cn$/;
+        if(!emailRegex.test(email)) {
+            message.error('请输入有效的SJTU邮箱地址');
+            return;
+        }
+
+        const result = await postAuthCode(email);
+        if(!result) {
+            message.error('验证码发送失败');
+            return;
+        }
+        message.success('验证码已发送到您的邮箱');
+        
+        setCountdown(60);
+        const timer = setInterval(() => {
+            setCountdown((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+    };
+
     const onFinish = async (values) => {
         const existed = await userExisted(values.username);
         if(existed) {
@@ -43,6 +76,12 @@ export default function RegisterForm() {
                 message.error("Verify Failed");
                 return;
             }
+        }
+
+        const valid = await checkAuthCode(values.authCode);
+        if(!valid) {
+            message.error('验证码错误');
+            return;
         }
 
         const now = new Date();
@@ -186,15 +225,50 @@ export default function RegisterForm() {
                 label="邮箱"
                 rules={[
                     { required: true, message: '请输入邮箱' },
-                    { type: 'email', message: '请输入有效的邮箱地址!' }
+                    { type: 'email', message: '请输入有效的邮箱地址' },
+                    { pattern: /^[a-zA-Z0-9._%+-]+@sjtu\.edu\.cn$/, message: '仅支持SJTU邮箱' }
                 ]}
                 style={{ marginBottom: 16 }}
             >
                 <Input 
                     prefix={<MailOutlined style={{ color: '#bfbfbf' }} />} 
-                    placeholder="请输入邮箱地址" 
+                    placeholder="请输入您的SJTU邮箱地址" 
                 />
             </Form.Item>
+
+            <Row gutter={12}>
+                <Col span={16}>
+                    <Form.Item
+                        name="authCode"
+                        label="邮箱验证码"
+                        rules={[
+                            { required: true, message: '请输入邮箱验证码' },
+                            { pattern: /^\d{6}$/, message: '验证码必须是6位数字' }
+                        ]}
+                        style={{ marginBottom: 16 }}
+                    >
+                        <Input
+                            prefix={<SafetyOutlined style={{ color: '#bfbfbf' }} />} 
+                            placeholder="请输入6位验证码" 
+                            maxLength={6}
+                        />
+                    </Form.Item>
+                </Col>
+                <Col span={8}>
+                    <Form.Item label=" " style={{ marginBottom: 16 }}>
+                        <Button 
+                            onClick={sendEmailCode}
+                            disabled={countdown > 0}
+                            style={{ 
+                                width: '100%',
+                                height: '32px'
+                            }}
+                        >
+                            {countdown > 0 ? `${countdown}秒后重发` : '发送验证码'}
+                        </Button>
+                    </Form.Item>
+                </Col>
+            </Row>
 
             <Row gutter={12}>
                 <Col span={14}>
@@ -221,7 +295,7 @@ export default function RegisterForm() {
                     <Form.Item name="verifyKey" style={{ marginBottom: 12 }}>
                         <Input 
                             prefix={<LockOutlined style={{ color: '#bfbfbf' }} />} 
-                            placeholder="验证码" 
+                            placeholder="身份码" 
                             disabled={!adminChecked && !psyChecked}
                             style={{ fontSize: '13px' }}
                         />

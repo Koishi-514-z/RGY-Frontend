@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import CustomLayout from "../components/layout/customlayout";
-import { getIntimateUsers, getUserProfile, getSimplifiedProfile } from "../service/user";
+import { getIntimateUsers, getUserProfile, getSimplifiedProfile, getMilestone } from "../service/user";
 import ProfileEdit from "../components/home/profileedit";
 import ProfileView from "../components/home/profileview";
 import ProfileHeader from "../components/home/profileheader";
@@ -16,31 +16,42 @@ import EmotionGragh from "../components/home/emotiongragh";
 import { getNotification } from "../service/notification";
 import NotificationCard from "../components/home/notificationcard";
 import NotificationModal from "../components/home/notificationmodal";
-import SockJS from "sockjs-client";
-import { Stomp } from "@stomp/stompjs";
-import { App } from "antd";
 import BlogCardOther from "../components/home/blogcardother";
+import { useProfile } from "../components/context/profilecontext";
+import { useNotification } from "../components/context/notificationcontext";
+import EmotionHistoryCard from "../components/home/emotionhistorycard";
+import ProcessLine from "../components/home/processline";
 
 export default function HomePage() {
-    const [profile, setProfile] = useState(null);
+    const { profile, setProfile } = useProfile();
+    const { privateNotifications, setPrivateNotifications, publicNotifications, setPublicNotifications } = useNotification();
+    const [other, setOther] = useState(null);
     const [emotion, setEmotion] = useState(null);
     const [intimateUsers, setIntimateUsers] = useState([]);
     const [myBlogs, setMyBlogs] = useState([]);
+    const [otherBlogs, setOtherBlogs] = useState([]);
     const [likeBlogs, setLikeBlogs] = useState([]);
     const [commentBlogs, setCommentBlogs] = useState([]);
     const [weekData, setWeekData] = useState([]);
     const [monthData, setMonthData] = useState([]);
-    const [privateNotifications, setPrivateNotifications] = useState([]); 
-    const [publicNotifications, setPublicNotifications] = useState([]); 
+    const [milestones, setMilestones] = useState([]);
+    const [loadedTabs, setLoadedTabs] = useState([]);
     const [isModelOpen, setIsModelOpen] = useState(false);
-    const [connectionStatus, setConnectionStatus] = useState('connecting');
     const {userid} = useParams();
-    const useridRef = useRef(null);
     const [searchParams, setSearchParams] = useSearchParams();
     const tabKey = parseInt(searchParams.get('tabKey'));
     const navigate = useNavigate();
-    const { message } = App.useApp();
 
+    // 加载个人信息
+    useEffect(() => {
+        const fetch = async () => {
+            const fetched_profile = await getUserProfile();
+            setProfile(fetched_profile);
+        }
+        fetch();
+    }, []);
+
+    // 加载他人主页数据
     useEffect(() => {
         const fetch = async () => {
             if(userid) {
@@ -48,44 +59,69 @@ export default function HomePage() {
                 if(me.userid === userid) {
                     navigate(`/home?tabKey=${1}`);
                 }
-                const fetched_profile = await getSimplifiedProfile(userid);
+                const fetched_other = await getSimplifiedProfile(userid);
                 const fetched_blogs = await getBlogs(userid);
-                setProfile(fetched_profile);
-                setEmotion(null);
-                setIntimateUsers(null);
-                setWeekData([]);
-                setMonthData([]);
-                setMyBlogs(fetched_blogs);
-                setLikeBlogs([]);
-                setCommentBlogs([]);
+                setOther(fetched_other);
+                setOtherBlogs(fetched_blogs);
                 if(!tabKey) {
                     setSearchParams({tabKey: 2});
-                }
-            }
-            else {
-                const fetched_profile = await getUserProfile();
-                const fetched_emotion = await getEmotion();
-                const fetched_users = await getIntimateUsers();
-                const fetched_blogs = await getBlogs(fetched_profile.userid);
-                const fetched_blogs_like = await getLikeBlogs(fetched_profile.userid);
-                const fetched_blogs_comment = await getCommentBlogs(fetched_profile.userid);
-                const fetched_week = await getWeekData();
-                const fetched_month = await getMonthData();
-                setProfile(fetched_profile);
-                setEmotion(fetched_emotion);
-                setIntimateUsers(fetched_users);
-                setMyBlogs(fetched_blogs);
-                setLikeBlogs(fetched_blogs_like);
-                setCommentBlogs(fetched_blogs_comment);
-                setWeekData(fetched_week);
-                setMonthData(fetched_month);
-                if(!tabKey) {
-                    setSearchParams({tabKey: 1});
                 }
             }
         }
         fetch();
     }, [userid]);
+
+    // 加载“个人中心”
+    useEffect(() => {
+        const fetch = async () => {
+            if(!tabKey) {
+                setSearchParams({tabKey: 1});
+            }
+            if(userid || tabKey !== 1 || loadedTabs.includes(1)) {
+                return;
+            }
+            loadedTabs.push(1);
+            const fetched_emotion = await getEmotion();
+            const fetched_users = await getIntimateUsers();
+            setEmotion(fetched_emotion);
+            setIntimateUsers(fetched_users);
+        }
+        fetch();
+    }, [userid, tabKey]);
+
+    // 加载“我的博客”
+    useEffect(() => {
+        const fetch = async () => {
+            if(userid || tabKey !== 2 || loadedTabs.includes(2) || !profile) {
+                return;
+            }
+            loadedTabs.push(2);
+            const fetched_blogs = await getBlogs(profile.userid);
+            const fetched_blogs_like = await getLikeBlogs(profile.userid);
+            const fetched_blogs_comment = await getCommentBlogs(profile.userid);
+            setMyBlogs(fetched_blogs);
+            setLikeBlogs(fetched_blogs_like);
+            setCommentBlogs(fetched_blogs_comment);
+        }
+        fetch();
+    }, [userid, tabKey, profile]);
+
+    // 加载“成长轨迹”
+    useEffect(() => {
+        const fetch = async () => {
+            if(userid || tabKey !== 5 || loadedTabs.includes(5)) {
+                return;
+            }
+            loadedTabs.push(5);
+            const fetched_week = await getWeekData();
+            const fetched_month = await getMonthData();
+            const fetched_data = await getMilestone();
+            setWeekData(fetched_week);
+            setMonthData(fetched_month);
+            setMilestones(fetched_data.milestones);
+        }
+        fetch();
+    }, [userid, tabKey]);
 
     const fetchNotification = async () => {
         const fetched_notification = await getNotification();
@@ -95,27 +131,13 @@ export default function HomePage() {
         setPublicNotifications(fetched_public);
     }
 
+    // 加载通知
     useEffect(() => {
         if(userid) {
-            setPrivateNotifications([]);
-            setPublicNotifications([]);
+            return;
         }
-        else {
-            fetchNotification();
-        }
+        fetchNotification();
     }, [userid]);
-
-    const [update, setUpdate] = useState(0);
-    useEffect(() => {
-        const fetch = async () => {
-            if(userid) {
-                return;
-            }
-            const fetched_profile = await getUserProfile();
-            setProfile(fetched_profile);
-        }
-        fetch();
-    }, [update]);
 
     useEffect(() => {
         const setModal = () => {
@@ -145,48 +167,7 @@ export default function HomePage() {
         setModal();
     }, [profile, privateNotifications, publicNotifications, setIsModelOpen]);
 
-    useEffect(() => {
-        useridRef.current = profile?.userid;
-    }, [profile]);
-
-    useEffect(() => {
-        const socket = new SockJS("https://192.168.101.26:8443/ws");
-        const client = Stomp.over(socket);
-        
-        setConnectionStatus('connecting');
-        
-        client.connect({}, 
-            () => {
-                setConnectionStatus('connected');
-                client.subscribe("/user/queue/notifications/notify", async (msg) => {
-                    try {
-                        const receivedMsg = JSON.parse(msg.body);
-                        console.log(receivedMsg);
-                        if(receivedMsg.touserid !== useridRef.current) {
-                            message.error('消息发送错误');
-                            return;
-                        }
-                        fetchNotification();
-                    } catch (error) {
-                        console.error('处理消息失败:', error);
-                    }
-                });
-            },
-            (error) => {
-                console.error('WebSocket连接失败:', error);
-                setConnectionStatus('disconnected');
-            }
-        );
-        
-        return () => {
-            if(client && client.connected) {
-                client.disconnect();
-            }
-            setConnectionStatus('disconnected');
-        };
-    }, []);
-
-    if(!profile || (!userid && !emotion)) {
+    if(!profile || (userid && !other)) {
         return (
             <CustomLayout content={
                 <Loading />
@@ -194,32 +175,21 @@ export default function HomePage() {
         )
     }
 
-    const unreadAndHighPublic = publicNotifications.filter(item => item.priority === 'high' && item.unread);
-    const unreadAndHighPrivate = privateNotifications.filter(item => item.priority === 'high' && item.unread);
-
     return (
-        <CustomLayout update={update} content={
+        <CustomLayout content={
             <HomeLayout 
-                header={<ProfileHeader profile={profile} id={userid} />} 
-                modal={<NotificationModal 
-                    profile={profile}
-                    isModelOpen={isModelOpen} 
-                    setIsModelOpen={setIsModelOpen} 
-                    highPublic={unreadAndHighPublic} 
-                    highPrivate={unreadAndHighPrivate}
-                />}
-                edit={<ProfileEdit profile={profile} setUpdate={setUpdate} />} 
-                view={<ProfileView profile={profile} />} 
+                header={<ProfileHeader profile={userid ? other : profile} id={userid} />} 
+                modal={<NotificationModal isModelOpen={isModelOpen} setIsModelOpen={setIsModelOpen} />}
+                edit={<ProfileEdit />} 
+                view={<ProfileView />} 
                 emotionCard={<EmotionCard emotion={emotion} />} 
                 intimateCard={<IntimateCard intimateUsers={intimateUsers} />} 
                 blogCard={!userid ? <BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} profile={profile} /> : 
-                                <BlogCardOther myBlogs={myBlogs} profile={profile} />} 
+                                <BlogCardOther myBlogs={otherBlogs} profile={other} />} 
                 emotionGraph={<EmotionGragh weekData={weekData} monthData={monthData} />} 
-                notificationcard={<NotificationCard 
-                    privateNotifications={privateNotifications} 
-                    publicNotifications={publicNotifications}
-                    fetchNotification={fetchNotification} 
-                />}
+                historyCard={<EmotionHistoryCard />}
+                timeline={<ProcessLine milestones={milestones} />}
+                notificationcard={<NotificationCard />}
                 tabKey={tabKey} 
             />
         }/>

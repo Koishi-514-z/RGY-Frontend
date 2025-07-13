@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Typography, Layout, Avatar, Space } from 'antd';
+import React, { useEffect, useRef, useState } from "react";
+import { Typography, Layout, Avatar, Space, App } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Navbar from "../navbar";
 import NavbarCounselor from "../admin/navbarcounselor";
@@ -7,12 +7,29 @@ import { getUserProfile } from "../../service/user";
 import NavbarAdmin from "../admin/navbaradmin";
 import MessageInfromer from "../messageinfromer";
 import UserHeader from "../userheader";
+import { useProfile } from "../context/profilecontext";
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
+import { useNotification } from "../context/notificationcontext";
+import { getNotification } from "../../service/notification";
 
 const { Header, Content, Sider, Footer } = Layout;
 const { Title, Text } = Typography;
 
-export default function CustomLayout({content, role = 0, update = 0}) {
-    const [profile, setProfile] = useState(null);
+export default function CustomLayout({content}) {
+    const { profile, setProfile } = useProfile();
+    const { setPrivateNotifications, setPublicNotifications } = useNotification();
+    const useridRef = useRef(null);
+    const [connectionStatus, setConnectionStatus] = useState('connecting');
+    const { message } = App.useApp();
+
+    const fetchNotification = async () => {
+        const fetched_notification = await getNotification();
+        const fetched_private = fetched_notification.filter(notify => notify.type < 1000);
+        const fetched_public = fetched_notification.filter(notify => notify.type >= 1000);
+        setPrivateNotifications(fetched_private);
+        setPublicNotifications(fetched_public);
+    }
 
     useEffect(() => {
         const fetch = async () => {
@@ -20,7 +37,50 @@ export default function CustomLayout({content, role = 0, update = 0}) {
             setProfile(fetched_profile);
         }
         fetch();
-    }, [update]);
+    }, []);
+
+    useEffect(() => {
+        useridRef.current = profile?.userid;
+    }, [profile]);
+
+    useEffect(() => {
+        const socket = new SockJS("https://localhost:8443/ws");
+        const client = Stomp.over(socket);
+        
+        setConnectionStatus('connecting');
+        
+        client.connect({}, 
+            () => {
+                setConnectionStatus('connected');
+                client.subscribe("/user/queue/notifications/notify", async (msg) => {
+                    try {
+                        const receivedMsg = JSON.parse(msg.body);
+                        console.log(receivedMsg);
+                        if(receivedMsg.touserid !== useridRef.current) {
+                            message.error('消息发送错误');
+                            return;
+                        }
+                        fetchNotification();
+                    } catch (error) {
+                        console.error('处理消息失败:', error);
+                    }
+                });
+            },
+            (error) => {
+                console.error('WebSocket连接失败:', error);
+                setConnectionStatus('disconnected');
+            }
+        );
+        
+        return () => {
+            if(client && client.connected) {
+                client.disconnect();
+            }
+            setConnectionStatus('disconnected');
+        };
+    }, []);
+
+    const role = profile?.role;
 
     if(role === 1) {
         return (
