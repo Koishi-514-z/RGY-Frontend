@@ -3,7 +3,16 @@ import React, { createContext, useContext, useState } from 'react';
 const ProfileContext = createContext(null);
 
 export function ProfileProvider({ children }) {
-    const [profile, setProfile] = useState(null);
+    const [profile, setProfile] = useState({
+        userid: null,
+        username: null,
+        email: null,
+        avatar: null,
+        note: null,
+        role: null,
+        jointime: null,
+        level: null
+    });
 
     return (
         <ProfileContext.Provider value={{profile, setProfile}}>

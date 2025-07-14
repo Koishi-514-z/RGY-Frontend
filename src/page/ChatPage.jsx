@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { getSession, getSessionTags, updateRead } from "../service/chat";
 import { useParams } from "react-router-dom";
-import { App, Row, Col } from "antd";
+import { App, Row, Col, Drawer, Button } from "antd";
+import { MenuOutlined, MessageOutlined } from "@ant-design/icons";
 import SessionMenu from "../components/chat/sessionmenu";
 import CustomLayout from "../components/layout/customlayout";
 import MessageDisplay from "../components/chat/messagedisplay";
@@ -19,10 +20,28 @@ export default function ChatPage() {
     const [sessionTags, setSessionTags] = useState([]);
     const [session, setSession] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('connecting');
+    const [sessionMenuVisible, setSessionMenuVisible] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
     const { sessionid } = useParams();
     const sessionidRef = useRef(sessionid);
     const useridRef = useRef(null);
     const { message } = App.useApp();
+
+    // 监听屏幕尺寸变化
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            setIsMobile(width < 768);
+            setIsTablet(width >= 768 && width < 1024);
+            if(width >= 768) {
+                setSessionMenuVisible(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const fetchSessionTags = async () => {
         try {
@@ -136,69 +155,182 @@ export default function ChatPage() {
         fetch();
     }, []);
 
+    // 会话侧边栏内容
+    const SessionSidebar = () => (
+        <div style={{
+            height: isMobile ? 'auto' : '100%',
+            background: '#fff',
+            display: 'flex',
+            flexDirection: 'column'
+        }}>
+            <SessionStatus sessionTags={sessionTags} />
+            
+            <div style={{ 
+                flex: 1, 
+                overflow: 'auto',
+                minHeight: isMobile ? '400px' : 'auto'
+            }}>
+                <SessionMenu sessionTags={sessionTags} />
+            </div>
+        </div>
+    );
+
     if(!profile) {
         return (
-            <CustomLayout role={0} content={
+            <CustomLayout content={
                 <Loading />
             }/>
         )
     }
 
     return (
-        <CustomLayout role={profile.role} content={
-            <div style={{ height: 'calc(110vh - 64px - 69px - 48px)' }}>
+        <CustomLayout content={
+            <div style={{ 
+                height: isMobile ? 'calc(100vh - 64px - 69px)' : 'calc(100vh - 64px - 69px - 48px)',
+                position: 'relative'
+            }}>
                 <ParticleBackground role={profile.role} />
 
-                <Row style={{ height: '100%' }}>
-                    <Col xs={24} sm={8} md={6} lg={5} xl={4} style={{ height: '100%' }}>
+                {/* 移动端布局 */}
+                {isMobile ? (
+                    <div style={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        background: '#fff',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        margin: '0 8px'
+                    }}>
+                        {/* 移动端头部 */}
                         <div style={{
-                            height: '100%',
-                            background: '#fff',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                            borderRadius: '8px',
-                            overflow: 'hidden',
                             display: 'flex',
-                            flexDirection: 'column'
+                            alignItems: 'center',
+                            padding: '12px 16px',
+                            borderBottom: '1px solid #f0f0f0',
+                            background: '#fff',
+                            zIndex: 10
                         }}>
-                            <SessionStatus sessionTags={sessionTags} />
-                            
-                            <div style={{ flex: 1, overflow: 'auto' }}>
-                                <SessionMenu sessionTags={sessionTags} />
+                            <Button
+                                type="text"
+                                icon={<MenuOutlined />}
+                                onClick={() => setSessionMenuVisible(true)}
+                                style={{
+                                    marginRight: '12px',
+                                    fontSize: '16px',
+                                    color: '#595959'
+                                }}
+                            />
+                            <div style={{ flex: 1 }}>
+                                <ChatHeader session={session} />
                             </div>
                         </div>
-                    </Col>
-                    
-                    <Col xs={24} sm={16} md={18} lg={19} xl={20} style={{ height: '100%' }}>
+
+                        {/* 消息显示区域 */}
                         <div style={{
-                            height: '100%',
-                            marginLeft: '16px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            background: '#fff',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                            borderRadius: '8px',
-                            overflow: 'hidden'
+                            flex: 1,
+                            padding: '12px',
+                            overflowY: 'auto',
+                            background: '#fafafa',
+                            zIndex: 1
                         }}>
-                            <ChatHeader session={session} />
-                            
-                            <div style={{
-                                flex: 1,
-                                padding: '16px',
-                                overflowY: 'auto',
-                                background: '#fafafa'
-                            }}>
-                                <MessageDisplay session={session} />
-                            </div>
-                            
-                            <div style={{
-                                borderTop: '1px solid #f0f0f0',
-                                background: '#fff'
-                            }}>
-                                <InputArea setSession={setSession} />
-                            </div>
+                            <MessageDisplay session={session} />
                         </div>
-                    </Col>
-                </Row>
+                        
+                        {/* 输入区域 */}
+                        <div style={{
+                            borderTop: '1px solid #f0f0f0',
+                            background: '#fff',
+                            zIndex: 10
+                        }}>
+                            <InputArea setSession={setSession} />
+                        </div>
+
+                        {/* 移动端抽屉 */}
+                        <Drawer
+                            title="会话列表"
+                            placement="left"
+                            onClose={() => setSessionMenuVisible(false)}
+                            open={sessionMenuVisible}
+                            width={280}
+                            styles={{
+                                body: { padding: 0 }
+                            }}
+                        >
+                            <SessionSidebar />
+                        </Drawer>
+                    </div>
+                ) : (
+                    /* 桌面端和平板布局 */
+                    <Row style={{ height: '100%' }} gutter={16}>
+                        {/* 会话列表侧边栏 */}
+                        <Col 
+                            xs={0} 
+                            sm={8} 
+                            md={6} 
+                            lg={5} 
+                            xl={4} 
+                            style={{ height: '100%' }}
+                        >
+                            <div style={{
+                                height: '100%',
+                                background: '#fff',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                borderRadius: '8px',
+                                overflow: 'hidden'
+                            }}>
+                                <SessionSidebar />
+                            </div>
+                        </Col>
+                        
+                        {/* 聊天主区域 */}
+                        <Col 
+                            xs={24} 
+                            sm={16} 
+                            md={18} 
+                            lg={19} 
+                            xl={20} 
+                            style={{ height: '100%' }}
+                        >
+                            <div style={{
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                background: '#fff',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                borderRadius: '8px',
+                                overflow: 'hidden'
+                            }}>
+                                {/* 聊天头部 */}
+                                <div style={{
+                                    padding: isTablet ? '12px 16px' : '16px 20px',
+                                    borderBottom: '1px solid #f0f0f0',
+                                    background: '#fff'
+                                }}>
+                                    <ChatHeader session={session} />
+                                </div>
+                                
+                                {/* 消息显示区域 */}
+                                <div style={{
+                                    flex: 1,
+                                    padding: isTablet ? '12px' : '16px',
+                                    overflowY: 'auto',
+                                    background: '#fafafa'
+                                }}>
+                                    <MessageDisplay session={session} />
+                                </div>
+                                
+                                {/* 输入区域 */}
+                                <div style={{
+                                    borderTop: '1px solid #f0f0f0',
+                                    background: '#fff'
+                                }}>
+                                    <InputArea setSession={setSession} />
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                )}
             </div>
         } />
     );

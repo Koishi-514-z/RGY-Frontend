@@ -1,16 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    Input,
-    Button,
-    List,
-    Avatar,
-    Typography,
-    Spin,
-    Row,
-    Col,
-    App
-} from 'antd';
-import { UserOutlined, RobotOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Input, Button, List, Avatar, Typography, Spin, Row, Col, App, Drawer } from 'antd';
+import { UserOutlined, RobotOutlined, MenuOutlined } from '@ant-design/icons';
 import CustomLayout from '../components/layout/customlayout';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import AISessionTabs from '../components/admin/AIsessiontabs';
@@ -23,18 +13,35 @@ import ParticleBackground from '../components/layout/particlebackground';
 const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
 
-const AIAssistant = () => {
+export default function AIAssistantPage() {
     const { message } = App.useApp();
     const [AIsessions, setAIsessions] = useState([]);
     const [messages, setMessages] = useState([]);
     const [userInput, setUserInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [usageSeconds, setUsageSeconds] = useState(0);
+    const [sidebarVisible, setSidebarVisible] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
     const alertShownRef = useRef(false); 
     const {sessionid} = useParams();                 
     const [searchParams] = useSearchParams();         
     const activeTab = searchParams.get('activeTab');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            setIsMobile(width < 768);
+            setIsTablet(width >= 768 && width < 1024);
+            if(width >= 768) {
+                setSidebarVisible(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const createAIsession = (oldAIsessions = AIsessions) => {
         const initcontentHearing = {
@@ -114,7 +121,7 @@ const AIAssistant = () => {
 
     useEffect(() => {
         const handleOveruse = async () => {
-            if(usageSeconds >= 10 && !alertShownRef.current) {
+            if(usageSeconds >= 3600 && !alertShownRef.current) {
                 message.info('您单日使用已超过一小时，已安排心理咨询师回访');
                 alertShownRef.current = true;
                 // let orderInfo = { userid };
@@ -236,76 +243,144 @@ const AIAssistant = () => {
         }
     };
 
+    // AI侧边栏内容
+    const AISidebar = () => (
+        <div style={{
+            height: isMobile ? 'auto' : '100%',
+            background: '#fff',
+            display: 'flex',
+            flexDirection: 'column'
+        }}>
+            <AISidbar 
+                AIsessions={AIsessions} 
+                handleCreate={handleCreate} 
+                handleDelete={deleteAIsession} 
+            />
+        </div>
+    );
+
     return (
         <CustomLayout content={
-            <div>
+            <div style={{
+                height: isMobile ? 'calc(100vh - 64px - 69px)' : 'calc(100vh - 64px - 69px - 48px)',
+                position: 'relative'
+            }}>
                 <ParticleBackground />
-                <Row>
-                    <Col span={24}>
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                background: 'linear-gradient(90deg, #e6f7ff 0%, #fff 100%)',
-                                boxShadow: '0 2px 12px rgba(24,144,255,0.08)',
-                                padding: '0px 32px',
-                                minHeight: 60,
-                            }}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <RobotOutlined style={{ fontSize: 32, color: '#1890ff', marginRight: 16 }} />
-                                <Title level={3} style={{ color: '#222', margin: 0, letterSpacing: 2 }}>
-                                    AI 虚拟陪伴助手
-                                </Title>
-                            </div>
-                            <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', paddingLeft: 320 }}>
-                                <AISessionTabs activeTab={activeTab} handleTabChange={handleTabChange} />
-                            </div>
+                
+                {/* 头部区域 */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'linear-gradient(90deg, #e6f7ff 0%, #fff 100%)',
+                    boxShadow: '0 2px 12px rgba(24,144,255,0.08)',
+                    padding: isMobile ? '0px 16px' : '0px 32px',
+                    minHeight: 60,
+                    flexDirection: isMobile ? 'column' : 'row',
+                    gap: isMobile ? '12px' : '0',
+                    position: 'relative',
+                    zIndex: 10
+                }}>
+                    <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center',
+                        width: isMobile ? '100%' : 'auto',
+                        justifyContent: isMobile ? 'space-between' : 'flex-start'
+                    }}>
+                        {isMobile && (
+                            <Button
+                                type="text"
+                                icon={<MenuOutlined />}
+                                onClick={() => setSidebarVisible(true)}
+                                style={{
+                                    fontSize: '16px',
+                                    color: '#1890ff'
+                                }}
+                            />
+                        )}
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <RobotOutlined style={{ 
+                                fontSize: isMobile ? 24 : 32, 
+                                color: '#1890ff', 
+                                marginRight: isMobile ? 8 : 16 
+                            }} />
+                            <Title level={isMobile ? 4 : 3} style={{ 
+                                color: '#222', 
+                                margin: 0, 
+                                letterSpacing: isMobile ? 1 : 2 
+                            }}>
+                                {isMobile ? 'AI助手' : 'AI 虚拟陪伴助手'}
+                            </Title>
                         </div>
-                    </Col>
-                </Row>
-                <Row gutter={[24, 24]} style={{ height: 'calc(104vh - 64px - 69px - 48px)' }}>
-                    <Col xs={24} sm={8} md={6} lg={5} xl={4} style={{ height: '100%' }}>
-                        <div style={{ 
-                            height: '100%', 
-                            background: '#fff', 
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.09)',
-                            borderRadius: '4px',
-                            overflow: 'hidden'
-                        }}>
-                            <AISidbar AIsessions={AIsessions} handleCreate={handleCreate} handleDelete={deleteAIsession} />
-                        </div>
-                    </Col>
-                    <Col xs={24} sm={16} md={18} lg={19} xl={20} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    </div>
+                    
+                    <div style={{ 
+                        flex: isMobile ? 'none' : 1, 
+                        display: 'flex', 
+                        justifyContent: isMobile ? 'center' : 'flex-start', 
+                        paddingLeft: isMobile ? 0 : (isTablet ? 120 : 320),
+                        width: isMobile ? '100%' : 'auto'
+                    }}>
+                        <AISessionTabs 
+                            activeTab={activeTab} 
+                            handleTabChange={handleTabChange} 
+                            mobile={isMobile}
+                        />
+                    </div>
+                </div>
+
+                {/* 主内容区域 */}
+                {isMobile ? (
+                    /* 移动端布局 */
+                    <div style={{
+                        height: 'calc(100% - 60px)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        background: '#fff',
+                        margin: '16px 8px 0 8px',
+                        borderRadius: '8px',
+                        overflow: 'hidden'
+                    }}>
                         <div style={{ 
                             flex: 1, 
                             overflowY: 'auto',
                             background: '#fff',
-                            padding: '16px',
-                            marginBottom: '16px',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.09)'
+                            padding: '12px',
+                            borderBottom: '1px solid #f0f0f0',
+                            position: 'relative',
+                            zIndex: 1
                         }}>
                             <List
                                 dataSource={messages}
                                 renderItem={(msg, index) => (
                                     msg.role !== 'developer' && (
-                                        <List.Item key={index}>
+                                        <List.Item key={index} style={{ padding: '8px 0' }}>
                                             <List.Item.Meta
                                                 avatar={
                                                     msg.role === 'user' ? (
-                                                        <Avatar icon={<UserOutlined />} />
+                                                        <Avatar icon={<UserOutlined />} size={40} />
                                                     ) : (
                                                         <Avatar
                                                             icon={<RobotOutlined />}
                                                             style={{ backgroundColor: '#87d068' }}
+                                                            size={40}
                                                         />
                                                     )
                                                 }
-                                                title={msg.role === 'user' ? '你' : 'AI小伙伴'}
+                                                title={
+                                                    <span style={{ fontSize: '14px', fontWeight: '500' }}>
+                                                        {msg.role === 'user' ? '你' : 'AI小伙伴'}
+                                                    </span>
+                                                }
                                                 description={
                                                     <div className="markdown-content">
-                                                        <Paragraph style={{ whiteSpace: 'pre-wrap', margin: 0, color: 'black' }}>
+                                                        <Paragraph style={{ 
+                                                            whiteSpace: 'pre-wrap', 
+                                                            margin: 0, 
+                                                            color: 'black',
+                                                            fontSize: '13px',
+                                                            lineHeight: '1.5'
+                                                        }}>
                                                             <ReactMarkdown
                                                                 children={msg.content}
                                                                 remarkPlugins={[remarkGfm]}
@@ -319,42 +394,188 @@ const AIAssistant = () => {
                                     )
                                 )}
                             />
-                            {loading && <Spin style={{ marginTop: 10 }} />}
+                            {loading && (
+                                <div style={{ textAlign: 'center', padding: '12px' }}>
+                                    <Spin />
+                                </div>
+                            )}
                         </div>
+                        
                         <div style={{ 
                             background: '#fff',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.09)'
+                            padding: '12px',
+                            position: 'relative',
+                            zIndex: 10
                         }}>
-                            <div style={{
-                                borderRadius: '12px',
-                                background: '#fff',
-                                padding: '12px',
-                                boxShadow: '0 -2px 8px rgba(0,0,0,0.05)'
+                            <TextArea
+                                rows={3}
+                                value={userInput}
+                                onChange={(e) => setUserInput(e.target.value)}
+                                onPressEnter={(e) => {
+                                    if (!e.shiftKey) {
+                                        e.preventDefault();
+                                        sendMessage();
+                                    }
+                                }}
+                                placeholder="写下你的心情..."
+                                style={{ 
+                                    fontSize: '14px',
+                                    borderRadius: '8px'
+                                }}
+                            />
+                            <Button 
+                                type="primary" 
+                                onClick={sendMessage} 
+                                style={{ 
+                                    marginTop: 8,
+                                    borderRadius: '6px',
+                                    fontSize: '14px'
+                                }}
+                                block
+                            >
+                                发送
+                            </Button>
+                        </div>
+
+                        <Drawer
+                            title="AI会话列表"
+                            placement="left"
+                            onClose={() => setSidebarVisible(false)}
+                            open={sidebarVisible}
+                            width={280}
+                            styles={{
+                                body: { padding: 0 }
+                            }}
+                        >
+                            <AISidebar />
+                        </Drawer>
+                    </div>
+                ) : (
+                    /* 桌面端和平板布局 */
+                    <Row gutter={[16, 16]} style={{ 
+                        height: 'calc(100% - 60px)',
+                        margin: '16px 0 0 0',
+                        paddingRight: '16px'
+                    }}>
+                        <Col xs={0} sm={8} md={6} lg={5} xl={4} style={{ height: '100%' }}>
+                            <div style={{ 
+                                height: '100%', 
+                                background: '#fff', 
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.09)',
+                                borderRadius: '8px',
+                                overflow: 'hidden'
                             }}>
-                                <TextArea
-                                    rows={3}
-                                    value={userInput}
-                                    onChange={(e) => setUserInput(e.target.value)}
-                                    onPressEnter={(e) => {
-                                        if (!e.shiftKey) {
-                                            e.preventDefault();
-                                            sendMessage();
-                                        }
-                                    }}
-                                    placeholder="写下你的心情..."
-                                    style={{ marginTop: 8 }}
+                                <AISidebar />
+                            </div>
+                        </Col>
+                        
+                        <Col xs={24} sm={16} md={18} lg={19} xl={20} style={{ 
+                            height: '100%', 
+                            display: 'flex', 
+                            flexDirection: 'column' 
+                        }}>
+                            <div style={{ 
+                                flex: 1, 
+                                overflowY: 'auto',
+                                background: '#fff',
+                                padding: isTablet ? '12px' : '16px',
+                                marginBottom: '16px',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.09)',
+                                borderRadius: '8px'
+                            }}>
+                                <List
+                                    dataSource={messages}
+                                    renderItem={(msg, index) => (
+                                        msg.role !== 'developer' && (
+                                            <List.Item key={index}>
+                                                <List.Item.Meta
+                                                    avatar={
+                                                        msg.role === 'user' ? (
+                                                            <Avatar icon={<UserOutlined />} size={isTablet ? 48 : 56} />
+                                                        ) : (
+                                                            <Avatar
+                                                                icon={<RobotOutlined />}
+                                                                style={{ backgroundColor: '#87d068' }}
+                                                                size={isTablet ? 48 : 56}
+                                                            />
+                                                        )
+                                                    }
+                                                    title={
+                                                        <span style={{ fontSize: isTablet ? '15px' : '16px' }}>
+                                                            {msg.role === 'user' ? '你' : 'AI小伙伴'}
+                                                        </span>
+                                                    }
+                                                    description={
+                                                        <div className="markdown-content">
+                                                            <Paragraph style={{ 
+                                                                whiteSpace: 'pre-wrap', 
+                                                                margin: 0, 
+                                                                color: 'black',
+                                                                fontSize: isTablet ? '13px' : '14px',
+                                                                lineHeight: '1.6'
+                                                            }}>
+                                                                <ReactMarkdown
+                                                                    children={msg.content}
+                                                                    remarkPlugins={[remarkGfm]}
+                                                                    rehypePlugins={[rehypeHighlight]}
+                                                                />
+                                                            </Paragraph>
+                                                        </div>
+                                                    }
+                                                />
+                                            </List.Item>
+                                        )
+                                    )}
                                 />
-                                <Button type="primary" onClick={sendMessage} style={{ marginTop: 10 }}>
-                                    发送
-                                </Button>
+                                {loading && (
+                                    <div style={{ textAlign: 'center', padding: '16px' }}>
+                                        <Spin size="large" />
+                                    </div>
+                                )}
                             </div>
                             
-                        </div>
-                    </Col>
-                </Row>
+                            <div style={{ 
+                                background: '#fff',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.09)',
+                                borderRadius: '8px'
+                            }}>
+                                <div style={{
+                                    borderRadius: '8px',
+                                    background: '#fff',
+                                    padding: isTablet ? '12px' : '16px'
+                                }}>
+                                    <TextArea
+                                        rows={3}
+                                        value={userInput}
+                                        onChange={(e) => setUserInput(e.target.value)}
+                                        onPressEnter={(e) => {
+                                            if (!e.shiftKey) {
+                                                e.preventDefault();
+                                                sendMessage();
+                                            }
+                                        }}
+                                        placeholder="写下你的心情..."
+                                        style={{ 
+                                            marginTop: 8,
+                                            fontSize: isTablet ? '13px' : '14px'
+                                        }}
+                                    />
+                                    <Button 
+                                        type="primary" 
+                                        onClick={sendMessage} 
+                                        style={{ 
+                                            marginTop: 10,
+                                            fontSize: isTablet ? '13px' : '14px'
+                                        }}
+                                    >
+                                        发送
+                                    </Button>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                )}
             </div>
         }/>
     )
 };
-
-export default AIAssistant;

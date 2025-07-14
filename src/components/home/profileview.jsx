@@ -174,7 +174,7 @@ export default function ProfileView() {
                     <InfoItem 
                         icon={<IdcardOutlined />}
                         label="账户ID" 
-                        value={profile.userid} 
+                        value={profile?.userid} 
                     />
                 </Col>
 
@@ -182,7 +182,7 @@ export default function ProfileView() {
                     <InfoItem 
                         icon={<UserOutlined />}
                         label="用户名" 
-                        value={profile.username} 
+                        value={profile?.username} 
                     />
                 </Col>
                 
@@ -190,7 +190,7 @@ export default function ProfileView() {
                     <InfoItem 
                         icon={<MailOutlined />}
                         label="电子邮箱" 
-                        value={profile.email} 
+                        value={profile?.email} 
                         tag="已验证"
                         tagColor="success"
                     />

@@ -154,7 +154,7 @@ export default function EmotionGragh({weekData, monthData}) {
     };
 
     const calcAverage = (datas) => {
-        if(!datas || datas.length < 2) {
+        if(!datas || datas.length == 0) {
             return null;
         }
         let avg = 0;

@@ -4,7 +4,6 @@ import { getIntimateUsers, getUserProfile, getSimplifiedProfile, getMilestone } 
 import ProfileEdit from "../components/home/profileedit";
 import ProfileView from "../components/home/profileview";
 import ProfileHeader from "../components/home/profileheader";
-import Loading from "../components/loading";
 import HomeLayout from "../components/layout/homelayout";
 import EmotionCard from "../components/home/emotioncard";
 import BlogCard from "../components/home/blogcard";
@@ -37,6 +36,7 @@ export default function HomePage() {
     const [milestones, setMilestones] = useState([]);
     const [loadedTabs, setLoadedTabs] = useState([]);
     const [isModelOpen, setIsModelOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const {userid} = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const tabKey = parseInt(searchParams.get('tabKey'));
@@ -59,13 +59,15 @@ export default function HomePage() {
                 if(me.userid === userid) {
                     navigate(`/home?tabKey=${1}`);
                 }
+                if(!tabKey) {
+                    setSearchParams({tabKey: 2});
+                }
+                setLoading(true);
                 const fetched_other = await getSimplifiedProfile(userid);
                 const fetched_blogs = await getBlogs(userid);
                 setOther(fetched_other);
                 setOtherBlogs(fetched_blogs);
-                if(!tabKey) {
-                    setSearchParams({tabKey: 2});
-                }
+                setLoading(false);
             }
         }
         fetch();
@@ -81,10 +83,12 @@ export default function HomePage() {
                 return;
             }
             loadedTabs.push(1);
+            setLoading(true);
             const fetched_emotion = await getEmotion();
             const fetched_users = await getIntimateUsers();
             setEmotion(fetched_emotion);
             setIntimateUsers(fetched_users);
+            setLoading(false);
         }
         fetch();
     }, [userid, tabKey]);
@@ -92,16 +96,18 @@ export default function HomePage() {
     // 加载“我的博客”
     useEffect(() => {
         const fetch = async () => {
-            if(userid || tabKey !== 2 || loadedTabs.includes(2) || !profile) {
+            if(userid || tabKey !== 2 || loadedTabs.includes(2) || !profile.userid) {
                 return;
             }
             loadedTabs.push(2);
+            setLoading(true);
             const fetched_blogs = await getBlogs(profile.userid);
             const fetched_blogs_like = await getLikeBlogs(profile.userid);
             const fetched_blogs_comment = await getCommentBlogs(profile.userid);
             setMyBlogs(fetched_blogs);
             setLikeBlogs(fetched_blogs_like);
             setCommentBlogs(fetched_blogs_comment);
+            setLoading(false);
         }
         fetch();
     }, [userid, tabKey, profile]);
@@ -113,12 +119,14 @@ export default function HomePage() {
                 return;
             }
             loadedTabs.push(5);
+            setLoading(true);
             const fetched_week = await getWeekData();
             const fetched_month = await getMonthData();
             const fetched_data = await getMilestone();
             setWeekData(fetched_week);
             setMonthData(fetched_month);
             setMilestones(fetched_data.milestones);
+            setLoading(false);
         }
         fetch();
     }, [userid, tabKey]);
@@ -167,14 +175,6 @@ export default function HomePage() {
         setModal();
     }, [profile, privateNotifications, publicNotifications, setIsModelOpen]);
 
-    if(!profile || (userid && !other)) {
-        return (
-            <CustomLayout content={
-                <Loading />
-            }/>
-        )
-    }
-
     return (
         <CustomLayout content={
             <HomeLayout 
@@ -184,8 +184,8 @@ export default function HomePage() {
                 view={<ProfileView />} 
                 emotionCard={<EmotionCard emotion={emotion} />} 
                 intimateCard={<IntimateCard intimateUsers={intimateUsers} />} 
-                blogCard={!userid ? <BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} profile={profile} /> : 
-                                <BlogCardOther myBlogs={otherBlogs} profile={other} />} 
+                blogCard={!userid ? <BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} profile={profile} loading={loading}/> : 
+                                <BlogCardOther myBlogs={otherBlogs} profile={other} loading={loading} />} 
                 emotionGraph={<EmotionGragh weekData={weekData} monthData={monthData} />} 
                 historyCard={<EmotionHistoryCard />}
                 timeline={<ProcessLine milestones={milestones} />}

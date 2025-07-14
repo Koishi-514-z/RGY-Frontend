@@ -6,9 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
-export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
+export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile, loading}) {
     const navigate = useNavigate();
-    console.log(myBlogs);
 
     const handleClick = () => {
         navigate(`/post`);
@@ -31,7 +30,9 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
     };
 
     const getLastPostTime = () => {
-        if (myBlogs.length === 0) return null;
+        if(myBlogs.length === 0) {
+            return null;
+        }
         const latestBlog = myBlogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
         console.log(latestBlog);
         return new Date(latestBlog.timestamp).toLocaleDateString('zh-CN');
@@ -78,6 +79,7 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
                 marginBottom: '24px',
                 background: 'linear-gradient(135deg, #f0f9ff 0%,rgb(235, 249, 255) 100%)'
             }}
+            loading={loading}
         >
             <Row align="middle" gutter={[24, 16]}>
                 <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
@@ -170,6 +172,7 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
                 borderRadius: '12px',
                 marginBottom: '24px'
             }}
+            loading={loading}
         >
             <Row gutter={[16, 16]}>
                 <Col xs={24} sm={12}>
@@ -274,6 +277,7 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
                     overflow: 'hidden',
                     marginBottom: '24px'
                 }}
+                loading={loading}
             >
                 <BlogList 
                     blogs={myBlogs} 
@@ -322,6 +326,7 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
                     overflow: 'hidden',
                     marginBottom: '24px'
                 }}
+                loading={loading}
             >
                 <BlogList 
                     blogs={likeBlogs} 
@@ -368,6 +373,7 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
                     borderRadius: '12px',
                     overflow: 'hidden',
                 }}
+                loading={loading}
             >
                 <BlogList 
                     blogs={commentBlogs} 

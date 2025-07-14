@@ -17,6 +17,8 @@ export default function EmotionCard({emotion}) {
     const navigate = useNavigate();
     const pageSize = 3;
 
+    const loading = !emotion || tags.length === 0;
+
     useEffect(() => {
         const fetch = async () => {
             const fetched_tags = await getTags();
@@ -121,11 +123,7 @@ export default function EmotionCard({emotion}) {
         return "希望我们能给您带来一些温暖";
     };
 
-    if(!emotion || tags.length === 0) {
-        return <Loading />;
-    }
-
-    const { icon, color, gradient, bgGradient } = getEmotionIcon(emotion.score);
+    const { icon, color, gradient, bgGradient } = getEmotionIcon(emotion?.score);
     const emptyIcon = getEmptyEmotionIcon();
 
     const title = (
@@ -212,7 +210,7 @@ export default function EmotionCard({emotion}) {
                             <div key={i} style={{
                                 width: '6px',
                                 height: '6px',
-                                background: i <= emotion.score ? color : 'rgba(0,0,0,0.1)',
+                                background: i <= emotion?.score ? color : 'rgba(0,0,0,0.1)',
                                 borderRadius: '50%',
                                 transition: 'all 0.3s ease'
                             }} />
@@ -315,7 +313,7 @@ export default function EmotionCard({emotion}) {
         </div>
     );
 
-    if (!emotion.tag) {
+    if(!emotion?.tag) {
         return (
             <Card 
                 style={{ 
@@ -326,6 +324,7 @@ export default function EmotionCard({emotion}) {
                     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06)',
                     position: 'relative'
                 }}
+                loading={loading}
             >
                 {emptyTitle}
                 <div style={{ textAlign: 'center', padding: '40px 20px', position: 'relative', zIndex: 1 }}>
@@ -477,6 +476,7 @@ export default function EmotionCard({emotion}) {
                 boxShadow: '0 8px 32px rgba(24, 144, 255, 0.12)',
                 position: 'relative'
             }}
+            loading={loading}
         >
             {title}
 
@@ -530,7 +530,7 @@ export default function EmotionCard({emotion}) {
                     
                     <Rate 
                         disabled={true} 
-                        value={emotion.score} 
+                        value={emotion?.score} 
                         style={{ 
                             fontSize: '24px',
                             marginBottom: '20px',
@@ -539,7 +539,7 @@ export default function EmotionCard({emotion}) {
                     />
                     
                     <div style={{ margin: '20px 0' }}>
-                        {getEmotionTag(emotion.tag)}
+                        {getEmotionTag(emotion?.tag)}
                     </div>
                     
                     <Text style={{ 
@@ -552,7 +552,7 @@ export default function EmotionCard({emotion}) {
                         display: 'block',
                         textAlign: 'center'
                     }}>
-                        {getEmotionDescription(emotion.score)}
+                        {getEmotionDescription(emotion?.score)}
                     </Text>
                     
                     {!negative ? null : (
