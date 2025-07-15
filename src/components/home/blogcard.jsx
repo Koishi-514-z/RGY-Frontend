@@ -18,7 +18,7 @@ export default function BlogCard({myBlogs, likeBlogs, commentBlogs, profile}) {
         const totalPosts = myBlogs.length;
         const totalLikes = myBlogs.reduce((sum, blog) => sum + blog.likeNum, 0);
         const totalComments = myBlogs.reduce((sum, blog) => sum + blog.replies.length, 0);
-        const totalViews = myBlogs.reduce((sum, blog) => sum + blog.viewCount, 0);
+        const totalViews = myBlogs.reduce((sum, blog) => sum + blog.browsenum, 0);
         
         return {
             totalPosts,

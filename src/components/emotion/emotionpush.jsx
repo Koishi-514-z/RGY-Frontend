@@ -133,7 +133,12 @@ export default function EmotionPush({score, urlDatas, pageIndex, setPageIndex, p
                     </Space>
                 </div>
                 
-                <PushList urlDatas={urlDatas} inhome={true} />
+                <PushList 
+                    urlDatas={urlDatas} 
+                    pageIndex={pageIndex} 
+                    setPageIndex={setPageIndex} 
+                    pageSize={pageSize} 
+                />
             </Card>
         );
     }
@@ -240,7 +245,12 @@ export default function EmotionPush({score, urlDatas, pageIndex, setPageIndex, p
                 </Space>
             </div>
             
-            <PushList urlDatas={urlDatas} inhome={true} pageIndex={pageIndex} setPageIndex={setPageIndex} pageSize={pageSize} />
+            <PushList 
+                urlDatas={urlDatas} 
+                pageIndex={pageIndex} 
+                setPageIndex={setPageIndex} 
+                pageSize={pageSize} 
+            />
         </Card>
     );
 }

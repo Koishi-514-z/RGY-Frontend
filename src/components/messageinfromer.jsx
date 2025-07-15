@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Tooltip } from 'antd';
 import { BellOutlined } from "@ant-design/icons";
-import { getPrivateNotification, getPublicNotification } from "../service/notification";
+import { getNotification } from "../service/notification";
 import { useNavigate } from "react-router-dom";
 
 export default function MessageInfromer({role}) {
     const [privateNotifications, setPrivateNotifications] = useState([]); 
     const [publicNotifications, setPublicNotifications] = useState([]); 
     const navigate = useNavigate();
-
+    
     useEffect(() => {
-        const fetch = async () => {
-            const fetched_notifications_private = await getPrivateNotification();
-            const fetched_notifications_public = await getPublicNotification();
-            setPrivateNotifications(fetched_notifications_private);
-            setPublicNotifications(fetched_notifications_public);
+        const fetchNotification = async () => {
+            const fetched_notification = await getNotification();
+            const fetched_private = fetched_notification.filter(notify => notify.type < 1000);
+            const fetched_public = fetched_notification.filter(notify => notify.type >= 1000);
+            setPrivateNotifications(fetched_private);
+            setPublicNotifications(fetched_public);
         }
-        fetch();
+        fetchNotification();
     }, []);
 
     const handleClick = () => {
@@ -34,12 +35,12 @@ export default function MessageInfromer({role}) {
         }
     }
 
-    const unreadOrHighprivate = privateNotifications.filter(item => item.priority === 'high' || item.unread).length;
-    const highPublic = publicNotifications.filter(item => item.priority === 'high').length;
+    const unreadPrivate = privateNotifications.filter(item => item.unread).length;
+    const unreadPublic = publicNotifications.filter(item => item.unread).length;
 
     return (
         <Tooltip title="通知消息">
-            <Badge count={unreadOrHighprivate + highPublic} size="small">
+            <Badge count={unreadPrivate + unreadPublic} size="small">
                 <Button 
                     type="text" 
                     icon={<BellOutlined />} 

@@ -1,4 +1,22 @@
 import {getJson, PREFIX,post} from "./common";
+import { sendNotification } from "./NotificationService";
+
+export async function getRepliesForBlog(blogid,currentPage,pageSize) {
+    const url = `${PREFIX}/blogs/getrepliesforblog`;
+    let res;
+    let params = {
+        blogid: blogid,
+        currentPage: currentPage,
+        pageSize: pageSize
+    };
+    try {
+        res = await post(url, params);
+
+    } catch (e) {
+        throw e;
+    }
+    return res;
+}
 
 export async function adminGetBlogById(id) {
     const url = `${PREFIX}/blogs/getById/${id}`;
@@ -318,20 +336,47 @@ export async function getIllegalReplies() {
     return res;
 }
 
-export async function deleteBlog(blogId, illegalId) {
+export async function deleteBlog(blogId, illegalId,userid) {
     const url = `${PREFIX}/blogs/sheldingBlog`;
     try {
-
-        await post(url, { blogid :blogId ,illegalid :illegalId});
+        if (illegalId) {
+            const url = `${PREFIX}/blogs/sheldingBlog`;
+            await post(url, { blogid: blogId, illegalid: illegalId });
+        } else {
+            const url = `${PREFIX}/blogs/delete`;
+            await post(url, { blogid: blogId });
+        }
+        const selectedUsers = [userid];
+        //向被删贴用户发送通知
+        const data = {users: selectedUsers,
+            type: 500,
+            priority: "high",
+            title: "违规警告",
+            content: "您发表的帖子违规，已被管理员删除，请注意文明发言。"};
+        await sendNotification(data);
     } catch (e) {
         throw e;
     }
 }
 
-export async function deleteReply(replyId, illegalId) {
+export async function deleteReply(replyId, illegalId,userid) {
     const url = `${PREFIX}/blogs/sheldingReply`;
     try {
-        await post(url, { replyid:replyId, illegalid: illegalId });
+        if (illegalId) {
+            const url = `${PREFIX}/blogs/sheldingReply`;
+            await post(url, { replyid: replyId, illegalid: illegalId });
+        } else {
+            const url = `${PREFIX}/blogs/deleteReply`;
+            await post(url, { replyid: replyId });
+        }
+        const selectedUsers = [userid];
+        //向被删贴用户发送通知
+        const data = {users: selectedUsers,
+            type: 500,
+            priority: "high",
+            title: "违规警告",
+            content: "您发表的回复违规，已被管理员删除，请注意文明发言。"};
+        await sendNotification(data);
     } catch (e) {
         throw e;
     }

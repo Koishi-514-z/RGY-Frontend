@@ -103,7 +103,7 @@ export default function MyCousnelingCard({counseling, psyProfiles, setPsyProfile
     const handleSubmit = async () => {
         const comment = {
             psyid: currentRecord.psyid,
-            rating: rating,
+            score: rating,
             success: isSatisfied
         };
         const res = await addComment(comment);

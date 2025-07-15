@@ -39,6 +39,7 @@ export default function ChatPage() {
                 message.error('加载会话失败');
                 return;
             }
+            console.log(fetched_session);
             setSession(fetched_session);
         } catch (error) {
             console.error('获取会话详情失败:', error);
@@ -51,7 +52,7 @@ export default function ChatPage() {
     }, [sessionid]);
 
     useEffect(() => {
-        const socket = new SockJS("http://localhost:8080/ws");
+        const socket = new SockJS("https://localhost:8443/ws");
         const client = Stomp.over(socket);
         
         setConnectionStatus('connecting');

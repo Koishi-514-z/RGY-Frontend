@@ -16,12 +16,13 @@ import ChatPage from "../page/ChatPage";
 import AdminPage from "../page/AdminPage";
 import AdminCommunityPage from "../page/AdminCommunityPage";
 import AdminBlogdetailPage from "../page/AdminBlogdetailPage";
-import AdminPushPage from "../page/AdminPushPage";
 import AdminReviewPage from "../page/AdminReviewPage";
 import CrisisReviewPage from "../page/CrisisReviewPage";
 import AdminUserDetailPage from "../page/AdminUserDetailPage";
 import CounselingPage from "../page/CounselingPage";
 import CounselingDetailPage from "../page/CounselingDetailPage";
+import AdminNotificationPage from "../page/AdminNotificationPage";
+import AdminNotificationHistoryPage from "../page/AdminNotificationHistoryPage";
 
 export default function AppRouter() {
     return (
@@ -48,10 +49,11 @@ export default function AppRouter() {
                 <Route path="/admin/blogmanagement" element={<AdminCommunityPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
                 <Route path="/admin/crisis" element={<CrisisReviewPage />} />
+                <Route path="/admin/notification" element={<AdminNotificationPage />} />
                 <Route path="/admin/blog/:blogid" element={<AdminBlogdetailPage />} />
                 <Route path="/AIassistant/:sessionid" element={<AIAssistantPage />} />
                 <Route path="/admin/user/:userid" element={<AdminUserDetailPage />}/>
-
+                <Route path="/admin/history" element={<AdminNotificationHistoryPage />} />
                 <Route path="/forbidden" element={<ForbiddenPage />} />
                 <Route path="/*" element={<NotFoundPage />} />
 

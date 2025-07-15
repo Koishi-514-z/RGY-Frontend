@@ -15,6 +15,18 @@ export default function NavbarAdmin() {
         {
             label: '帖子管理',
             key: 'blogmanagement'
+        },
+        {
+            label: '违规审核',
+            key: 'review'
+        },
+        {
+            label: '危机审核',
+            key: 'crisis'
+        },
+        {
+            label: '历史通知',
+            key: 'history'
         }
     ];
 
@@ -25,6 +37,15 @@ export default function NavbarAdmin() {
         }
         else if(path.includes('/admin/blogmanagement')) {
             setCurrent('blogmanagement');
+        }
+        else if(path.includes('/admin/review')) {
+            setCurrent('review');
+        }
+        else if(path.includes('/admin/crisis')) {
+            setCurrent('crisis');
+        }
+        else if(path.includes('/admin/history')) {
+            setCurrent('history');
         }
         else {
             setCurrent(null);
@@ -39,6 +60,18 @@ export default function NavbarAdmin() {
             }
             case 'blogmanagement': {
                 navigate(`/admin/blogmanagement`);
+                break;
+            }
+            case'review': {
+                navigate(`/admin/review`);
+                break;
+            }
+            case 'crisis': {
+                navigate(`/admin/crisis`);
+                break;
+            }
+            case 'history': {
+                navigate(`/admin/history`);
                 break;
             }
             default: {

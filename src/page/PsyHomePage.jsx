@@ -5,7 +5,7 @@ import { getPsyProfile } from "../service/user";
 import PsyHomeLayout from "../components/layout/PsyHomeLayout";
 import PsyProfileHeader from "../components/psy/psyprofileheader";
 import Loading from "../components/loading";
-import { getPrivateNotification, getPublicNotification } from "../service/notification";
+import { getNotification, getPrivateNotification, getPublicNotification } from "../service/notification";
 import NotificationModal from "../components/home/notificationmodal";
 import NotificationCard from "../components/home/notificationcard";
 import PsyProfileCard from "../components/psy/psyprofilecard";
@@ -41,14 +41,10 @@ export default function PsyHomePage() {
     useEffect(() => {
         const fetch = async () => {
             const fetched_profile = await getPsyProfile();
-            const fetched_notifications_private = await getPrivateNotification();
-            const fetched_notifications_public = await getPublicNotification();
             const fetched_times = await getAvailableTimes(fetched_profile.userid);
             const fetched_counseling = await getCounseling(fetched_profile.userid);
             const fetched_crisis = await getCrisis();
             setProfile(fetched_profile);
-            setPrivateNotifications(fetched_notifications_private);
-            setPublicNotifications(fetched_notifications_public);
             setAvailableTimes(fetched_times);
             setCounseling(fetched_counseling);
             setCrisisCases(fetched_crisis);
@@ -68,6 +64,18 @@ export default function PsyHomePage() {
         fetch();
     }, [update]);
 
+    const fetchNotification = async () => {
+        const fetched_notification = await getNotification();
+        const fetched_private = fetched_notification.filter(notify => notify.type < 1000);
+        const fetched_public = fetched_notification.filter(notify => notify.type >= 1000);
+        setPrivateNotifications(fetched_private);
+        setPublicNotifications(fetched_public);
+    }
+
+    useEffect(() => {
+        fetchNotification();
+    }, []);
+
     useEffect(() => {
         useridRef.current = profile?.userid;
     }, [profile]);
@@ -78,7 +86,9 @@ export default function PsyHomePage() {
                 setIsModelOpen(false);
                 return;
             }
-            if(publicNotifications.filter(item => item.priority === 'high').length || privateNotifications.filter(item => item.priority === 'high').length) {
+            const unreadAndHighPublic = publicNotifications.filter(item => item.priority === 'high' && item.unread);
+            const unreadAndHighPrivate = privateNotifications.filter(item => item.priority === 'high' && item.unread);
+            if(unreadAndHighPublic.length || unreadAndHighPrivate.length) {
                 const storage = localStorage.getItem('notificationModal_' + profile.userid);
                 const now = new Date();
                 if(!storage) {
@@ -99,7 +109,7 @@ export default function PsyHomePage() {
     }, [profile, privateNotifications, publicNotifications, setIsModelOpen]);
 
     useEffect(() => {
-        const socket = new SockJS("http://localhost:8080/ws");
+        const socket = new SockJS("https://localhost:8443/ws");
         const client = Stomp.over(socket);
         
         setConnectionStatus('connecting');
@@ -115,10 +125,7 @@ export default function PsyHomePage() {
                             message.error('消息发送错误');
                             return;
                         }
-                        const fetched_notifications_private = await getPrivateNotification();
-                        const fetched_notifications_public = await getPublicNotification();
-                        setPrivateNotifications(fetched_notifications_private);
-                        setPublicNotifications(fetched_notifications_public);
+                        fetchNotification();
                     } catch (error) {
                         console.error('处理消息失败:', error);
                     }
@@ -146,8 +153,8 @@ export default function PsyHomePage() {
         )
     }
 
-    const highPublic = publicNotifications.filter(item => item.priority === 'high');
-    const highPrivate = privateNotifications.filter(item => item.priority === 'high');
+    const unreadAndHighPublic = publicNotifications.filter(item => item.priority === 'high' && item.unread);
+    const unreadAndHighPrivate = privateNotifications.filter(item => item.priority === 'high' && item.unread);
 
     return (
         <CustomLayout role={2} update={update} content={
@@ -157,8 +164,9 @@ export default function PsyHomePage() {
                     profile={profile}
                     isModelOpen={isModelOpen} 
                     setIsModelOpen={setIsModelOpen} 
-                    highPublic={highPublic} 
-                    highPrivate={highPrivate}/>}
+                    highPublic={unreadAndHighPublic} 
+                    highPrivate={unreadAndHighPrivate}
+                />}
                 edit={<PsyProfileEdit profile={profile} setUpdate={setUpdate} />}
                 view={<PsyAccountCard profile={profile} />} 
                 profilecard={<PsyProfileCard profile={profile} />}
@@ -166,11 +174,12 @@ export default function PsyHomePage() {
                     availableTimes={availableTimes} 
                     setAvailableTimes={setAvailableTimes} 
                     counseling={counseling}
-                    fetchCounseling={fetchCounseling} />}
+                    fetchCounseling={fetchCounseling} 
+                />}
                 notificationcard={<NotificationCard 
                     privateNotifications={privateNotifications} 
-                    setPrivateNotifications={setPrivateNotifications} 
                     publicNotifications={publicNotifications} 
+                    fetchNotification={fetchNotification}
                 />}
                 crisis={<CrisisHandlingCard crisisCases={crisisCases} setCrisisCases={setCrisisCases} />}
                 tabKey={tabKey}

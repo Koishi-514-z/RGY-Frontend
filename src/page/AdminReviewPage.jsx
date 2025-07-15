@@ -41,11 +41,11 @@ const AdminReviewPage = () => {
         fetchData();
     }, [update]);
 
-    const handleDelete = async (blogId, illegalId, title,type) => {
+    const handleDelete = async (blogId, illegalId, title,type,userid) => {
         if(type === 'blog'){
-            await handleDeleteBlog(blogId, illegalId, title);
+            await handleDeleteBlog(blogId, illegalId, title, userid);
         }else{
-            await handleDeleteReply(blogId, illegalId);
+            await handleDeleteReply(blogId, illegalId, userid);
         }
     };
 
@@ -59,7 +59,7 @@ const AdminReviewPage = () => {
         }
     };
 
-    const handleDeleteBlog = async (blogId, illegalId, title) => {
+    const handleDeleteBlog = async (blogId, illegalId, title, userid) => {
         // confirm({
         //     title: '确认屏蔽帖子',
         //     icon: <ExclamationCircleOutlined />,
@@ -69,7 +69,7 @@ const AdminReviewPage = () => {
         //     cancelText: '取消',
         //     onOk: async () => {
                 try {
-                    await deleteBlog(blogId, illegalId);
+                    await deleteBlog(blogId, illegalId,userid);
                     message.success('帖子已屏蔽');
                     setUpdate(!update);
                     //await fetchData();
@@ -83,7 +83,7 @@ const AdminReviewPage = () => {
 
     };
 
-    const handleDeleteReply = async (replyId, illegalId) => {
+    const handleDeleteReply = async (replyId, illegalId, userid) => {
         // try {
         //     await deleteReply(replyId, illegalId);
         //     message.success('回复已屏蔽');
@@ -102,7 +102,7 @@ const AdminReviewPage = () => {
         //     cancelText: '取消',
         //     onOk: async () => {
                 try {
-                    await deleteReply(replyId, illegalId);
+                    await deleteReply(replyId, illegalId, userid);
                     message.success('回复已屏蔽');
                     setUpdate(!update);
                     //await fetchData();
@@ -141,221 +141,6 @@ const AdminReviewPage = () => {
         );
     };
 
-    //const getActionMenu = (record, type) => ({
-//         items: [
-//             {
-//                 key: 'view-user',
-//                 label: '查看用户',
-//                 onClick: () => navigate(`/home/${record.userid}`)
-//             },
-//             {
-//                 key: 'view-content',
-//                 label: type === 'blog' ? '查看帖子' : '查看原帖',
-//                 onClick: () => navigate(`/admin/blog/${record.blogid}`)
-//             },
-//             ...(record.status === 0 ? [
-//                 {
-//                     key: 'block',
-//                     label: '屏蔽',
-//                     danger: true,
-//                     onClick: () => handleDelete(record.contentid, record.illegalid, record.title,type)
-//
-//                 },
-//                 {
-//                     key: 'approve',
-//                     label: '撤销',
-//                     onClick: () => handleApprove(record.illegalid,type)
-//                 }
-//             ] : [])
-//         ]
-//     });
-//
-//     const blogColumns = [
-//         {
-//             title: '状态',
-//             dataIndex: 'status',
-//             key: 'status',
-//             render: (status) => getStatusTag(status),
-//             width: 100
-//         },
-//         {
-//             title: '时间',
-//             dataIndex: 'timestamp',
-//             key: 'timestamp',
-//             render: (timestamp) => formatTimestamp(timestamp),
-//             width: 180
-//         },
-//         { title: '标题', dataIndex: 'title', key: 'title', width: 200 },
-//         { title: '发帖人ID', dataIndex: 'userid', key: 'userid', width: 120 },
-//         {
-//             title: '违规原因',
-//             dataIndex: 'reason',
-//             key: 'reason',
-//             width: 150
-//         },
-//
-//         {
-//             title: '操作',
-//             key: 'action',
-//             fixed: 'right',
-//             width: 80,
-//             render: (_, record) => (
-//                 <Dropdown
-//                     menu={getActionMenu(record, 'blog')}
-//                     trigger={['click']}
-//                     placement="bottomRight"
-//                 >
-//                     <Button type="text" icon={<MoreOutlined />} />
-//                 </Dropdown>
-//             ),
-//         },
-//     ];
-//
-//     const replyColumns = [
-//         {
-//             title: '状态',
-//             dataIndex: 'status',
-//             key: 'status',
-//             render: (status) => getStatusTag(status),
-//             width: 100
-//         },
-//         {
-//             title: '时间',
-//             dataIndex: 'timestamp',
-//             key: 'timestamp',
-//             render: (timestamp) => formatTimestamp(timestamp),
-//             width: 180
-//         },
-//         { title: '回复ID', dataIndex: 'contentid', key: 'contentid', width: 120 },
-//         { title: '所属帖子', dataIndex: 'blogtitle', key: 'blogtitle', width: 120 },
-//         { title: '回复人', dataIndex: 'userid', key: 'userid', width: 120 },
-//         {
-//             title: '违规原因',
-//             dataIndex: 'reason',
-//             key: 'reason',
-//             width: 150
-//         },
-//         {
-//             title: '内容',
-//             dataIndex: 'content',
-//             key: 'content',
-//             ellipsis: true
-//         },
-//         {
-//             title: '操作',
-//             key: 'action',
-//             fixed: 'right',
-//             width: 80,
-//             render: (_, record) => (
-//                 <Dropdown
-//                     menu={getActionMenu(record, 'reply')}
-//                     trigger={['click']}
-//                     placement="bottomRight"
-//                 >
-//                     <Button type="text" icon={<MoreOutlined />} />
-//                 </Dropdown>
-//             ),
-//         },
-//     ];
-//
-//     return (
-//         <CustomLayout role={1} content={
-//             <div style={{ padding: '24px' }}>
-//                 {/*<Modal*/}
-//                 {/*    title="屏蔽确认"*/}
-//                 {/*    open={open}*/}
-//                 {/*    onOk={async () => {*/}
-//                 {/*        try {*/}
-//                 {/*            await deleteBlog(blogId, illegalId);*/}
-//                 {/*            message.success('帖子已屏蔽');*/}
-//                 {/*            setUpdate(!update);*/}
-//                 {/*            //await fetchData();*/}
-//                 {/*        } catch (error) {*/}
-//                 {/*            message.error('屏蔽失败：' + error.message);*/}
-//                 {/*        }*/}
-//                 {/*        setOpen(false);*/}
-//                 {/*    }}*/}
-//                 {/*    onCancel={() => setOpen(false)}*/}
-//                 {/*>*/}
-//                 {/*    <p>确定要屏蔽该内容吗？</p>*/}
-//                 {/*</Modal>*/}
-//                 <Card>
-//                     <div style={{ marginBottom: 24 }}>
-//                         <Title level={2}>内容审核
-//                             <Tooltip title="对违规内容进行审核和处理">
-//                                 <InfoCircleOutlined style={{ fontSize: 16, marginLeft: 8 }} />
-//                             </Tooltip>
-//                         </Title>
-//                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, marginTop: 24 }}>
-//                             <Input
-//                                 placeholder="搜索用户ID/标题/内容"
-//                                 prefix={<SearchOutlined />}
-//                                 onChange={e => setSearchText(e.target.value)}
-//                                 style={{ width: 300 }}
-//                             />
-//                             <Select
-//                                 defaultValue="0"
-//                                 style={{ width: 120 }}
-//                                 onChange={setStatusFilter}
-//                             >
-//                                 <Option value="0">待审核</Option>
-//                                 <Option value="1">已屏蔽</Option>
-//                                 <Option value="2">已撤销</Option>
-//                                 <Option value="all">全部</Option>
-//                             </Select>
-//                         </div>
-//                     </div>
-//                     <Tabs type="card">
-//                         <TabPane
-//                             tab={
-//                                 <span>
-//                                     <ExclamationCircleOutlined />
-//                                     违规帖子
-//                                     {illegalBlogs.length > 0 &&
-//                                         <Tag color="red" style={{ marginLeft: 8 }}>
-//                                             {illegalBlogs.filter(b => b.status === 0).length}
-//                                         </Tag>
-//                                     }
-//                                 </span>
-//                             }
-//                             key="1"
-//                         >
-//                             <Table
-//                                 columns={blogColumns}
-//                                 dataSource={filterData(filterByStatus(illegalBlogs))}
-//                                 rowKey="contentid"
-//                                 loading={loading}
-//                                 scroll={{ x: 1300 }}
-//                                 pagination={{
-//                                     showSizeChanger: true,
-//                                     showQuickJumper: true,
-//                                     showTotal: total => `共 ${total} 条记录`
-//                                 }}
-//                             />
-//                         </TabPane>
-//                         <TabPane tab="违规回复" key="2">
-//                             <Table
-//                                 columns={replyColumns}
-//                                 dataSource={filterData(filterByStatus(illegalReplies))}
-//                                 rowKey="contentid"
-//                                 loading={loading}
-//                                 scroll={{ x: 1300 }}
-//                                 pagination={{
-//                                     showSizeChanger: true,
-//                                     showQuickJumper: true,
-//                                     showTotal: total => `共 ${total} 条记录`
-//                                 }}
-//                             />
-//                         </TabPane>
-//                     </Tabs>
-//                 </Card>
-//             </div>
-//         } />
-//     );
-// };
-//
-// export default AdminReviewPage;
-
 
     const getActionMenu = (record, type) => ({
         items: [
@@ -373,7 +158,7 @@ const AdminReviewPage = () => {
                 {
                     key: 'block',
                     label: <span style={{ color: '#ff4d4f' }}>屏蔽</span>,
-                    onClick: () => handleDelete(record.contentid, record.illegalid, record.title, type)
+                    onClick: () => handleDelete(record.contentid, record.illegalid, record.title, type,record.userid)
                 },
                 {
                     key: 'approve',
@@ -452,7 +237,7 @@ const AdminReviewPage = () => {
                             <Button
                                 size="small"
                                 danger
-                                onClick={() => handleDelete(record.contentid, record.illegalid, record.title,  'blog')}
+                                onClick={() => handleDelete(record.contentid, record.illegalid, record.title,  'blog',record.userid)}
                             >
                                 屏蔽
                             </Button>
@@ -499,18 +284,12 @@ const AdminReviewPage = () => {
             width: 160,
             sorter: (a, b) => moment(a.timestamp).unix() - moment(b.timestamp).unix()
         },
-        {
-            title: '回复ID',
-            dataIndex: 'contentid',
-            key: 'contentid',
-            width: 100
-        },
 
         {
             title: '回复人',
             dataIndex: 'userid',
             key: 'userid',
-            width: 120,
+            width: 180,
             render: (text) => (
                 <Tag color="blue" style={{ cursor: 'pointer' }}
                      onClick={() => navigate(`/admin/user/${text}`)}>
@@ -522,7 +301,7 @@ const AdminReviewPage = () => {
             title: '违规原因',
             dataIndex: 'reason',
             key: 'reason',
-            width: 150,
+            width: 70,
             render: (text) => <Tag color="red">{text}</Tag>
         },
         {
@@ -544,7 +323,7 @@ const AdminReviewPage = () => {
                             <Button
                                 size="small"
                                 danger
-                                onClick={() => handleDelete(record.contentid, record.illegalid, record.title, 'reply')}
+                                onClick={() => handleDelete(record.contentid, record.illegalid, record.title, 'reply',record.userid)}
                             >
                                 屏蔽
                             </Button>

@@ -13,12 +13,13 @@ import { getEmotion, getMonthData, getWeekData } from "../service/emotion";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { getCommentBlogs, getLikeBlogs, getBlogs } from "../service/blog";
 import EmotionGragh from "../components/home/emotiongragh";
-import { getPrivateNotification, getPublicNotification } from "../service/notification";
+import { getNotification } from "../service/notification";
 import NotificationCard from "../components/home/notificationcard";
 import NotificationModal from "../components/home/notificationmodal";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 import { App } from "antd";
+import BlogCardOther from "../components/home/blogcardother";
 
 export default function HomePage() {
     const [profile, setProfile] = useState(null);
@@ -49,18 +50,14 @@ export default function HomePage() {
                 }
                 const fetched_profile = await getSimplifiedProfile(userid);
                 const fetched_blogs = await getBlogs(userid);
-                const fetched_blogs_like = await getLikeBlogs(userid);
-                const fetched_blogs_comment = await getCommentBlogs(userid);
                 setProfile(fetched_profile);
                 setEmotion(null);
                 setIntimateUsers(null);
                 setWeekData([]);
                 setMonthData([]);
                 setMyBlogs(fetched_blogs);
-                setLikeBlogs(fetched_blogs_like);
-                setCommentBlogs(fetched_blogs_comment);
-                setPrivateNotifications([]);
-                setPublicNotifications([]);
+                setLikeBlogs([]);
+                setCommentBlogs([]);
                 if(!tabKey) {
                     setSearchParams({tabKey: 2});
                 }
@@ -74,8 +71,6 @@ export default function HomePage() {
                 const fetched_blogs_comment = await getCommentBlogs(fetched_profile.userid);
                 const fetched_week = await getWeekData();
                 const fetched_month = await getMonthData();
-                const fetched_notifications_private = await getPrivateNotification();
-                const fetched_notifications_public = await getPublicNotification();
                 setProfile(fetched_profile);
                 setEmotion(fetched_emotion);
                 setIntimateUsers(fetched_users);
@@ -84,14 +79,30 @@ export default function HomePage() {
                 setCommentBlogs(fetched_blogs_comment);
                 setWeekData(fetched_week);
                 setMonthData(fetched_month);
-                setPrivateNotifications(fetched_notifications_private);
-                setPublicNotifications(fetched_notifications_public);
                 if(!tabKey) {
                     setSearchParams({tabKey: 1});
                 }
             }
         }
         fetch();
+    }, [userid]);
+
+    const fetchNotification = async () => {
+        const fetched_notification = await getNotification();
+        const fetched_private = fetched_notification.filter(notify => notify.type < 1000);
+        const fetched_public = fetched_notification.filter(notify => notify.type >= 1000);
+        setPrivateNotifications(fetched_private);
+        setPublicNotifications(fetched_public);
+    }
+
+    useEffect(() => {
+        if(userid) {
+            setPrivateNotifications([]);
+            setPublicNotifications([]);
+        }
+        else {
+            fetchNotification();
+        }
     }, [userid]);
 
     const [update, setUpdate] = useState(0);
@@ -112,7 +123,9 @@ export default function HomePage() {
                 setIsModelOpen(false);
                 return;
             }
-            if(publicNotifications.filter(item => item.priority === 'high').length || privateNotifications.filter(item => item.priority === 'high').length) {
+            const unreadAndHighPublic = publicNotifications.filter(item => item.priority === 'high' && item.unread);
+            const unreadAndHighPrivate = privateNotifications.filter(item => item.priority === 'high' && item.unread);
+            if(unreadAndHighPublic.length || unreadAndHighPrivate.length) {
                 const storage = localStorage.getItem('notificationModal_' + profile.userid);
                 const now = new Date();
                 if(!storage) {
@@ -137,7 +150,7 @@ export default function HomePage() {
     }, [profile]);
 
     useEffect(() => {
-        const socket = new SockJS("http://localhost:8080/ws");
+        const socket = new SockJS("https://localhost:8443/ws");
         const client = Stomp.over(socket);
         
         setConnectionStatus('connecting');
@@ -153,10 +166,7 @@ export default function HomePage() {
                             message.error('消息发送错误');
                             return;
                         }
-                        const fetched_notifications_private = await getPrivateNotification();
-                        const fetched_notifications_public = await getPublicNotification();
-                        setPrivateNotifications(fetched_notifications_private);
-                        setPublicNotifications(fetched_notifications_public);
+                        fetchNotification();
                     } catch (error) {
                         console.error('处理消息失败:', error);
                     }
@@ -184,8 +194,8 @@ export default function HomePage() {
         )
     }
 
-    const highPublic = publicNotifications.filter(item => item.priority === 'high');
-    const highPrivate = privateNotifications.filter(item => item.priority === 'high');
+    const unreadAndHighPublic = publicNotifications.filter(item => item.priority === 'high' && item.unread);
+    const unreadAndHighPrivate = privateNotifications.filter(item => item.priority === 'high' && item.unread);
 
     return (
         <CustomLayout update={update} content={
@@ -195,15 +205,21 @@ export default function HomePage() {
                     profile={profile}
                     isModelOpen={isModelOpen} 
                     setIsModelOpen={setIsModelOpen} 
-                    highPublic={highPublic} 
-                    highPrivate={highPrivate}/>}
+                    highPublic={unreadAndHighPublic} 
+                    highPrivate={unreadAndHighPrivate}
+                />}
                 edit={<ProfileEdit profile={profile} setUpdate={setUpdate} />} 
                 view={<ProfileView profile={profile} />} 
                 emotionCard={<EmotionCard emotion={emotion} />} 
                 intimateCard={<IntimateCard intimateUsers={intimateUsers} />} 
-                blogCard={<BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} profile={profile} />} 
+                blogCard={!userid ? <BlogCard myBlogs={myBlogs} likeBlogs={likeBlogs} commentBlogs={commentBlogs} profile={profile} /> : 
+                                <BlogCardOther myBlogs={myBlogs} profile={profile} />} 
                 emotionGraph={<EmotionGragh weekData={weekData} monthData={monthData} />} 
-                notificationcard={<NotificationCard privateNotifications={privateNotifications} setPrivateNotifications={setPrivateNotifications} publicNotifications={publicNotifications} />}
+                notificationcard={<NotificationCard 
+                    privateNotifications={privateNotifications} 
+                    publicNotifications={publicNotifications}
+                    fetchNotification={fetchNotification} 
+                />}
                 tabKey={tabKey} 
             />
         }/>
