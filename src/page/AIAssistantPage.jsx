@@ -9,6 +9,9 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import ParticleBackground from '../components/layout/particlebackground';
+import { placeCallBackRequest } from '../service/counseling';
+import { getNotification } from '../service/notification';
+import { useNotification } from '../components/context/notificationcontext';
 
 const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
@@ -28,6 +31,15 @@ export default function AIAssistantPage() {
     const [searchParams] = useSearchParams();         
     const activeTab = searchParams.get('activeTab');
     const navigate = useNavigate();
+    const { setPrivateNotifications, setPublicNotifications } = useNotification();
+
+    const fetchNotification = async () => {
+        const fetched_notification = await getNotification();
+        const fetched_private = fetched_notification.filter(notify => notify.type < 1000);
+        const fetched_public = fetched_notification.filter(notify => notify.type >= 1000);
+        setPrivateNotifications(fetched_private);
+        setPublicNotifications(fetched_public);
+    }
 
     useEffect(() => {
         const handleResize = () => {
@@ -121,11 +133,14 @@ export default function AIAssistantPage() {
 
     useEffect(() => {
         const handleOveruse = async () => {
-            if(usageSeconds >= 3600 && !alertShownRef.current) {
+            if(usageSeconds >= 10 && !alertShownRef.current) {
+                const res = await placeCallBackRequest();
+                if(!res) {
+                    message.error('ERROR');
+                }
                 message.info('您单日使用已超过一小时，已安排心理咨询师回访');
                 alertShownRef.current = true;
-                // let orderInfo = { userid };
-                // await placeCallBackRequest(orderInfo);
+                fetchNotification();
             }
         };
         handleOveruse();

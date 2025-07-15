@@ -152,3 +152,15 @@ export async function updateAvailableTimes(datas) {
     }
     return res;
 }
+
+export async function placeCallBackRequest() {
+    const url = `${PREFIX}/counseling/callback`;
+    let res;
+    try {
+        res = await post(url, null);
+    } catch (e) {
+        console.log(e);
+        res = false;
+    }
+    return res;
+}
