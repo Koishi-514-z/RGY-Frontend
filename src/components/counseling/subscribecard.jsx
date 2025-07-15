@@ -3,6 +3,8 @@ import { Card, DatePicker, Row, Col, Button, Typography, Space, Avatar, Tag, Div
 import { CalendarOutlined, ClockCircleOutlined, UserOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import dayjs from 'dayjs';
 import { getDateAvailables, addCounseling, getCounselingTags } from "../../service/counseling";
+import { getNotification } from "../../service/notification";
+import { useNotification } from "../context/notificationcontext";
 
 const { Title, Text } = Typography;
 
@@ -14,6 +16,7 @@ export default function SubscribeCard({psyProfile}) {
     const [typeTags, setTypeTags] = useState([]);
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
     const { message } = App.useApp();
+    const { setPrivateNotifications, setPublicNotifications } = useNotification();
 
     useEffect(() => {
         const fetch = async () => {
@@ -22,6 +25,14 @@ export default function SubscribeCard({psyProfile}) {
         }
         fetch();
     }, []);
+
+    const fetchNotification = async () => {
+        const fetched_notification = await getNotification();
+        const fetched_private = fetched_notification.filter(notify => notify.type < 1000);
+        const fetched_public = fetched_notification.filter(notify => notify.type >= 1000);
+        setPrivateNotifications(fetched_private);
+        setPublicNotifications(fetched_public);
+    }
 
     const handleDateChange = async (date) => {
         if(!date) {
@@ -55,6 +66,7 @@ export default function SubscribeCard({psyProfile}) {
         const res = await addCounseling(counseling);
         if(res) {
             message.success('预约成功！');
+            fetchNotification();
             setConfirmModalVisible(false);
             handleDateChange(selectedDate);
         }

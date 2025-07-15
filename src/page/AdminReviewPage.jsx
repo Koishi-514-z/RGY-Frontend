@@ -210,7 +210,7 @@ const AdminReviewPage = () => {
             title: '发帖人',
             dataIndex: 'userid',
             key: 'userid',
-            width: 120,
+            width: 150,
             render: (text) => (
                 <Tag color="blue" style={{ cursor: 'pointer' }}
                      onClick={() => navigate(`/admin/user/${text}`)}>

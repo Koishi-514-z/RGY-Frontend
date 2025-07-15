@@ -5,10 +5,12 @@ import { App } from 'antd';
 import { getUserProfile, updatePassword, updateProfile, verifyPassword } from "../../service/user";
 import { readFile } from "../../service/common";
 import { useSearchParams } from "react-router-dom";
+import { useProfile } from "../context/profilecontext";
 
 const { Title, Text } = Typography;
 
-export default function ProfileEdit({profile, setUpdate}) {
+export default function ProfileEdit() {
+    const { profile, setProfile } = useProfile();
     const initFormValues = {
         username: profile.username,
         password: null,
@@ -46,7 +48,7 @@ export default function ProfileEdit({profile, setUpdate}) {
         }
         else {
             message.success('保存成功');
-            setUpdate(prev => prev + 1);
+            setProfile(await getUserProfile());
         }
         setTimeout(() => {
             closeModal();

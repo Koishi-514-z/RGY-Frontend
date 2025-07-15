@@ -194,7 +194,7 @@ export default function CrisisHandlingCard({crisisCases, setCrisisCases}) {
                                         />
                                     </Tooltip>
                                     
-                                    {item.status === 'pending' && (
+                                    {item.status === 0 && (
                                         <>
                                             <Tooltip title="立即联系">
                                                 <Button
@@ -216,7 +216,7 @@ export default function CrisisHandlingCard({crisisCases, setCrisisCases}) {
                                         </>
                                     )}
                                     
-                                    {item.status === 'processing' && (
+                                    {item.status === 1 && (
                                         <Tooltip title="标记已解决">
                                             <Button
                                                 type="primary"

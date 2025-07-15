@@ -1,6 +1,8 @@
 import './css/App.css';
 import AppRouter from './components/router';
 import { ConfigProvider, theme, App as AntdApp } from 'antd';
+import { ProfileProvider } from './components/context/profilecontext';
+import { NotificationProvider } from './components/context/notificationcontext';
 
 function App() {
   const themeToken = {
@@ -12,9 +14,13 @@ function App() {
       algorithm: theme.defaultAlgorithm,
       token: themeToken
     }}>
-      <AntdApp>
-        <AppRouter />
-      </AntdApp>
+      <ProfileProvider>
+        <NotificationProvider>
+          <AntdApp>
+            <AppRouter />
+          </AntdApp>
+        </NotificationProvider>
+      </ProfileProvider>
     </ConfigProvider>
   )
 }

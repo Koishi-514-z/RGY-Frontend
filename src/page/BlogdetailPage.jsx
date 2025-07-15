@@ -72,7 +72,6 @@ export default function BlogdetailPage() {
         }
     };
 
-
     const getIfLiked = async () => {
         try {
             const liked = await getLiked(id);

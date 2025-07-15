@@ -1,10 +1,13 @@
 import React from "react";
 import { Typography, Card, Row, Col, Space, Tag, Avatar } from "antd";
 import { UserOutlined, MailOutlined, IdcardOutlined, SafetyOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { useProfile } from "../context/profilecontext";
 
 const { Title, Text } = Typography;
 
-export default function ProfileView({profile}) {
+export default function ProfileView() {
+    const { profile } = useProfile();
+
     const InfoItem = ({ icon, label, value, tag, tagColor }) => (
         <div style={{ 
             display: 'flex', 
@@ -171,7 +174,7 @@ export default function ProfileView({profile}) {
                     <InfoItem 
                         icon={<IdcardOutlined />}
                         label="账户ID" 
-                        value={profile.userid} 
+                        value={profile?.userid} 
                     />
                 </Col>
 
@@ -179,7 +182,7 @@ export default function ProfileView({profile}) {
                     <InfoItem 
                         icon={<UserOutlined />}
                         label="用户名" 
-                        value={profile.username} 
+                        value={profile?.username} 
                     />
                 </Col>
                 
@@ -187,7 +190,7 @@ export default function ProfileView({profile}) {
                     <InfoItem 
                         icon={<MailOutlined />}
                         label="电子邮箱" 
-                        value={profile.email} 
+                        value={profile?.email} 
                         tag="已验证"
                         tagColor="success"
                     />

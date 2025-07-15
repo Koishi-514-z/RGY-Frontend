@@ -110,8 +110,6 @@ const AdminBlogDetailPage = () => {
         );
     }
 
-
-
     if(blog.valid === 0)
     {
         return (
@@ -249,7 +247,6 @@ const AdminBlogDetailPage = () => {
                             />
                         </div>
                     </div>
-
                 </Card>
             </div>
         } />

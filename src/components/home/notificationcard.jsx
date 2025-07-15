@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { Card, Tabs, List, Avatar, Space, Badge, Button, Typography, Tag, Empty, Tooltip, Divider, App, Popconfirm } from "antd";
 import { BellOutlined, NotificationOutlined, MessageOutlined, EyeOutlined, DeleteOutlined, SettingOutlined, CheckOutlined, ClearOutlined, ExclamationCircleOutlined, InfoCircleOutlined, WarningOutlined } from "@ant-design/icons";
-import { getPrivateNotification, markRead, markAllRead, deleteNotification, markPublicRead, markAllPublicRead, getNotification, markAllPrivateRead } from "../../service/notification";
+import { markRead, deleteNotification, markAllPublicRead, getNotification, markAllPrivateRead } from "../../service/notification";
+import { useNotification } from "../context/notificationcontext";
 
 const { Text, Title } = Typography;
 const { TabPane } = Tabs;
 
-export default function NotificationCard({ privateNotifications, publicNotifications, fetchNotification }) {
+export default function NotificationCard() {
     const [activeTab, setActiveTab] = useState("public");
     const { message, modal } = App.useApp();
+    const { privateNotifications, setPrivateNotifications, publicNotifications, setPublicNotifications } = useNotification();
 
     const unreadPrivate = privateNotifications.filter(item => item.unread).length;
     const unreadPublic = publicNotifications.filter(item => item.unread).length;
+
+    const fetchNotification = async () => {
+        const fetched_notification = await getNotification();
+        const fetched_private = fetched_notification.filter(notify => notify.type < 1000);
+        const fetched_public = fetched_notification.filter(notify => notify.type >= 1000);
+        setPrivateNotifications(fetched_private);
+        setPublicNotifications(fetched_public);
+    }
 
     const markAsRead = async (notificationid) => {
         const res = await markRead(notificationid);

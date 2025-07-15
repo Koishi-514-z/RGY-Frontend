@@ -16,7 +16,7 @@ export default function EmotionPage() {
     const [urlDatas, setUrlDatas] = useState([]);
     const [loadedPage, setLoadedPage] = useState([]);
     const [pageIndex, setPageIndex] = useState(0);
-    const pageSize = 5;
+    const pageSize = 4;
 
     const reloadPage = async () => {
         setLoadedPage([0]);

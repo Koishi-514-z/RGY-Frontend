@@ -6,7 +6,9 @@ const { Content } = Layout;
 
 export default function HomeLayout({header, modal,
                                     edit, view, 
-                                    emotionCard, intimateCard, blogCard, emotionGraph, notificationcard, 
+                                    emotionCard, intimateCard, blogCard, 
+                                    emotionGraph, historyCard, timeline,
+                                    notificationcard, 
                                     tabKey}) {
     let content;
 
@@ -15,17 +17,23 @@ export default function HomeLayout({header, modal,
             content = (
                 <div style={{ margin: '0 auto', padding: '0px 24px' }}>
                     <Row gutter={[24, 24]}>
-                        <Col span={16}>
+                        <Col xs={24} lg={16}>
                             {emotionCard}
                         </Col>
-                        <Col span={8}>
+                        <Col xs={24} lg={8}>
                             {view}
                         </Col>
                     </Row>
                     <Row gutter={[24, 24]} style={{ marginTop: '32px' }}>
                         <Col span={24}>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <div style={{ width: '500px' }}>
+                            <div style={{ 
+                                display: 'flex', 
+                                justifyContent: window.innerWidth >= 768 ? 'flex-end' : 'center' 
+                            }}>
+                                <div style={{ 
+                                    width: window.innerWidth >= 768 ? '500px' : '100%',
+                                    maxWidth: '500px'
+                                }}>
                                     {intimateCard}
                                 </div>
                             </div>
@@ -37,7 +45,10 @@ export default function HomeLayout({header, modal,
         }
         case 2: {
             content = (
-                <div style={{ margin: '0 auto', padding: '0px 48px' }}>
+                <div style={{ 
+                    margin: '0 auto', 
+                    padding: window.innerWidth >= 768 ? '0px 48px' : '0px 16px'
+                }}>
                     {blogCard}
                 </div>
             )
@@ -45,7 +56,11 @@ export default function HomeLayout({header, modal,
         }
         case 3: {
             content = (
-                <div style={{ maxWidth: '750px', margin: '0 auto', padding: '0px 24px' }}>
+                <div style={{ 
+                    maxWidth: '750px', 
+                    margin: '0 auto', 
+                    padding: window.innerWidth >= 768 ? '0px 24px' : '0px 16px'
+                }}>
                     <Card 
                         style={{ 
                             boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
@@ -61,15 +76,31 @@ export default function HomeLayout({header, modal,
         }
         case 5: {
             content = (
-                <div style={{ margin: '0 auto', padding: '0px 24px' }}>
-                    {emotionGraph}
+                <div style={{ 
+                    margin: '0 auto', 
+                    padding: window.innerWidth >= 768 ? '0px 24px' : '0px 16px'
+                }}>
+                    <Row gutter={[24, 24]}>
+                        <Col xs={24} lg={16}>
+                            {emotionGraph}
+                            <div style={{ marginTop: '24px' }}>
+                                {historyCard}
+                            </div>
+                        </Col>
+                        <Col xs={24} lg={8}>
+                            {timeline}
+                        </Col>
+                    </Row>
                 </div> 
             )
             break;
         }
         case 7: {
             content = (
-                <div style={{ margin: '0 auto', padding: '0px 24px' }}>
+                <div style={{ 
+                    margin: '0 auto', 
+                    padding: window.innerWidth >= 768 ? '0px 24px' : '0px 16px'
+                }}>
                     {notificationcard}
                 </div> 
             )
@@ -90,7 +121,10 @@ export default function HomeLayout({header, modal,
             }}>
                 <ParticleBackground />
 
-                <div style={{ margin: '0 auto' }}>
+                <div style={{ 
+                    margin: '0 auto',
+                    padding: window.innerWidth >= 768 ? undefined : '0 16px'
+                }}>
                     <Row gutter={[24, 24]}>
                         <Col span={24}>
                             {header}

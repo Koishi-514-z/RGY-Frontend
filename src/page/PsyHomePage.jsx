@@ -5,7 +5,7 @@ import { getPsyProfile } from "../service/user";
 import PsyHomeLayout from "../components/layout/PsyHomeLayout";
 import PsyProfileHeader from "../components/psy/psyprofileheader";
 import Loading from "../components/loading";
-import { getNotification, getPrivateNotification, getPublicNotification } from "../service/notification";
+import { getNotification } from "../service/notification";
 import NotificationModal from "../components/home/notificationmodal";
 import NotificationCard from "../components/home/notificationcard";
 import PsyProfileCard from "../components/psy/psyprofilecard";
@@ -15,9 +15,6 @@ import { getAvailableTimes, getCounseling } from "../service/counseling";
 import CounselingCard from "../components/psy/counselingcard";
 import { getCrisis } from "../service/crisis";
 import CrisisHandlingCard from "../components/psy/crisishandlingcard";
-import { Stomp } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-import { App } from "antd";
 
 export default function PsyHomePage() {
     const [profile, setProfile] = useState(null);
@@ -29,9 +26,6 @@ export default function PsyHomePage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const tabKey = parseInt(searchParams.get('tabKey'));
     const [isModelOpen, setIsModelOpen] = useState(false);
-    const [connectionStatus, setConnectionStatus] = useState('connecting');
-    const useridRef = useRef(null);
-    const { message } = App.useApp();
 
     const fetchCounseling = async () => {
         const fetched_counseling = await getCounseling(profile.userid);
@@ -77,10 +71,6 @@ export default function PsyHomePage() {
     }, []);
 
     useEffect(() => {
-        useridRef.current = profile?.userid;
-    }, [profile]);
-
-    useEffect(() => {
         const setModal = () => {
             if(!profile) {
                 setIsModelOpen(false);
@@ -107,43 +97,6 @@ export default function PsyHomePage() {
         }
         setModal();
     }, [profile, privateNotifications, publicNotifications, setIsModelOpen]);
-
-    useEffect(() => {
-        const socket = new SockJS("https://localhost:8443/ws");
-        const client = Stomp.over(socket);
-        
-        setConnectionStatus('connecting');
-        
-        client.connect({}, 
-            () => {
-                setConnectionStatus('connected');
-                client.subscribe("/user/queue/notifications/notify", async (msg) => {
-                    try {
-                        const receivedMsg = JSON.parse(msg.body);
-                        console.log(receivedMsg);
-                        if(receivedMsg.touserid !== useridRef.current) {
-                            message.error('消息发送错误');
-                            return;
-                        }
-                        fetchNotification();
-                    } catch (error) {
-                        console.error('处理消息失败:', error);
-                    }
-                });
-            },
-            (error) => {
-                console.error('WebSocket连接失败:', error);
-                setConnectionStatus('disconnected');
-            }
-        );
-        
-        return () => {
-            if(client && client.connected) {
-                client.disconnect();
-            }
-            setConnectionStatus('disconnected');
-        };
-    }, []);
 
     if(!profile || !availableTimes) {
         return (
