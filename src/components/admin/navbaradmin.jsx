@@ -23,6 +23,10 @@ export default function NavbarAdmin() {
         {
             label: '危机审核',
             key: 'crisis'
+        },
+        {
+            label: '历史通知',
+            key: 'history'
         }
     ];
 
@@ -39,6 +43,9 @@ export default function NavbarAdmin() {
         }
         else if(path.includes('/admin/crisis')) {
             setCurrent('crisis');
+        }
+        else if(path.includes('/admin/history')) {
+            setCurrent('history');
         }
         else {
             setCurrent(null);
@@ -61,6 +68,10 @@ export default function NavbarAdmin() {
             }
             case 'crisis': {
                 navigate(`/admin/crisis`);
+                break;
+            }
+            case 'history': {
+                navigate(`/admin/history`);
                 break;
             }
             default: {

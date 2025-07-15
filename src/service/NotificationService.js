@@ -1,4 +1,4 @@
-import { PREFIX, put } from './common';
+import { PREFIX, put, getJson } from './common';
 
 export async function sendNotification(data) {
   try {
@@ -6,6 +6,17 @@ export async function sendNotification(data) {
     await put(url, data);
   } catch (error) {
     console.error('发送通知失败:', error);
+    throw error;
+  }
+}
+
+export async function getAdminNotifications() {
+  try {
+    const url = `${PREFIX}/notification/getmine`;
+    const response = await getJson(url);
+    return response;
+  } catch (error) {
+    console.error('获取通知历史失败:', error);
     throw error;
   }
 }

@@ -69,7 +69,7 @@ const AdminReviewPage = () => {
         //     cancelText: '取消',
         //     onOk: async () => {
                 try {
-                    await deleteBlog(blogId, illegalId, userid);
+                    await deleteBlog(blogId, illegalId,userid);
                     message.success('帖子已屏蔽');
                     setUpdate(!update);
                     //await fetchData();
@@ -289,7 +289,7 @@ const AdminReviewPage = () => {
             title: '回复人',
             dataIndex: 'userid',
             key: 'userid',
-            width: 150,
+            width: 180,
             render: (text) => (
                 <Tag color="blue" style={{ cursor: 'pointer' }}
                      onClick={() => navigate(`/admin/user/${text}`)}>
@@ -301,7 +301,7 @@ const AdminReviewPage = () => {
             title: '违规原因',
             dataIndex: 'reason',
             key: 'reason',
-            width: 200,
+            width: 70,
             render: (text) => <Tag color="red">{text}</Tag>
         },
         {

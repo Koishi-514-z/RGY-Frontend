@@ -51,10 +51,10 @@ const BlogCard = ({ blog, navigate }) => (
         </div>
 
         <div className="card-body">
-            <Title level={4} className="blog-title">{blog.title}</Title>
-            <Paragraph className="blog-content">
-                {blog.content.slice(0, 30)}{blog.content.length > 30 ? "..." : ""}
-            </Paragraph>
+            <Title level={4} className="blog-title">{blog.title.slice(0, 16)}{blog.title.length > 16 ? "..." : ""}</Title>
+            {/*<Paragraph className="blog-content">*/}
+            {/*    {blog.content.slice(0, 30)}{blog.content.length > 30 ? "..." : ""}*/}
+            {/*</Paragraph>*/}
         </div>
         <Footer className={"card-footer"} >
             <div className="interaction-stats">
@@ -89,6 +89,7 @@ export default function CommunityPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
+    const [allBlogs, setAllBlogs] = useState([]);
 
     const fetchBlogs = async () => {
         let result;
@@ -99,6 +100,10 @@ export default function CommunityPage() {
         }
         setBlogs(result.blogs);
         setTotal(result.total);
+        //设置allBlogs为长度为total，内容暂为null的数组，用于缓存分页数据
+        setAllBlogs(Array(result.total).fill(null));
+        //缓存分页数据
+        allBlogs.splice(result.start, result.size, ...result.blogs);
     };
 
     useEffect(() => {

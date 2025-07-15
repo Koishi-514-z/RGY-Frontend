@@ -3,7 +3,7 @@ import CustomLayout from "../components/layout/customlayout";
 import { useNavigate, useParams } from "react-router-dom";
 import {
     getBlogById, likeBlog, cancelLikeBlog, addReply,
-    getAvatar, getBlogs, getLiked, reportContent
+    getAvatar, getBlogs, getLiked, reportContent, getRepliesForBlog
 } from "../service/community";
 import {
     ArrowLeftOutlined, HeartTwoTone, ExclamationCircleOutlined,
@@ -42,12 +42,15 @@ export default function BlogdetailPage() {
     const [blog, setBlog] = useState(null);
     const [isLiked, setIsLiked] = useState(false);
     const [replies, setReplies] = useState([]);
+    const [allReplies, setAllReplies] = useState([]);
     const [replyContent, setReplyContent] = useState("");
     const [numLikes, setNumLikes] = useState(0);
     const { message, modal } = App.useApp();
     const reportRef = useRef(null);
     const [reportReason, setReportReason] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('connecting');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
     // 举报原因选项
     const reportReasons = [
@@ -63,7 +66,7 @@ export default function BlogdetailPage() {
             const fetchedBlog = await getBlogById(id);
             setBlog(fetchedBlog);
             setNumLikes(fetchedBlog.likeNum);
-            setReplies(fetchedBlog.replies || []);
+            setAllReplies(fetchedBlog.replies || []);
         } catch (error) {
             message.error("加载帖子失败");
         }
@@ -82,6 +85,34 @@ export default function BlogdetailPage() {
         fetchBlog();
         getIfLiked();
     }, [id]);
+    useEffect(() => {
+        const fetchReplies = async () => {
+            try {
+                if (allReplies.length === 0) {
+                    return;
+                }
+                if(allReplies[(currentPage - 1)*pageSize]!== null){
+                    setReplies(allReplies.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+                    console.log(allReplies.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+                    return;
+                }
+                const fetchedReplies = await getRepliesForBlog(
+                    id,
+                    currentPage,
+                    pageSize
+                );
+                let i = 0;
+                for (const reply of fetchedReplies) {
+                    allReplies[i + (currentPage - 1) * pageSize] = reply;
+                    i++;
+                }
+                setReplies(allReplies.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+            } catch (error) {
+                console.error("获取回复失败", error);
+            }
+        };
+        fetchReplies();
+    },[currentPage,pageSize,id,allReplies]);
 
     useEffect(() => {
         const updateRef =  () => {
@@ -154,9 +185,11 @@ export default function BlogdetailPage() {
 
         try {
             const newReply = await addReply(id, replyContent);
-            setReplies([...replies, newReply]);
+            //setReplies([...replies, newReply]);
+            setCurrentPage(1);
             setReplyContent("");
             message.success("回复成功！");
+
         } catch (error) {
             message.error("回复失败");
         }
@@ -345,22 +378,22 @@ export default function BlogdetailPage() {
                 {/* 回复区域 */}
                 <div style={{ position:'relative',zIndex:1 }} className="replies-section">
                     <div className="replies-header">
-                        <Title level={4} className="section-title">回复 ({replies.length})</Title>
+                        <Title level={4} className="section-title">回复 ({allReplies.length})</Title>
                     </div>
 
                     <List
                         dataSource={replies}
                         renderItem={reply => (
-                            <Card className="reply-card" key={reply.replyid}>
+                            <Card className="reply-card" key={reply?.replyid}>
                                 <div className="reply-header">
                                     <Avatar
-                                        src={reply.user.avatar}
+                                        src={reply?.user?.avatar}
                                         size={36}
                                         className="reply-avatar"
-                                        onClick={() => navigate(`/home/${reply.user.userid}`)}
+                                        onClick={() => navigate(`/home/${reply?.user?.userid}`)}
                                     />
                                     <div className="reply-user-info">
-                                        <Text strong className="reply-username">{reply.user.username}</Text>
+                                        <Text strong className="reply-username">{reply?.user?.username}</Text>
                                         <Text type="secondary" className="reply-time">
                                             {"     "}{"    "}
                                             {new Date(reply.timestamp).toLocaleString()}
@@ -370,7 +403,7 @@ export default function BlogdetailPage() {
                                         type="text"
                                         icon={<ExclamationCircleOutlined />}
                                         className="report-button"
-                                        onClick={() => showReportModal("reply", reply.replyid)}
+                                        onClick={() => showReportModal("reply", reply?.replyid)}
                                     >
                                         举报
                                     </Button>
@@ -381,6 +414,18 @@ export default function BlogdetailPage() {
                                 </div>
                             </Card>
                         )}
+                        pagination={{
+                            pageSize: pageSize,
+                            current: currentPage,
+                            total: allReplies.length,
+                            onChange: (page) => {
+                                setCurrentPage(page);
+                            },
+                            onShowSizeChange: (current, size) => {
+                                setPageSize(size);
+                                setCurrentPage(1);
+                            }
+                        }}
                     />
 
                     <div className="reply-input-area">

@@ -1,5 +1,23 @@
 import {getJson, PREFIX,post} from "./common";
 import { sendNotification } from "./NotificationService";
+
+export async function getRepliesForBlog(blogid,currentPage,pageSize) {
+    const url = `${PREFIX}/blogs/getrepliesforblog`;
+    let res;
+    let params = {
+        blogid: blogid,
+        currentPage: currentPage,
+        pageSize: pageSize
+    };
+    try {
+        res = await post(url, params);
+
+    } catch (e) {
+        throw e;
+    }
+    return res;
+}
+
 export async function adminGetBlogById(id) {
     const url = `${PREFIX}/blogs/getById/${id}`;
     let res;

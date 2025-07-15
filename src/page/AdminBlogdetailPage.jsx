@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Typography, Space, Tag, message, Tooltip, Modal, Divider, Avatar } from 'antd';
+import {Card, Button, Typography, Space, Tag, message, Tooltip, Modal, Divider, Avatar, Pagination} from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
-import { adminGetBlogById,  deleteBlog, deleteReply } from '../service/community';
+import {adminGetBlogById, deleteBlog, deleteReply, getRepliesForBlog} from '../service/community';
 import CustomLayout from "../components/layout/customlayout";
 import { ArrowLeftOutlined, UserOutlined, LikeOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -16,15 +16,48 @@ const AdminBlogDetailPage = () => {
     const [blog, setBlog] = useState();
     const [replies, setReplies] = useState([]);
     const [update, setUpdate] = useState(false);
+    const [allReplies, setAllReplies] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
     useEffect(() => {
         const fetchBlog = async () => {
             const fetched_blog = await adminGetBlogById(id);
             setBlog(fetched_blog);
-            setReplies(fetched_blog.replies || [])
+            setAllReplies(fetched_blog.replies || [])
         };
         fetchBlog();
-    }, [id, update]);
+    }, [id,update]);
+
+    useEffect(() => {
+        const fetchReplies = async () => {
+            try {
+                if (allReplies.length === 0) {
+                    setReplies([]);
+                    return;
+                }
+                if(allReplies[(currentPage - 1)*pageSize]!== null){
+                    setReplies(allReplies.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+                    console.log(allReplies.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+                    return;
+                }
+                const fetchedReplies = await getRepliesForBlog(
+                    id,
+                    currentPage,
+                    pageSize
+                );
+                let i = 0;
+                for (const reply of fetchedReplies) {
+                    allReplies[i + (currentPage - 1) * pageSize] = reply;
+                    i++;
+                }
+                setReplies(allReplies.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+            } catch (error) {
+                console.error("获取回复失败", error);
+            }
+        };
+        fetchReplies();
+    },[currentPage,pageSize,id,allReplies,update]);
 
 
     // 处理屏蔽帖子
@@ -62,8 +95,10 @@ const AdminBlogDetailPage = () => {
             await deleteReply(replyId, null, userid);
             message.success('回复已屏蔽');
             setUpdate(!update);
+            setCurrentPage(1);
         } catch (error) {
             message.error('屏蔽失败：' + error.message);
+            console.log(error);
         }
         //     }
         // });
@@ -74,7 +109,6 @@ const AdminBlogDetailPage = () => {
             <CustomLayout role={1} content={<div>加载中...</div>} />
         );
     }
-
 
     if(blog.valid === 0)
     {
@@ -153,10 +187,10 @@ const AdminBlogDetailPage = () => {
 
                     {/* 回复列表区 */}
                     <div style={{ marginTop: 24 }}>
-                        <Title level={4}>全部回复 ({replies.length})</Title>
-                        {replies.map((reply, index) => (
+                        <Title level={4}>全部回复 ({allReplies?.length})</Title>
+                        {replies?.map((reply, index) => (
                             <Card 
-                                key={reply.replyid} 
+                                key={reply?.replyid}
                                 style={{ marginTop: 16 }}
                                 className="reply-card"
                             >
@@ -165,27 +199,27 @@ const AdminBlogDetailPage = () => {
                                         <Avatar 
                                             size={32} 
                                             icon={<UserOutlined />} 
-                                            src={reply.user?.avatar}
+                                            src={reply?.user?.avatar}
                                         />
                                         <Space direction="vertical" size={0}>
-                                            <Text strong>{reply.user?.username}</Text>
+                                            <Text strong>{reply?.user?.username}</Text>
                                             <Text type="secondary">
-                                                {moment(reply.timestamp).format('YYYY-MM-DD HH:mm:ss')}
+                                                {moment(reply?.timestamp).format('YYYY-MM-DD HH:mm:ss')}
                                             </Text>
                                         </Space>
                                         <Tag 
                                             color="blue" 
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => navigate(`/admin/user/${reply.user?.userid}`)}
+                                            onClick={() => navigate(`/admin/user/${reply?.user?.userid}`)}
                                         >
-                                            {reply.user?.userid}
+                                            {reply?.user?.userid}
                                         </Tag>
                                     </Space>
                                     <Button 
                                         danger
                                         type="text"
                                         icon={<DeleteOutlined />}
-                                        onClick={() => handleBlockReply(reply.replyid,reply.user?.userid)}
+                                        onClick={() => handleBlockReply(reply?.replyid,reply?.user?.userid)}
                                     >
                                         屏蔽
                                     </Button>
@@ -197,10 +231,21 @@ const AdminBlogDetailPage = () => {
                                         paddingLeft: 40
                                     }}
                                 >
-                                    {reply.content}
+                                    {reply?.content}
                                 </Paragraph>
                             </Card>
                         ))}
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
+                            <Pagination
+                                current={currentPage}
+                                pageSize={pageSize}
+                                total={allReplies.length}
+                                onChange={(page, pageSize) => {
+                                    setCurrentPage(page);
+                                    setPageSize(pageSize);
+                                }}
+                            />
+                        </div>
                     </div>
                 </Card>
             </div>

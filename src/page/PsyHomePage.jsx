@@ -98,7 +98,6 @@ export default function PsyHomePage() {
         setModal();
     }, [profile, privateNotifications, publicNotifications, setIsModelOpen]);
 
-
     if(!profile || !availableTimes) {
         return (
             <CustomLayout role={2} content={
