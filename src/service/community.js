@@ -176,7 +176,7 @@ export async function getBlogs(pageSize, currentPage, searchText, tags) {
     return res;
 }
 
-export async function getBlogById(id) {
+export async function getBlogById(id,i) {
 
     const url = `${PREFIX}/blogs/getById/${id}`;
     let res;
@@ -186,12 +186,23 @@ export async function getBlogById(id) {
         let params = {
             blogid: id
         };
-
-        await post(`${PREFIX}/blogs/addBrowsenum`, params);
     } catch (e) {
         throw e;
     }
     return res;
+}
+
+export async function addBrowsenum(id) {
+    const url = `${PREFIX}/blogs/addBrowsenum`;
+    let params = {
+        blogid: id
+    };
+
+    try {
+        await post(url, params);
+    } catch (e) {
+        throw e;
+    }
 }
 
 /*
@@ -260,15 +271,13 @@ export async function addBlog(blog) {
     blog.likeNum = 0;
     blog.reply = [];
     let res;
-    try {
+    try{
         res = await post(url, blog);
+
         console.log(res);
-        //res.success = true;
     } catch (e) {
         throw e;
     }
-    //以下为测试使用
-    //res.success = true;
     return res;
 }
 
