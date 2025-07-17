@@ -120,7 +120,7 @@ export default function ProfileHeader({profile, id}) {
                                 textAlign: isMobile ? 'center' : 'left',
                                 display: 'block'
                             }}>
-                                {profile.note ? profile.note : emptyText}
+                                {profile?.note ? profile?.note : emptyText}
                             </Text>
                             
                             <div style={{ 

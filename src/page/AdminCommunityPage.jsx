@@ -19,6 +19,7 @@ const AdminCommunityPage = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -36,7 +37,7 @@ const AdminCommunityPage = () => {
       }
     };
     fetchBlogs();
-  }, [pageSize, currentPage, searchText, tags, sortOrder]);
+  }, [pageSize, currentPage, update, tags, sortOrder]);
 
   const renderEllipsisText = (text) => (
     <Tooltip title={text} placement="topLeft">
@@ -135,9 +136,10 @@ const AdminCommunityPage = () => {
             }}>
               <Space size="middle">
                 <Input
-                  placeholder="搜索标题/内容/用户"
+                  placeholder="搜索标题/用户"
                   prefix={<SearchOutlined />}
                   onChange={e => setSearchText(e.target.value)}
+                  onPressEnter={() => setUpdate(!update)}
                   style={{ width: 300 }}
                   allowClear
                 />

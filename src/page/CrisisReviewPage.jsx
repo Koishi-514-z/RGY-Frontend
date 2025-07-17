@@ -65,7 +65,7 @@ const CrisisReviewPage = () => {
 
     const showConfirmModal = (crisis) => {
         setSelectedCrisis(crisis);
-        setUrgencyLevel('high');
+        setUrgencyLevel(2);
         setConfirmModalVisible(true);
     };
 

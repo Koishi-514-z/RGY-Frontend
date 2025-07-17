@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Avatar, Button, Col, Divider, Input, Layout, Pagination, Row, Select, Space, Tag, Typography, Menu
 } from "antd";
@@ -15,6 +15,7 @@ import { Header } from "antd/es/layout/layout";
 import ParticleBackground from "../components/layout/particlebackground";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
+import Loading from "../components/loading";
 
 dayjs.extend(relativeTime);
 const { Option } = Select;
@@ -90,8 +91,11 @@ export default function CommunityPage() {
     const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
     const [allBlogs, setAllBlogs] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [update, setUpdate] = useState(false);
 
     const fetchBlogs = async () => {
+        setLoading(true);
         let result;
         if (sortOrder === 'recommend') {
             result = await getBlogs(pageSize, currentPage, searchText, tags);
@@ -100,24 +104,27 @@ export default function CommunityPage() {
         }
         setBlogs(result.blogs);
         setTotal(result.total);
-        //设置allBlogs为长度为total，内容暂为null的数组，用于缓存分页数据
-        setAllBlogs(Array(result.total).fill(null));
-        //缓存分页数据
-        allBlogs.splice(result.start, result.size, ...result.blogs);
+        setLoading(false);
     };
 
     useEffect(() => {
         fetchBlogs();
-    }, [pageSize, currentPage, searchText, tags, sortOrder]);
+    }, [pageSize, currentPage, update, tags, sortOrder]);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchText, tags, sortOrder]);
+    }, [update, tags, sortOrder]);
 
     // 处理菜单点击
     const handleMenuClick = (e) => {
         setSortOrder(e.key);
     };
+
+    if (!blogs || loading) {
+        return (
+            <CustomLayout content={<Loading />} />
+        );
+    }
 
     return (
         <CustomLayout role={0} content={
@@ -156,11 +163,15 @@ export default function CommunityPage() {
                         <Row gutter={16}>
                             <Col span={14}>
                                 <Input.Search
+                                    //修改下述逻辑，点击搜索按钮才触发搜索事件
+
                                     placeholder="搜索帖子或用户"
                                     allowClear
                                     enterButton={<SearchOutlined />}
                                     size="large"
+                                    //按下回车触发搜索事件
                                     value={searchText}
+                                    onSearch={value => setUpdate(!update)}
                                     onChange={(e) => setSearchText(e.target.value)}
                                     style={{ width: '100%' }}
                                 />

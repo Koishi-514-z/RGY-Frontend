@@ -28,13 +28,13 @@ export default function BlogCardOther({myBlogs, profile, loading}) {
     };
 
     const getUserLevel = () => {
-        if(profile.level >= 30) {
+        if(profile?.level >= 30) {
             return { level: '活跃达人', color: '#ff4d4f', icon: <FireOutlined /> };
         } 
-        if(profile.level >= 20) {
+        if(profile?.level >= 20) {
             return { level: '资深用户', color: '#faad14', icon: <TrophyOutlined /> };
         }
-        if(profile.level >= 10) {
+        if(profile?.level >= 10) {
             return { level: '活跃用户', color: '#52c41a', icon: <RiseOutlined /> };
         }
         return { level: '新手用户', color: '#1890ff', icon: <UserOutlined /> };
