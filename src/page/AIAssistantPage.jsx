@@ -133,12 +133,11 @@ export default function AIAssistantPage() {
 
     useEffect(() => {
         const handleOveruse = async () => {
-            if(usageSeconds >= 10 && !alertShownRef.current) {
+            if(usageSeconds >= 3600 && !alertShownRef.current) {
                 const res = await placeCallBackRequest();
                 if(!res) {
                     message.error('ERROR');
                 }
-                message.info('您单日使用已超过一小时，已安排心理咨询师回访');
                 alertShownRef.current = true;
                 fetchNotification();
             }

@@ -82,7 +82,7 @@ export default function HomePage() {
             if(userid || tabKey !== 1 || loadedTabs.includes(1)) {
                 return;
             }
-            loadedTabs.push(1);
+            setLoadedTabs([...loadedTabs, 1]);
             setLoading(true);
             const fetched_emotion = await getEmotion();
             const fetched_users = await getIntimateUsers();
@@ -99,7 +99,7 @@ export default function HomePage() {
             if(userid || tabKey !== 2 || loadedTabs.includes(2) || !profile.userid) {
                 return;
             }
-            loadedTabs.push(2);
+            setLoadedTabs([...loadedTabs, 2]);
             setLoading(true);
             const fetched_blogs = await getBlogs(profile.userid);
             const fetched_blogs_like = await getLikeBlogs(profile.userid);
@@ -118,7 +118,7 @@ export default function HomePage() {
             if(userid || tabKey !== 5 || loadedTabs.includes(5)) {
                 return;
             }
-            loadedTabs.push(5);
+            setLoadedTabs([...loadedTabs, 5]);
             setLoading(true);
             const fetched_week = await getWeekData();
             const fetched_month = await getMonthData();

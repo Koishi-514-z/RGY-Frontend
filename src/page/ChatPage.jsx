@@ -14,9 +14,10 @@ import ChatHeader from "../components/chat/chatheader";
 import SessionStatus from "../components/chat/sessionstatus";
 import { getUserProfile } from "../service/user";
 import Loading from "../components/loading";
+import { useProfile } from "../components/context/profilecontext";
 
 export default function ChatPage() {
-    const [profile, setProfile] = useState(null);
+    const { profile, setProfile } = useProfile();
     const [sessionTags, setSessionTags] = useState([]);
     const [session, setSession] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('connecting');
@@ -92,7 +93,7 @@ export default function ChatPage() {
                             message.error('消息发送错误');
                             return;
                         }
-                        if (receivedMsg.id === parseInt(sessionidRef.current)) {
+                        if(receivedMsg.id === parseInt(sessionidRef.current)) {
                             const res = await updateRead(sessionidRef.current);
                             if (!res) {
                                 message.error('更新失败');
@@ -186,7 +187,7 @@ export default function ChatPage() {
     return (
         <CustomLayout content={
             <div style={{ 
-                height: isMobile ? 'calc(100vh - 64px - 69px)' : 'calc(100vh - 64px - 69px - 48px)',
+                height: isMobile ? 'calc(100vh - 64px - 69px)' : 'calc(105vh - 64px - 69px - 48px)',
                 position: 'relative'
             }}>
                 <ParticleBackground role={profile.role} />
