@@ -210,7 +210,7 @@ export default function CrisisHandlingCard({crisisCases, setCrisisCases}) {
                                                 <Button
                                                     size="small"
                                                     icon={<MessageOutlined />}
-                                                    onClick={() => handleStatusUpdate(item.id, 1)}
+                                                    onClick={() => handleStatusUpdate(item.crisisid, 1)}
                                                 />
                                             </Tooltip>
                                         </>
@@ -222,7 +222,7 @@ export default function CrisisHandlingCard({crisisCases, setCrisisCases}) {
                                                 type="primary"
                                                 size="small"
                                                 icon={<CheckOutlined />}
-                                                onClick={() => handleStatusUpdate(item.id, 2)}
+                                                onClick={() => handleStatusUpdate(item.crisisid, 2)}
                                                 style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
                                             />
                                         </Tooltip>

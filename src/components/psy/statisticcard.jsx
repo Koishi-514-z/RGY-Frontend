@@ -351,7 +351,7 @@ export default function StatisticCard() {
                             }}>
                                 <Statistic 
                                     title="平均评分" 
-                                    value={averageScore} 
+                                    value={averageScore ? averageScore.toFixed(2) : '0.00'} 
                                     valueStyle={{ color: '#1890ff', fontSize: '20px' }}
                                     prefix={<LineChartOutlined />}
                                     suffix="分"
