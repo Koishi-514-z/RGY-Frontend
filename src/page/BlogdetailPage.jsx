@@ -15,7 +15,6 @@ import {
     List,
     Card,
     App,
-    Pagination,
     Dropdown,
     Tooltip,
     Typography,
@@ -47,6 +46,7 @@ export default function BlogdetailPage() {
     const [numLikes, setNumLikes] = useState(0);
     const { message, modal } = App.useApp();
     const reportRef = useRef(null);
+    const blogidRef = useRef(id);
     const [reportReason, setReportReason] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('connecting');
     const [currentPage, setCurrentPage] = useState(1);
@@ -63,7 +63,7 @@ export default function BlogdetailPage() {
 
     const fetchBlog = async (i) => {
         try {
-            const fetchedBlog = await getBlogById(id,i);
+            const fetchedBlog = await getBlogById(blogidRef.current, i);
             setBlog(fetchedBlog);
             setNumLikes(fetchedBlog.likeNum);
             setAllReplies(fetchedBlog.replies || []);
@@ -71,13 +71,14 @@ export default function BlogdetailPage() {
             message.error("加载帖子失败");
         }
     };
+    
     useEffect(() => {
-        addBrowsenum(id);
+        addBrowsenum(blogidRef.current);
     }, []);
 
     const getIfLiked = async () => {
         try {
-            const liked = await getLiked(id);
+            const liked = await getLiked(blogidRef.current);
             setIsLiked(liked);
         } catch (error) {
             console.error("获取点赞状态失败", error);
@@ -88,6 +89,7 @@ export default function BlogdetailPage() {
         fetchBlog(0);
         getIfLiked();
     }, [id]);
+
     useEffect(() => {
         const fetchReplies = async () => {
             try {
@@ -115,7 +117,7 @@ export default function BlogdetailPage() {
             }
         };
         fetchReplies();
-    },[currentPage,pageSize,id,allReplies]);
+    },[currentPage, pageSize, id, allReplies]);
 
     useEffect(() => {
         const updateRef =  () => {
@@ -125,40 +127,51 @@ export default function BlogdetailPage() {
 
     }, [reportReason]);
 
-    // useEffect(() => {
-    //     const socket = new SockJS("https://localhost:8443/ws");
-    //     const client = Stomp.over(socket);
-    //
-    //     setConnectionStatus('connecting');
-    //
-    //     client.connect({},
-    //         () => {
-    //             setConnectionStatus('connected');
-    //             client.subscribe("/topic/messages/blog", async (msg) => {
-    //                 try {
-    //                     const receivedMsg = JSON.parse(msg.body);
-    //                     console.log(receivedMsg);
-    //                     await fetchBlog(1);
-    //                     getIfLiked();
-    //
-    //                 } catch (error) {
-    //                     console.error('处理消息失败:', error);
-    //                 }
-    //             });
-    //         },
-    //         (error) => {
-    //             console.error('WebSocket连接失败:', error);
-    //             setConnectionStatus('disconnected');
-    //         }
-    //     );
-    //
-    //     return () => {
-    //         if(client && client.connected) {
-    //             client.disconnect();
-    //         }
-    //         setConnectionStatus('disconnected');
-    //     };
-    // }, []);
+    useEffect(() => {
+        const updateRef =  () => {
+            blogidRef.current = id;
+        };
+        updateRef();
+
+    }, [id]);
+
+    useEffect(() => {
+        const socket = new SockJS("https://localhost:8443/ws");
+        const client = Stomp.over(socket);
+    
+        setConnectionStatus('connecting');
+    
+        client.connect({},
+            () => {
+                setConnectionStatus('connected');
+                client.subscribe("/topic/messages/blog", async (msg) => {
+                    try {
+                        const receivedMsg = JSON.parse(msg.body);
+                        console.log(receivedMsg.id);
+                        console.log(parseInt(blogidRef.current));
+                        if(receivedMsg.id === parseInt(blogidRef.current)) {
+                            console.log('FETCH');
+                            await fetchBlog(1);
+                            getIfLiked();
+                        }
+                    } catch (error) {
+                        console.error('处理消息失败:', error);
+                    }
+                });
+            },
+            (error) => {
+                console.error('WebSocket连接失败:', error);
+                setConnectionStatus('disconnected');
+            }
+        );
+    
+        return () => {
+            if(client && client.connected) {
+                client.disconnect();
+            }
+            setConnectionStatus('disconnected');
+        };
+    }, []);
 
     // 点赞/取消点赞
 
@@ -188,9 +201,9 @@ export default function BlogdetailPage() {
 
         try {
             const newReply = await addReply(id, replyContent);
-            //setReplies([...replies, newReply]);
             setCurrentPage(1);
             setReplyContent("");
+            await fetchBlog(1);
             message.success("回复成功！");
 
         } catch (error) {
